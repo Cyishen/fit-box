@@ -1,24 +1,28 @@
 "use client"
 
 
-import { useMenuStore, useTemplateStore } from '@/lib/store'
-import { useEffect, useState } from 'react'
+import { useMenuStore, useTemplateStore } from '@/lib/store';
+import { useEffect, useState } from 'react';
 import TemplateCardList from './TemplateCardList';
 import MenuList from './MenuList';
-
 
 const FitDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<{ [key: string]: boolean }>({});
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
 
   const templates = useTemplateStore((state) => state.templates);
-  const removeTemplate = useTemplateStore((state) => state.removeTemplate); 
+  const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
   const menus = useMenuStore((state) => state.menus);
   const removeMenu = useMenuStore((state) => state.removeMenu);
 
   useEffect(() => {
-    if (menus.length > 0) {
+    const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
+
+    if (lastSelectedMenuId && menus.some(menu => menu.menuId === lastSelectedMenuId)) {
+      setSelectedMenuId(lastSelectedMenuId);
+      setIsMenuOpen({ [lastSelectedMenuId]: true });
+    } else if (menus.length > 0) {
       const firstMenuId = menus[0].menuId;
       setSelectedMenuId(firstMenuId);
       setIsMenuOpen({ [firstMenuId]: true });
@@ -27,16 +31,17 @@ const FitDashboard = () => {
     }
   }, [menus]);
 
-  const handleMenuClick = (boxId: string) => {
-    setSelectedMenuId(boxId);
+  const handleMenuClick = (menuId: string) => {
+    setSelectedMenuId(menuId);
+    localStorage.setItem('selectedMenuId', menuId);
+
     setIsMenuOpen((prev) => {
       const newState = Object.keys(prev).reduce((acc, key) => {
         acc[key] = false;
         return acc;
       }, {} as { [key: string]: boolean });
 
-      newState[boxId] = true;
-
+      newState[menuId] = true;
       return newState;
     });
   };
@@ -46,10 +51,15 @@ const FitDashboard = () => {
     .slice()
     .reverse();
 
-  const handleRemoveMenu = (boxId: string) => {
+  const handleRemoveMenu = (menuId: string) => {
     const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
     if (userConfirmed) {
-      removeMenu(boxId);
+      removeMenu(menuId);
+
+      if (menuId === selectedMenuId) {
+        setSelectedMenuId(null);
+        localStorage.removeItem('selectedMenuId');
+      }
     }
   };
 
@@ -72,9 +82,10 @@ const FitDashboard = () => {
 
       <TemplateCardList
         selectedTemplates={selectedTemplates}
-        handleRemoveTemplate={handleRemoveTemplate} />
+        handleRemoveTemplate={handleRemoveTemplate}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default FitDashboard
+export default FitDashboard;
