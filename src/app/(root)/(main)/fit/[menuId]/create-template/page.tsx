@@ -6,7 +6,7 @@ import Form, { TemplateType } from './Form'
 import { useTemplateStore } from '@/lib/store'
 
 
-const CreateCard = ({ params }: { params: { menuId: string } }) => {
+const CreateTemplate = ({ params }: { params: { menuId: string } }) => {
   const { menuId } = params;
 
   const router = useRouter()
@@ -16,6 +16,7 @@ const CreateCard = ({ params }: { params: { menuId: string } }) => {
     category: "",
     title: "",
     menuId,
+    exercises: []
   })
 
   const addTemplate = useTemplateStore((state) => state.addTemplate);
@@ -32,6 +33,7 @@ const CreateCard = ({ params }: { params: { menuId: string } }) => {
       category: template.category,
       title: template.title,
       menuId,
+      exercises: template.exercises || [],
     };
 
     addTemplate(newTemplate)
@@ -48,4 +50,4 @@ const CreateCard = ({ params }: { params: { menuId: string } }) => {
   )
 }
 
-export default CreateCard
+export default CreateTemplate

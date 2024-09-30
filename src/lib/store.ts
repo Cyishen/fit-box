@@ -1,12 +1,6 @@
+import { TemplateType } from '@/app/(root)/(main)/fit/[menuId]/create-template/Form';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
-
-type TemplateType = {
-  cardId: string;
-  category: string;
-  title: string;
-  menuId: string;
-};
 
 interface TemplateStore {
   templates: TemplateType[];

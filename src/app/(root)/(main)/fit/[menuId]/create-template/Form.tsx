@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
 import { ChangeEvent, useState } from "react"
 
+import WeightTraining, { Exercise } from "./WeightTraining";
+
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
 
@@ -12,6 +14,7 @@ export type TemplateType = {
   category: string;
   title: string;
   menuId: string;
+  exercises: Exercise[];
 };
 
 type Props = {
@@ -44,7 +47,7 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
           <h3 className="font-bold">{type} - 盒子內容</h3>
 
           <div className="mt-5">
-            <h3 className="font-bold">訓練部位</h3>
+            <h3 className="font-bold">訓練的部位</h3>
             <div className="flex gap-3 py-3 flex-wrap">
               {categories?.map((item, index) => (
                 <button
@@ -63,7 +66,7 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
 
           <div className="mt-10">
             <div className="flex items-center gap-3">
-              <h3 className="font-bold">內容物</h3>
+              <h3 className="font-bold">模板名</h3>
               <p className="text-xs text-gray-500">
                 {count}/20 字
               </p>
@@ -72,7 +75,7 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
             <div className="flex gap-3 py-3">
               <input
                 type="text"
-                placeholder="輸入內容物"
+                placeholder="輸入模板名"
                 onChange={handleChange}
                 name="title"
                 value={template.title}
@@ -81,6 +84,14 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
                 className="border rounded-lg px-4 py-2 focus:outline-none w-full placeholder:text-sm"
               />
             </div>
+          </div>
+
+          {/* TODO: 添加動作 */}
+          <div className="mt-10">
+            <WeightTraining
+              exercises={template.exercises || []}
+              setTemplateState={setTemplateState} 
+            />
           </div>
 
           <div className="flex justify-end">

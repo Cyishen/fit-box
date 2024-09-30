@@ -6,7 +6,7 @@ import { useTemplateStore } from '@/lib/store'
 import Form, { TemplateType } from '../../create-template/Form'
 
 
-const UpdateWork = ({ params }: { params: { templateId: string } }) => {
+const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
   const { templateId } = params;
   const router = useRouter();
 
@@ -20,6 +20,7 @@ const UpdateWork = ({ params }: { params: { templateId: string } }) => {
     category: "",
     title: "",
     menuId: "",
+    exercises: [],
   });
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const UpdateWork = ({ params }: { params: { templateId: string } }) => {
         category: template.category,
         title: template.title,
         menuId: template.menuId,
+        exercises: template.exercises || [],
       };
 
       editTemplate(template.cardId, editTemplateData);
@@ -60,4 +62,4 @@ const UpdateWork = ({ params }: { params: { templateId: string } }) => {
   )
 }
 
-export default UpdateWork;
+export default UpdateTemplate;

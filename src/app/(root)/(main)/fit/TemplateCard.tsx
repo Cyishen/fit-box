@@ -75,7 +75,10 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId }
         </div>
 
         <div className='w-full mt-2 bg-white rounded-lg relative'>
-          <p className='font-bold text-sm absolute top-0 right-0 bg-gray-100 px-3 py-1 rounded-bl-lg'>{category}</p>
+          <p className='absolute top-0 right-0 font-bold text-sm bg-gray-100 px-3 py-1 rounded-bl-lg'>
+            {category}
+          </p>
+
           <Image
             src={iconSrc}
             alt={iconSrc}
