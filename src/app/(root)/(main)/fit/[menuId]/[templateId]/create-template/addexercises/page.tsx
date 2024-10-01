@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { Exercise } from '../WeightTraining';
 import { useTemplateStore } from '@/lib/store';
 import { TemplateType } from '../Form';
+import { Button } from '@/components/ui/button';
 
 const exerciseTemplates: Exercise[] = [
   { ExerciseId: '1', name: '啞鈴胸推', sets: [] },
@@ -59,7 +60,7 @@ const AddExercisesPage = ({ params }: { params: { templateId: string } }) => {
         <div className="bg-gray-100 p-4 rounded-2xl">
           <div className='flex justify-between'>
             <button onClick={() => router.back()} className='font-bold'>返回</button>
-            <button onClick={handleSaveExercises}>儲存 {selectedExercises.length}</button>
+            <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
           </div>
 
           {exerciseTemplates.map((exercise) => (
