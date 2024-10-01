@@ -59,7 +59,7 @@ const AddExercisesPage = ({ params }: { params: { templateId: string } }) => {
       <Wrapper>
         <div className="bg-gray-100 p-4 rounded-2xl">
           <div className='flex justify-between'>
-            <button onClick={() => router.back()} className='font-bold'>返回</button>
+            <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
             <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
           </div>
 
