@@ -1,4 +1,4 @@
-import { TemplateType } from '@/app/(root)/(main)/fit/[menuId]/create-template/Form';
+import { TemplateType } from '@/app/(root)/(main)/fit/[menuId]/[templateId]/create-template/Form';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 
@@ -22,6 +22,7 @@ export const useTemplateStore = create<TemplateStore>()(
         set((state) => ({
           templates: state.templates.filter(work => work.cardId !== id),
         })),
+
       editTemplate: (id, updatedTemplate) =>
         set((state) => ({
           templates: state.templates.map(template => template.cardId === id
@@ -33,7 +34,6 @@ export const useTemplateStore = create<TemplateStore>()(
     {
       name: 'work-storage',
       storage: createJSONStorage(() => localStorage),
-      // storage: createJSONStorage(() => sessionStorage),
     }
   )
 );
@@ -58,6 +58,7 @@ export const useMenuStore = create<BoxStore>()(
         set((state) => ({
           menus: [box, ...state.menus ],
         })),
+
       removeMenu: (id) =>
         set((state) => ({
           menus: state.menus.filter(box => box.menuId !== id),

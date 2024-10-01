@@ -1,10 +1,11 @@
 "use client";
 
-import Link from 'next/link';
 import { useMenuStore, useTemplateStore } from '@/lib/store';
 import { ChevronDown, ChevronRight, EllipsisVertical, Plus, Trash2, } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import React from 'react';
+
 
 interface MenuListProps {
   menus: Array<{ menuId: string; title: string }>;
@@ -22,10 +23,12 @@ const MenuList: React.FC<MenuListProps> = ({
   isMenuOpen,
   onMenuRemove,
 }) => {
+  const router = useRouter();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
+  const addTemplate = useTemplateStore((state) => state.addTemplate);
   const templates = useTemplateStore((state) => state.templates);
-  
+
   const existingMenu = useMenuStore((state) => state.menus);
   const lastOneMenu = existingMenu.slice(-1)[0]?.menuId
 
@@ -46,6 +49,25 @@ const MenuList: React.FC<MenuListProps> = ({
       document.removeEventListener("click", handleClickOutside);
     };
   }, [openMenuId]);
+
+  const generateShortId = () => {
+    return Math.random().toString(36).substring(2, 6);
+  };
+
+  const handleAddTemplate = (menuId: string) => {
+    const newCardId = generateShortId();
+    const newTemplate = {
+      cardId: newCardId,
+      category: "",
+      title: "",
+      menuId: menuId,
+      exercises: []
+    };
+
+    addTemplate(newTemplate);
+
+    router.push(`/fit/${menuId}/${newCardId}/create-template`);
+  };
 
   return (
     <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap pb-10'>
@@ -84,7 +106,7 @@ const MenuList: React.FC<MenuListProps> = ({
                 <>
                   <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50' />
 
-                  <div className={`absolute ${menu.menuId === lastOneMenu ? 'right-6' : '-right-20'}  top-0 w-fit h-fit bg-white text-xl z-50 rounded-md shadow-lg overflow-hidden p-2 text-nowrap text-black`}>
+                  <div className={`absolute ${existingMenu.length === 1 ? '-right-20' : (menu.menuId === lastOneMenu ? 'right-6' : '-right-20')} top-0 w-fit h-fit bg-white text-xl z-50 rounded-md shadow-lg overflow-hidden p-2 text-nowrap text-black`}>
                     <div className='flex justify-start'>
                       <button
                         className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 hover:text-white duration-300'
@@ -95,13 +117,12 @@ const MenuList: React.FC<MenuListProps> = ({
                     </div>
 
                     <div className='flex justify-start'>
-                      <Link href={`/fit/${menu.menuId}/create-template`}>
-                        <button
-                          className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300'
-                        >
-                          <Plus width={14} /> 新增
-                        </button>
-                      </Link>
+                      <button
+                        className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300'
+                        onClick={() => handleAddTemplate(menu.menuId)}
+                      >
+                        <Plus width={14} /> 新增
+                      </button>
                     </div>
                   </div>
                 </>

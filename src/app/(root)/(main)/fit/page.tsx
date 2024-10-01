@@ -11,7 +11,7 @@ const FixPage = () => {
         <div className='flex py-10 mb-20'>
           <div className="flex flex-col w-full gap-3">
             <div className='flex items-center justify-between p-3 rounded-lg bg-gray-100'>
-              <h1 className='font-bold text-lg'>建立盒</h1>
+              <h1 className='font-bold text-lg'>你的訓練</h1>
 
               <Link href='/fit/create-menu'>
                 <Button className='w-fit self-end'>+ 新盒子</Button>

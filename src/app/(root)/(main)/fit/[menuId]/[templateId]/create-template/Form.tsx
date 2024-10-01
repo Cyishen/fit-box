@@ -41,10 +41,16 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
   };
 
   return (
-    <div className='flex pt-10'>
-      <Wrapper>
+    <div className='flex py-10'>
+      <Wrapper className="mb-14">
         <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-2xl">
-          <h3 className="font-bold">{type} - 盒子內容</h3>
+          <div className="flex justify-between">
+            <h3 className="font-bold">{type} - 盒子內容</h3>
+
+            <div>
+              <Button size='sm' className='flex w-full md:w-fit'>保存</Button>
+            </div>
+          </div>
 
           <div className="mt-5">
             <h3 className="font-bold">訓練的部位</h3>
@@ -64,7 +70,7 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
             </div>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-5">
             <div className="flex items-center gap-3">
               <h3 className="font-bold">模板名</h3>
               <p className="text-xs text-gray-500">
@@ -87,15 +93,12 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
           </div>
 
           {/* TODO: 添加動作 */}
-          <div className="mt-10">
+          <div className="mt-5">
             <WeightTraining
               exercises={template.exercises || []}
               setTemplateState={setTemplateState} 
+              template={template}
             />
-          </div>
-
-          <div className="flex justify-end">
-            <Button className='flex w-full md:w-fit'>建立</Button>
           </div>
         </form>
       </Wrapper>

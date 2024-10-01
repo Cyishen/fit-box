@@ -1,6 +1,5 @@
 import React from 'react';
 import TemplateCard from './TemplateCard';
-import { useMenuStore } from '@/lib/store';
 
 const CategoryIcons: { [key: string]: string } = {
   "胸": "/icons/chest.svg",
@@ -28,7 +27,6 @@ const TemplateCardList = ({
   handleRemoveTemplate,
 }: TemplateCardListProps
 ) => {
-  const menus = useMenuStore((state) => state.menus);
 
   return (
     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full gap-3'>
@@ -44,14 +42,7 @@ const TemplateCardList = ({
             templateId={work.cardId}
           />
         ))
-      ) : (
-        menus.length > 0 &&
-        <div className='w-full col-span-1 md:col-span-1'>
-          <div className='w-full h-32 flex flex-col items-center justify-center p-3 border border-dashed rounded-lg relative'>
-            <p className='font-bold capitalize text-sm'>加入訓練模板</p>
-          </div>
-        </div>
-      )}
+      ) : ''}
     </div>
   );
 };
