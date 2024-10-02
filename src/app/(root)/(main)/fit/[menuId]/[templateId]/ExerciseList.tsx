@@ -1,8 +1,9 @@
 import React from 'react';
-import { TemplateType } from './Form';
+import { TemplateType } from './TemplateForm';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useTemplateStore } from '@/lib/store';
+
 
 export type Exercise = {
   ExerciseId: string; // 唯一識別符
@@ -17,14 +18,15 @@ export type Set = {
   totalWeight: number; // 此組的總重量（左重量 + 右重量 * 做的次數）
 };
 
-type WeightTrainingProps = {
+type ExerciseListProps = {
   exercises: Exercise[];
   template: TemplateType;
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
 };
 
-const WeightTraining = ({ exercises, setTemplateState, template }: WeightTrainingProps) => {
+const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListProps) => {
   const router = useRouter();
+
   const updateTemplate = useTemplateStore(state => state.editTemplate);
 
   const handleRemoveExercise = (exerciseId: string) => {
@@ -46,7 +48,7 @@ const WeightTraining = ({ exercises, setTemplateState, template }: WeightTrainin
 
         <button
           type="button"
-          onClick={() => router.push(`/fit/${template.menuId}/${template.cardId}/create-template/addexercises`)}
+          onClick={() => router.push(`/fit/${template.menuId}/${template.cardId}/create-template/exercise-picker`)}
           className='font-bold rounded-full bg-white text-sm w-10 h-10 text-center'
         >
           +
@@ -74,4 +76,4 @@ const WeightTraining = ({ exercises, setTemplateState, template }: WeightTrainin
   );
 };
 
-export default WeightTraining;
+export default ExerciseList;

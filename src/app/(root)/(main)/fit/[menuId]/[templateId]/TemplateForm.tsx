@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
 import { ChangeEvent, useState } from "react"
 
-import WeightTraining, { Exercise } from "./WeightTraining";
+import ExerciseList, { Exercise } from "./ExerciseList";
+import { useRouter } from "next/navigation";
 
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
@@ -25,8 +26,10 @@ type Props = {
 };
 
 
-const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
+const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props) => {
   const [count, setCount] = useState(0);
+  const router = useRouter(); 
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (name === "title") {
@@ -45,11 +48,11 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
       <Wrapper className="mb-14">
         <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-2xl">
           <div className="flex justify-between">
-            <h3 className="font-bold">{type} - 盒子內容</h3>
+            <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
 
-            <div>
-              <Button size='sm' className='flex w-full md:w-fit'>保存</Button>
-            </div>
+            <h3 className="font-bold">{type}</h3>
+
+            <Button size='sm' className='font-bold'>保存</Button>
           </div>
 
           <div className="mt-5">
@@ -59,7 +62,7 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
                 <button
                   key={index}
                   type="button"
-                  className={`cursor-pointer py-1 px-5 text-sm rounded-full ${template.category === item ? "bg-black text-white" : "bg-white"}`}
+                  className={`cursor-pointer py-1 px-5 text-sm rounded-full ${template.category === item ? "bg-black text-white" : "bg-white hover:bg-gray-200"}`}
                   onClick={() => {
                     setTemplateState({ ...template, category: item });
                   }}
@@ -87,14 +90,14 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
                 value={template.title}
                 required
                 maxLength={20}
-                className="border rounded-lg px-4 py-2 focus:outline-none w-full placeholder:text-sm"
+                className="border rounded-lg px-4 py-3 text-sm font-bold focus:outline-none w-full placeholder:text-sm"
               />
             </div>
           </div>
 
           {/* TODO: 添加動作 */}
           <div className="mt-5">
-            <WeightTraining
+            <ExerciseList
               exercises={template.exercises || []}
               setTemplateState={setTemplateState} 
               template={template}
@@ -106,4 +109,4 @@ const Form = ({ type, template, setTemplateState, handleSubmit }: Props) => {
   );
 };
 
-export default Form;
+export default TemplateForm;

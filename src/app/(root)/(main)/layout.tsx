@@ -1,5 +1,6 @@
 import MobileFooter from "@/components/mobile/MobileFooter";
 import { Metadata } from "next";
+import React from "react";
 
 
 type Props = {
@@ -21,8 +22,6 @@ const MainLayout = ({ children }: Props) => {
         <div>
           {children}
         </div>
-
-        {/* <div className="h-[30vh]" /> */}
       </main>
       
       <MobileFooter />

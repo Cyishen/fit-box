@@ -18,8 +18,7 @@ interface MenuListProps {
 const MenuList: React.FC<MenuListProps> = ({
   menus,
   selectedMenuId,
-  onMenuSelect:
-  handleMenuClick,
+  onMenuSelect,
   isMenuOpen,
   onMenuRemove,
 }) => {
@@ -58,8 +57,8 @@ const MenuList: React.FC<MenuListProps> = ({
     const newCardId = generateShortId();
     const newTemplate = {
       cardId: newCardId,
-      category: "",
-      title: "",
+      category: "胸",
+      title: "換個名字吧",
       menuId: menuId,
       exercises: []
     };
@@ -78,12 +77,12 @@ const MenuList: React.FC<MenuListProps> = ({
             className={`flex p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-gray-100"}`}
           >
             <div
-              className='flex items-center gap-1'
-              onClick={() => handleMenuClick(menu.menuId)}
+              className='flex items-center gap-2'
+              onClick={() => onMenuSelect(menu.menuId)}
             >
               <div className='flex flex-col'>
-                <p className='font-bold text-sm'>{menu.title}</p>
-                <p className='text-gray-500 text-[10px]'>
+                <p className='font-bold'>{menu.title}</p>
+                <p className='text-gray-400 text-sm font-bold'>
                   {templates.filter(template => template.menuId === menu.menuId).length}
                 </p>
               </div>
@@ -104,7 +103,7 @@ const MenuList: React.FC<MenuListProps> = ({
 
               {openMenuId === menu.menuId && (
                 <>
-                  <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50' />
+                  <div className='fixed inset-0 bg-black/80 flex justify-center items-center z-50' />
 
                   <div className={`absolute ${existingMenu.length === 1 ? '-right-20' : (menu.menuId === lastOneMenu ? 'right-6' : '-right-20')} top-0 w-fit h-fit bg-white text-xl z-50 rounded-md shadow-lg overflow-hidden p-2 text-nowrap text-black`}>
                     <div className='flex justify-start'>
@@ -131,7 +130,11 @@ const MenuList: React.FC<MenuListProps> = ({
           </div>
         ))
       ) : (
-        <p className='font-bold capitalize text-sm'>建立新盒子吧</p>
+        <div className='flex justify-center items-center w-40 h-20 border p-2 border-dashed border-black rounded-lg'>
+          <p className='font-bold capitalize text-sm text-wrap'>
+            建立新盒子
+          </p>
+        </div>
       )}
     </div>
   );

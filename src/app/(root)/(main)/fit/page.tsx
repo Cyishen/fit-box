@@ -3,6 +3,7 @@ import Wrapper from '@/components/Wrapper'
 import { Button } from '@/components/ui/button'
 
 import FitDashboard from './FitDashboard'
+import FitProfile from './FitProfile'
 
 const FixPage = () => {
   return (
@@ -10,6 +11,8 @@ const FixPage = () => {
       <Wrapper>
         <div className='flex py-10 mb-20'>
           <div className="flex flex-col w-full gap-3">
+            <FitProfile />
+            
             <div className='flex items-center justify-between p-3 rounded-lg bg-gray-100'>
               <h1 className='font-bold text-lg'>你的訓練</h1>
 

@@ -3,9 +3,9 @@
 import Wrapper from '@/components/Wrapper';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Exercise } from '../WeightTraining';
+import { Exercise } from '../../ExerciseList';
 import { useTemplateStore } from '@/lib/store';
-import { TemplateType } from '../Form';
+import { TemplateType } from '../../TemplateForm';
 import { Button } from '@/components/ui/button';
 
 const exerciseTemplates: Exercise[] = [
@@ -14,7 +14,7 @@ const exerciseTemplates: Exercise[] = [
   { ExerciseId: '3', name: '肩推', sets: [] },
 ];
 
-const AddExercisesPage = ({ params }: { params: { templateId: string } }) => {
+const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
   const router = useRouter();
   const { templateId } = params;
 
@@ -79,4 +79,4 @@ const AddExercisesPage = ({ params }: { params: { templateId: string } }) => {
   );
 };
 
-export default AddExercisesPage;
+export default ExercisePicker;

@@ -1,4 +1,4 @@
-import { TemplateType } from '@/app/(root)/(main)/fit/[menuId]/[templateId]/create-template/Form';
+import { TemplateType } from '@/app/(root)/(main)/fit/[menuId]/[templateId]/TemplateForm';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 

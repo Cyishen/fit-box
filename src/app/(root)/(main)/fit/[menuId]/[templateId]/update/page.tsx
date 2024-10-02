@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTemplateStore } from '@/lib/store'
-import Form, { TemplateType } from '../create-template/Form'
+import TemplateForm, { TemplateType } from '../TemplateForm'
 
 
 const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
@@ -53,7 +53,7 @@ const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
   }
 
   return (
-    <Form
+    <TemplateForm
       type="編輯"
       template={template}
       setTemplateState={setTemplate}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Form, { TemplateType } from './Form'
+import TemplateForm, { TemplateType } from '../TemplateForm'
 import { useTemplateStore } from '@/lib/store'
 
 
@@ -48,7 +48,7 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   };
 
   return (
-    <Form
+    <TemplateForm
       type="新增"
       template={template}
       setTemplateState={setTemplate}
