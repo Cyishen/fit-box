@@ -28,7 +28,7 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
   };
 
   // 當圖片有設定路徑, 但資料庫沒實際圖片，用默認圖片
-  const defaultIconSrc = "/icons/workout.svg";
+  const defaultIconSrc = "/icons/dumbbell.svg";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

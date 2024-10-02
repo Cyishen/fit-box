@@ -24,7 +24,7 @@ const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateC
         selectedTemplates.map((work) => (
           <TemplateCard
             key={work.cardId}
-            iconSrc={CategoryIcons[work.category] || "/icons/workout.svg"}
+            iconSrc={CategoryIcons[work.category] || "/icons/dumbbell.svg"}
             category={work.category}
             title={work.title}
             onRemove={() => handleRemoveTemplate(work.cardId)}
