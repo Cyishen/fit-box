@@ -30,8 +30,8 @@ const Footer = () => {
             <div className="flex items-center justify-between mt-5 h-10">
               <input
                 type="text"
-                placeholder="Enter your email"
-                className="w-full h-full p-3.5 py-[15px] text-sm border rounded-l-md font-mono"
+                placeholder="Email"
+                className="w-full h-full px-3 py-2 text-sm border rounded-l-md font-mono focus-visible:outline-none focus-visible:border-sky-400 focus-visible:border-2"
               />
               <Button className="rounded-none text-sm font-mono rounded-r-md h-full">Submit</Button>
             </div>

@@ -84,13 +84,13 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
             <div className="flex gap-3 py-3">
               <input
                 type="text"
-                placeholder="輸入模板名"
+                placeholder="來取名吧 🤔"
                 onChange={handleChange}
                 name="title"
                 value={template.title}
                 required
                 maxLength={20}
-                className="border rounded-lg px-4 py-3 text-sm font-bold focus:outline-none w-full placeholder:text-sm"
+                className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-sm"
               />
             </div>
           </div>

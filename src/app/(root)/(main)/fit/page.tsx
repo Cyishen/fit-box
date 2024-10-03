@@ -9,7 +9,7 @@ const FixPage = () => {
   return (
     <section>
       <Wrapper>
-        <div className='flex sm:py-10 mb-20'>
+        <div className='flex sm:py-0 mb-20'>
           <div className="flex flex-col w-full gap-3">
             <FitProfile />
             

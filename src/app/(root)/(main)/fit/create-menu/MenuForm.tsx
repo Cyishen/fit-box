@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react"
-
 
 export type MenuType = {
   menuId: string;
@@ -20,6 +20,7 @@ type Props = {
 
 const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
   const [count, setCount] = useState(0);
+  const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -38,7 +39,13 @@ const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
     <div className='flex pt-10'>
       <Wrapper>
         <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-2xl">
-          <h3 className="font-bold">{type} - 盒子名</h3>
+          <div className="flex justify-between">
+            <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
+
+            <h3 className="font-bold">{type}</h3>
+
+            <Button variant='ghost' size='sm' type="button" className='font-bold'>盒子</Button>
+          </div>
 
           <div className="mt-10">
             <div className="flex items-center gap-3">
@@ -51,18 +58,18 @@ const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
             <div className="flex gap-3 py-3">
               <input
                 type="text"
-                placeholder="輸入盒子名"
+                placeholder="來取名吧 🤔"
                 onChange={handleChange}
                 name="title"
                 value={menu.title}
                 required
                 maxLength={10}
-                className="border rounded-lg px-4 py-3 text-sm font-bold focus:outline-none w-full placeholder:text-sm"
+                className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-sm"
               />
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-10">
             <Button className='flex w-full md:w-fit'>建立</Button>
           </div>
         </form>

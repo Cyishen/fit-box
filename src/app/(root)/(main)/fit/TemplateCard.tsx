@@ -85,7 +85,7 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
         </div>
 
         <div
-          className='relative w-full mt-2 bg-white rounded-lg hover:bg-yellow-50'
+          className='relative w-full mt-2 bg-white rounded-lg hover:bg-[#66CCFF]'
           onClick={handleOpen}
           // onClick={(e) => {
           //   e.stopPropagation();
