@@ -1,8 +1,9 @@
 import React from 'react';
 import { TemplateType } from './TemplateForm';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { useTemplateStore } from '@/lib/store';
+import { CopyPlus } from 'lucide-react';
+import ExerciseListCard from './ExerciseListCard';
 
 
 export type Exercise = {
@@ -13,7 +14,7 @@ export type Exercise = {
 
 export type Set = {
   leftWeight: number; // 左邊的重量
-  right邊的重量: number; // 右邊的重量
+  rightWeight: number; // 右邊的重量
   repetitions: number; // 做的次數
   totalWeight: number; // 此組的總重量（左重量 + 右重量 * 做的次數）
 };
@@ -41,34 +42,44 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
     setTemplateState(updatedTemplate);
   };
 
+  const handleUpdateSets = (exerciseId: string, updatedSets: Set[]) => {
+    const updatedExercises = exercises.map((exercise) =>
+      exercise.ExerciseId === exerciseId
+        ? { ...exercise, sets: updatedSets }
+        : exercise
+    );
+    const updatedTemplate: TemplateType = { ...template, exercises: updatedExercises };
+
+    updateTemplate(template.cardId, updatedTemplate);
+    setTemplateState(updatedTemplate);
+  };
+
+
   return (
     <div>
-      <div className='flex justify-between'>
+      <div className='flex justify-between items-center'>
         <h3 className="font-bold">添加動作</h3>
 
         <button
           type="button"
           onClick={() => router.push(`/fit/${template.menuId}/${template.cardId}/create-template/exercise-picker`)}
-          className='font-bold rounded-full bg-white text-sm w-10 h-10 text-center'
+          className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:opacity-80'
         >
-          +
+          <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>
+            <CopyPlus className='w-5'/>
+          </div>
         </button>
       </div>
 
-      <div className='h-[300px] bg-white rounded-lg mt-2 overflow-y-scroll'>
-        <div className='flex flex-col gap-1'>
+      <div className='rounded-lg mt-5 overflow-y-scroll'>
+        <div className='flex flex-col gap-3 pb-20 max-h-[500px] min-h-[500px]'>
           {exercises.map((exercise) => (
-            <div key={exercise.ExerciseId} className="flex items-center justify-between gap-3">
-              <h4>{exercise.name}</h4>
-              <Button
-                variant='destructive'
-                size='sm'
-                type='button'
-                onClick={() => handleRemoveExercise(exercise.ExerciseId)}
-              >
-                刪除
-              </Button>
-            </div>
+            <ExerciseListCard
+              key={exercise.ExerciseId}
+              exercise={exercise}
+              handleRemoveExercise={handleRemoveExercise}
+              onUpdateSets={handleUpdateSets}
+            />
           ))}
         </div>
       </div>

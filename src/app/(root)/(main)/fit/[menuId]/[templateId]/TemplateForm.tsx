@@ -44,7 +44,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
   };
 
   return (
-    <div className='flex py-10'>
+    <div className='flex pt-1 pb-10 sm:pt-10'>
       <Wrapper className="mb-14">
         <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-2xl">
           <div className="flex justify-between">

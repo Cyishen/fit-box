@@ -7,6 +7,8 @@ import { Exercise } from '../../ExerciseList';
 import { useTemplateStore } from '@/lib/store';
 import { TemplateType } from '../../TemplateForm';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import FitSideBar from './FitSideBar';
 
 const exerciseTemplates: Exercise[] = [
   { ExerciseId: '1', name: '啞鈴胸推', sets: [] },
@@ -45,14 +47,14 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
         ...currentTemplate,
         exercises: selectedExercises,
       };
-      
+
       const updateTemplate = useTemplateStore.getState().editTemplate;
       updateTemplate(templateId, updatedTemplate);
-  
+
       router.back()
     }
   };
-  
+
 
   return (
     <div className='flex py-5 md:py-10'>
@@ -63,16 +65,44 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
             <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
           </div>
 
-          {exerciseTemplates.map((exercise) => (
-            <button
-              key={exercise.ExerciseId}
-              type="button"
-              onClick={() => handleToggleExercise(exercise)}
-              className={`p-2 rounded m-2 ${selectedExercises.some(ex => ex.ExerciseId === exercise.ExerciseId) ? 'bg-blue-500' : 'bg-white'}`}
-            >
-              {exercise.name}
-            </button>
-          ))}
+          <div className='flex mt-5 gap-3'>
+            <div className='w-32'>
+              <h3 className="font-bold">選擇動作</h3>
+              <hr className='my-2'/>
+
+              <FitSideBar />
+            </div>
+
+            <div className='w-full'>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {exerciseTemplates.map((exercise) => (
+                  <div
+                    key={exercise.ExerciseId}
+                    onClick={() => handleToggleExercise(exercise)}
+                    className={`p-2 rounded-md cursor-pointer 
+                    ${selectedExercises.some(select => select.ExerciseId === exercise.ExerciseId) ? 'bg-[#66CCFF] ring-1 ring-offset-2 ring-blue-500' : 'bg-white'}`
+                    }
+                  >
+                    <div key={exercise.ExerciseId}>
+                      <div className="p-2">
+                        <div className="flex flex-col items-center">
+                          <Image
+                            src='/icons/dumbbell.svg'
+                            alt={exercise.name}
+                            width={36}
+                            height={36}
+                          />
+                          <p className={`text-sm mt-2 ${selectedExercises.some(select => select.ExerciseId === exercise.ExerciseId) ? 'text-black' : 'text-muted-foreground'}`}>
+                            {exercise.name}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </Wrapper>
     </div>
