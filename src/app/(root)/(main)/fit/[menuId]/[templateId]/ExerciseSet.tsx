@@ -1,40 +1,44 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Set } from './ExerciseList'
+import { EllipsisVertical, Trash2, Check } from 'lucide-react'
 
 interface SetProps {
-  sets: Set[], 
-  exerciseId: string, 
-  onUpdateSets: (exerciseId: string, updatedSets: Set[]) => void 
+  sets: Set[],
+  exerciseId: string,
+  onUpdateSets: (exerciseId: string, updatedSets: Set[]) => void
 }
 
-const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps ) => {
-  const [dynamicSets, setDynamicSets] = useState<Set[]>(
-    sets.length > 0 ? sets : [{ leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0 }]
-  );
+const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
+  const [dynamicSets, setDynamicSets] = useState<Set[]>([]);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [hasSave, setHasSave] = useState(false);
 
-  // 處理每個輸入框的變更，將值轉換為數字類型
+  useEffect(() => {
+    if (sets.length > 0) {
+      setDynamicSets(sets);
+    } else {
+      setDynamicSets([{ leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0 }]);
+    }
+  }, [sets]);
+
   const handleChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedSets = [...dynamicSets];
-    
-    // 確保所有輸入都轉換為數字
-    const newValue = Number(value) || 0; // 如果轉換失敗則使用0
-    
-    updatedSets[index] = { 
-      ...updatedSets[index], 
-      [name]: newValue, 
-      totalWeight: (newValue + updatedSets[index].rightWeight) * updatedSets[index].repetitions // 根據需求更新totalWeight計算
+
+    const newValue = Number(value) || 0;
+
+    updatedSets[index] = {
+      ...updatedSets[index],
+      [name]: newValue,
     };
-  
-    // 更新左側或右側重量時，需要重新計算totalWeight
+
     updatedSets[index].totalWeight = (updatedSets[index].leftWeight + updatedSets[index].rightWeight) * updatedSets[index].repetitions;
-  
+
     setDynamicSets(updatedSets);
   };
-  
 
   // 新增一組，確保新組的類型正確
   const handleAddSet = () => {
@@ -47,9 +51,32 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps ) => {
     setDynamicSets(updatedSets);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const isOutside = !target.closest('#outside-close') && openIndex !== null;
+
+      if (isOutside) {
+        setOpenIndex(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [openIndex]);
+
   // 保存組數據
   const handleSaveSets = () => {
     onUpdateSets(exerciseId, dynamicSets);
+
+    setHasSave(true);
+
+    setTimeout(() => {
+      setHasSave(false);
+    }, 500);
   };
 
   return (
@@ -101,24 +128,45 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps ) => {
                 />
               </div>
 
-              {/* <div>
-                <p> = </p>
-              </div> */}
-
               <div className='relative rounded-md'>
                 <p className='absolute top-0 left-2 text-[10px]'>重量 kg</p>
 
                 <div className="w-12 h-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold flex justify-end">
-                  {set.leftWeight * set.repetitions}
+                  {set.totalWeight}
                 </div>
               </div>
 
               {/* 刪除按鈕 */}
-              <div>
+              <div
+                className='flex items-center justify-center hover:bg-gray-100 min-w-10 h-10 rounded-full relative ml-auto cursor-pointer'
+                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+              >
+                <EllipsisVertical className='w-3' />
+
+                {openIndex === index && (
+                  <div
+                    id="outside-close"
+                    className="absolute -left-8 -bottom-12 w-fit h-fit bg-black text-white z-[60] rounded-md shadow-lg p-2"
+                  >
+                    <div className='flex justify-start'>
+                      <button
+                        onClick={() => {
+                          handleRemoveSet(index);
+                          setOpenIndex(null);
+                        }}
+                        className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 duration-300'
+                      >
+                        <Trash2 width={14} /> 刪除
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* <div>
                 <Button variant='destructive' size='sm' type='button' onClick={() => handleRemoveSet(index)}>
                   刪除
                 </Button>
-              </div>
+              </div> */}
             </div>
           ))}
 
@@ -128,9 +176,16 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps ) => {
               新增一組
             </Button>
 
-            <Button type='button' onClick={handleSaveSets}>
-              保存
-            </Button>
+            {!hasSave ? (
+              <Button size='sm' type='button' onClick={handleSaveSets}>
+                保存
+              </Button>
+            )
+              : (
+                <Button size='sm' type='button'>
+                  <Check className='w-5 text-green-300'/>
+                </Button>
+              )}
           </div>
         </div>
       </div>

@@ -32,13 +32,13 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
 
   const handleRemoveExercise = (exerciseId: string) => {
     const updatedExercises = exercises.filter((exercise) => exercise.ExerciseId !== exerciseId);
+    
     const updatedTemplate: TemplateType = {
       ...template,
       exercises: updatedExercises,
     };
 
     updateTemplate(template.cardId, updatedTemplate);
-
     setTemplateState(updatedTemplate);
   };
 
@@ -48,7 +48,11 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
         ? { ...exercise, sets: updatedSets }
         : exercise
     );
-    const updatedTemplate: TemplateType = { ...template, exercises: updatedExercises };
+    
+    const updatedTemplate: TemplateType = { 
+      ...template, 
+      exercises: updatedExercises, 
+    };
 
     updateTemplate(template.cardId, updatedTemplate);
     setTemplateState(updatedTemplate);

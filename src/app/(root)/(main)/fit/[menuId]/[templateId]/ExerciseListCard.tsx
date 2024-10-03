@@ -20,16 +20,16 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets }: Exer
   return (
     <div className={`rounded-md bg-white ${isOpen ? 'h-full' : 'h-24'}`}>
       <div className='flex justify-between w-full p-2 gap-3 relative'>
-        <div className='min-w-20 min-h-20 max-w-20 max-h-20 flex justify-center items-center rounded-md border'>
+        <div className='min-w-20 min-h-20 max-w-20 max-h-20 flex justify-center items-center rounded-full border'>
           <Image src="/icons/dumbbell.svg" alt='' width={50} height={50} className='w-full h-full' />
         </div>
 
-        <div className='flex w-full justify-between cursor-pointer hover:bg-gray-100'
+        <div className='flex w-full rounded-md justify-between cursor-pointer hover:bg-gray-50'
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className='flex flex-col w-full'>
+          <div className='flex flex-col w-full p-1'>
             <p>{exercise.name}</p>
-            <p>組數: {exercise.sets.length}</p>
+            <p>{exercise.sets.length} 組</p>
           </div>
         </div>
 
