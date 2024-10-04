@@ -67,7 +67,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
 
   return (
     <div>
-      <div className='flex justify-between items-center'>
+      <div className='flex justify-between items-center px-4'>
         <h3 className="font-bold">添加動作</h3>
 
         <button
@@ -81,8 +81,8 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
         </button>
       </div>
 
-      <div className='rounded-lg mt-5 overflow-y-scroll'>
-        <div className='flex flex-col gap-3 max-h-[500px] min-h-[500px'>
+      <div className='rounded-lg mt-3 overflow-y-scroll pt-3 rounded-t-2xl px-4 bg-gray-200'>
+        <div className='flex flex-col gap-3 max-h-[500px] min-h-[500px]'>
           {exercises.map((exercise) => (
             <ExerciseListCard
               key={exercise.ExerciseId}

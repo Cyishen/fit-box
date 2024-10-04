@@ -67,7 +67,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
 
   return (
     <div
-      className={`relative rounded-2xl p-2 bg-white ${isOpen ? 'h-full' : 'h-28'}`}
+      className={`relative rounded-2xl p-2 bg-white ${isOpen ? 'h-full' : 'h-24'}`}
       onTouchStart={handleTouchStart}  // 手機觸摸開始
       onTouchMove={handleTouchMove}    // 手機滑動
       onMouseDown={handleMouseDown}    // 桌面鼠標點擊開始
@@ -77,7 +77,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
         className={`flex justify-between w-full p-2 gap-3 relative transform transition-transform duration-300 rounded-2xl 
           ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
       >
-        <div className='min-w-20 min-h-20 max-w-20 max-h-20 flex justify-center items-center rounded-full border'>
+        <div className='min-w-14 min-h-14 max-w-14 max-h-14 flex justify-center items-center rounded-full border'>
           <Image src="/icons/dumbbell.svg" alt='' width={50} height={50} className='w-full h-full' />
         </div>
 
