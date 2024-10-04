@@ -97,7 +97,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
       {/* 刪除按鈕 */}
       <div
         ref={cardRef}
-        className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 overflow-hidden bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer 
+        className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 overflow-hidden bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
           ${isSwiped ? 'w-20' : 'w-0'}`}
         onClick={() => handleRemoveExercise(exercise.ExerciseId)}
       >

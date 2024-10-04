@@ -95,7 +95,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
           </div>
 
           {/* TODO: 添加動作 */}
-          <div className="mt-5">
+          <div className="mt-5 h-[75vh]">
             <ExerciseList
               exercises={template.exercises || []}
               setTemplateState={setTemplateState} 
