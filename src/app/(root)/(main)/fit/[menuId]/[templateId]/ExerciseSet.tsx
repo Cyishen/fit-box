@@ -80,11 +80,11 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
   };
 
   return (
-    <div className='flex w-full my-2 px-2 mb-5'>
+    <div className='flex w-full mt-2 px-2'>
       <div className='w-full'>
         <div className='flex flex-col'>
           {dynamicSets.map((set, index) => (
-            <div key={index} className='flex items-center gap-3 my-2'>
+            <div key={index} className='flex items-center gap-3 mb-2'>
               <div className='bg-gray-100 w-10 h-10 rounded-md flex justify-center items-center'>
                 <p className='font-bold'>{index + 1}</p>
               </div>
@@ -173,7 +173,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
           ))}
 
           {/* 新增一組按鈕 */}
-          <div className='mt-5 flex justify-between'>
+          <div className='mt-2 flex justify-between'>
             <Button variant='outline' type='button' onClick={handleAddSet}>
               新增一組
             </Button>

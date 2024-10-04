@@ -67,14 +67,15 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
 
   return (
     <div
-      className={`relative rounded-2xl p-2 bg-white ${isOpen ? 'h-full' : 'h-24'}`}
+      className={`relative flex flex-col justify-center rounded-2xl p-2 bg-white 
+        ${isOpen ? 'h-full' : 'h-fit'}`}
       onTouchStart={handleTouchStart}  // 手機觸摸開始
       onTouchMove={handleTouchMove}    // 手機滑動
       onMouseDown={handleMouseDown}    // 桌面鼠標點擊開始
       onMouseMove={handleMouseMove}    // 桌面滑動
     >
       <div
-        className={`flex justify-between w-full p-2 gap-3 relative transform transition-transform duration-300 rounded-2xl 
+        className={`flex justify-between w-full px-2 gap-3 relative transform transition-transform duration-300 rounded-2xl
           ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
       >
         <div className='min-w-14 min-h-14 max-w-14 max-h-14 flex justify-center items-center rounded-full border'>

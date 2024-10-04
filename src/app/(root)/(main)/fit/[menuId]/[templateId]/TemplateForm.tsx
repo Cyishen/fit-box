@@ -57,7 +57,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
 
             <div className="mt-3 sm:mt-5">
               <h3 className="font-bold">訓練的部位</h3>
-              <div className="flex gap-3 py-3 flex-wrap">
+              <div className="flex gap-3 py-2 flex-wrap">
                 {categories?.map((item, index) => (
                   <button
                     key={index}
@@ -77,7 +77,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
               <div className="flex items-center gap-3">
                 <h3 className="font-bold">模板名</h3>
                 <p className="text-xs text-gray-500">
-                  {count}/20 字
+                  {count}/20
                 </p>
               </div>
 
@@ -97,7 +97,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
           </div>
 
           {/* TODO: 添加動作 */}
-          <div className="mt-0 h-[75vh]">
+          <div className="h-full">
             <ExerciseList
               exercises={template.exercises || []}
               setTemplateState={setTemplateState} 

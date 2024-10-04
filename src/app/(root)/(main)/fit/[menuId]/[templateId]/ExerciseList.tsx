@@ -38,7 +38,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
 
   const handleRemoveExercise = (exerciseId: string) => {
     const updatedExercises = exercises.filter((exercise) => exercise.ExerciseId !== exerciseId);
-    
+
     const updatedTemplate: TemplateType = {
       ...template,
       exercises: updatedExercises,
@@ -54,10 +54,10 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
         ? { ...exercise, sets: updatedSets }
         : exercise
     );
-    
-    const updatedTemplate: TemplateType = { 
-      ...template, 
-      exercises: updatedExercises, 
+
+    const updatedTemplate: TemplateType = {
+      ...template,
+      exercises: updatedExercises,
     };
 
     updateTemplate(template.cardId, updatedTemplate);
@@ -76,23 +76,27 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
           className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
         >
           <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>
-            <CopyPlus className='w-5'/>
+            <CopyPlus className='w-5' />
           </div>
         </button>
       </div>
 
-      <div className='rounded-lg mt-3 overflow-y-scroll pt-3 rounded-t-2xl px-4 bg-gray-200'>
-        <div className='flex flex-col gap-3 max-h-[500px] min-h-[500px]'>
-          {exercises.map((exercise) => (
-            <ExerciseListCard
-              key={exercise.ExerciseId}
-              exercise={exercise}
-              handleRemoveExercise={handleRemoveExercise}
-              onUpdateSets={handleUpdateSets}
-              isOpen={openExerciseId === exercise.ExerciseId}
-              onToggle={() => handleToggleExercise(exercise.ExerciseId)}
-            />
-          ))}
+      <div className='mt-3 px-4 pt-0 rounded-2xl bg-gray-200'>
+        <div className='py-2 overflow-y-scroll'>
+          <div className='pt-2'>
+            <div className='flex flex-col gap-3 max-h-[500px] min-h-[500px]'>
+              {exercises.map((exercise) => (
+                <ExerciseListCard
+                  key={exercise.ExerciseId}
+                  exercise={exercise}
+                  handleRemoveExercise={handleRemoveExercise}
+                  onUpdateSets={handleUpdateSets}
+                  isOpen={openExerciseId === exercise.ExerciseId}
+                  onToggle={() => handleToggleExercise(exercise.ExerciseId)}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
