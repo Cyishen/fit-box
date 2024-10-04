@@ -43,9 +43,9 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
   };
 
   return (
-    <div className='flex pb-10 sm:pt-10'>
+    <div className='flex pb-10 sm:pt-10 bg-gray-50 sm:bg-white'>
       <div className="forMobile sm:forWeb">
-        <form onSubmit={handleSubmit} className="bg-gray-100 p-4 md:rounded-2xl">
+        <form onSubmit={handleSubmit} className="bg-gray-50 sm:bg-gray-100 p-4 sm:rounded-2xl">
           <div className="flex justify-between">
             <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
 
