@@ -71,12 +71,12 @@ const MenuList: React.FC<MenuListProps> = ({
   };
 
   return (
-    <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap'>
+    <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap pb-2'>
       {menus.length > 0 ? (
         menus.map((menu) => (
           <div
             key={menu.menuId}
-            className={`flex p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-gray-100"}`}
+            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-gray-100"}`}
           >
             <div
               className='flex items-center gap-2'
@@ -98,8 +98,11 @@ const MenuList: React.FC<MenuListProps> = ({
             </div>
 
             {/* TODO: 測試 modal */}
-            <div onClick={() => handleOpen(menu.menuId)}>
-              <EllipsisVertical width={14} />
+            <div 
+              onClick={() => handleOpen(menu.menuId)} 
+              className='bg-white text-black w-8 h-8 rounded-full flex justify-center items-center'
+            >
+              <EllipsisVertical width={14}/>
             </div>
 
             {/* <div

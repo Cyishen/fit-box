@@ -70,9 +70,9 @@ export const MenuModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={close}>
-      <DialogContent className="max-w-[200px] sm:max-w-sm rounded-lg p-2">
+      <DialogContent className="max-w-[220px] sm:max-w-sm rounded-lg p-2">
         <DialogHeader>
-          <DialogTitle className="text-center font-bold text-xl">
+          <DialogTitle className="text-center font-bold text-xl mt-8">
             {openMenu?.title}
           </DialogTitle>
           <DialogDescription className="text-center text-sm">
@@ -84,7 +84,7 @@ export const MenuModal = () => {
           <div className="flex flex-col gap-2 w-full">
             <div className='flex w-full'>
               <button
-                className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 hover:text-white duration-300'
+                className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 hover:text-white duration-300 bg-gray-100'
                 onClick={() => handleRemoveMenu(openMenu.menuId)}
               >
                 <Trash2 width={14} /> 刪除
@@ -93,7 +93,7 @@ export const MenuModal = () => {
 
             <div className='flex w-full'>
               <button
-                className='w-full flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300'
+                className='w-full flex items-center justify-center gap-3 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300 bg-gray-100'
                 onClick={() => {
                   close();
                   router.push(`/fit/${menuId}/menu-update`);
@@ -105,10 +105,10 @@ export const MenuModal = () => {
 
             <div className='flex w-full'>
               <button
-                className='w-full flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300'
+                className='w-full flex items-center justify-center gap-3 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300 bg-gray-100'
                 onClick={() => handleAddTemplate(openMenu.menuId)}
               >
-                <Plus width={14} /> 新增
+                <Plus width={14} /> 新增模板
               </button>
             </div>
           </div>
