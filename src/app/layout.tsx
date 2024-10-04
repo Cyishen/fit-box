@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { PracticeModal } from "@/components/modals/practice-modal";
+import { MenuModal } from "@/components/modals/menu-modal";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,6 +33,7 @@ export default function RootLayout({
         {children}
 
         <PracticeModal />
+        <MenuModal />
       </body>
     </html>
   );

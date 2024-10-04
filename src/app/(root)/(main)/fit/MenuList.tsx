@@ -1,8 +1,8 @@
 "use client";
 
-import { useMenuStore, useTemplateStore } from '@/lib/store';
-import { ChevronDown, ChevronRight, EllipsisVertical, Plus, Trash2, } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useTemplateStore } from '@/lib/store';
+import { useMenuModal } from '@/lib/use-menu-modal';
+import { ChevronDown, ChevronRight, EllipsisVertical } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import React from 'react';
 
@@ -12,7 +12,7 @@ interface MenuListProps {
   selectedMenuId: string | null;
   onMenuSelect: (menuId: string) => void;
   isMenuOpen: { [key: string]: boolean };
-  onMenuRemove: (menuId: string) => void;
+  onMenuRemove?: (menuId: string) => void;
 }
 
 const MenuList: React.FC<MenuListProps> = ({
@@ -20,20 +20,18 @@ const MenuList: React.FC<MenuListProps> = ({
   selectedMenuId,
   onMenuSelect,
   isMenuOpen,
-  onMenuRemove,
 }) => {
-  const router = useRouter();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-
-  const addTemplate = useTemplateStore((state) => state.addTemplate);
   const templates = useTemplateStore((state) => state.templates);
 
-  const existingMenu = useMenuStore((state) => state.menus);
-  const lastOneMenu = existingMenu.slice(-1)[0]?.menuId
+  // const router = useRouter();
+  // const addTemplate = useTemplateStore((state) => state.addTemplate);
+  // const existingMenu = useMenuStore((state) => state.menus);
+  // const lastOneMenu = existingMenu.slice(-1)[0]?.menuId
 
-  const toggleMenuOptions = (menuId: string) => {
-    setOpenMenuId(openMenuId === menuId ? null : menuId);
-  };
+  // const toggleMenuOptions = (menuId: string) => {
+  //   setOpenMenuId(openMenuId === menuId ? null : menuId);
+  // };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -49,27 +47,31 @@ const MenuList: React.FC<MenuListProps> = ({
     };
   }, [openMenuId]);
 
-  const generateShortId = () => {
-    return Math.random().toString(36).substring(2, 6);
-  };
+  // const generateShortId = () => {
+  //   return Math.random().toString(36).substring(2, 6);
+  // };
+  // const handleAddTemplate = (menuId: string) => {
+  //   const newCardId = generateShortId();
+  //   const newTemplate = {
+  //     cardId: newCardId,
+  //     category: "胸",
+  //     title: "換個名字吧",
+  //     menuId: menuId,
+  //     exercises: []
+  //   };
 
-  const handleAddTemplate = (menuId: string) => {
-    const newCardId = generateShortId();
-    const newTemplate = {
-      cardId: newCardId,
-      category: "胸",
-      title: "換個名字吧",
-      menuId: menuId,
-      exercises: []
-    };
+  //   addTemplate(newTemplate);
 
-    addTemplate(newTemplate);
+  //   router.push(`/fit/${menuId}/${newCardId}/create-template`);
+  // };
 
-    router.push(`/fit/${menuId}/${newCardId}/create-template`);
+  const { open } = useMenuModal();
+  const handleOpen = (menuId: string) => {
+    open(menuId);
   };
 
   return (
-    <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap pb-10'>
+    <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap'>
       {menus.length > 0 ? (
         menus.map((menu) => (
           <div
@@ -95,7 +97,12 @@ const MenuList: React.FC<MenuListProps> = ({
               </div>
             </div>
 
-            <div
+            {/* TODO: 測試 modal */}
+            <div onClick={() => handleOpen(menu.menuId)}>
+              <EllipsisVertical width={14} />
+            </div>
+
+            {/* <div
               className='flex items-center justify-center hover:bg-gray-300 min-w-5 h-5 rounded-full relative'
               onClick={() => toggleMenuOptions(menu.menuId)}
             >
@@ -126,7 +133,7 @@ const MenuList: React.FC<MenuListProps> = ({
                   </div>
                 </>
               )}
-            </div>
+            </div> */}
           </div>
         ))
       ) : (

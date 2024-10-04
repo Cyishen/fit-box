@@ -11,7 +11,7 @@ import { useMenuStore } from '@/lib/store'
 
 
 const FixPage = () => {
-  const NOT_USER_MAX_MENU = 2
+  const NOT_USER_MAX_MENU = 3
   const menus = useMenuStore((state) => state.menus);
 
   const canCreateNewMenu = menus.length < NOT_USER_MAX_MENU;

@@ -14,7 +14,7 @@ const FitDashboard = () => {
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
   const menus = useMenuStore((state) => state.menus);
-  const removeMenu = useMenuStore((state) => state.removeMenu);
+  // const removeMenu = useMenuStore((state) => state.removeMenu);
 
   useEffect(() => {
     const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
@@ -51,17 +51,17 @@ const FitDashboard = () => {
     .slice()
     .reverse();
 
-  const handleRemoveMenu = (menuId: string) => {
-    const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
-    if (userConfirmed) {
-      removeMenu(menuId);
+  // const handleRemoveMenu = (menuId: string) => {
+  //   const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
+  //   if (userConfirmed) {
+  //     removeMenu(menuId);
 
-      if (menuId === selectedMenuId) {
-        setSelectedMenuId(null);
-        localStorage.removeItem('selectedMenuId');
-      }
-    }
-  };
+  //     if (menuId === selectedMenuId) {
+  //       setSelectedMenuId(null);
+  //       localStorage.removeItem('selectedMenuId');
+  //     }
+  //   }
+  // };
 
   const handleRemoveTemplate = (templateId: string) => {
     const userConfirmed = confirm("刪除此模板");
@@ -77,7 +77,7 @@ const FitDashboard = () => {
         selectedMenuId={selectedMenuId}
         onMenuSelect={handleMenuClick}
         isMenuOpen={isMenuOpen}
-        onMenuRemove={handleRemoveMenu}
+        onMenuRemove={()=>''}
       />
 
       <TemplateCardList

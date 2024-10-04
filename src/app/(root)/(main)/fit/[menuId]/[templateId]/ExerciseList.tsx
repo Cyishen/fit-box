@@ -73,7 +73,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
         <button
           type="button"
           onClick={() => router.push(`/fit/${template.menuId}/${template.cardId}/create-template/exercise-picker`)}
-          className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:opacity-80'
+          className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
         >
           <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>
             <CopyPlus className='w-5'/>

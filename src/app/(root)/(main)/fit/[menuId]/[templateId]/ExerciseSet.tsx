@@ -146,17 +146,19 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 {openIndex === index && (
                   <div
                     id="outside-close"
-                    className="absolute -left-8 -bottom-12 w-fit h-fit bg-black text-white z-[60] rounded-md shadow-lg p-2"
+                    className="absolute -left-10 bottom-0 w-fit h-fit bg-black text-white z-[60] rounded-md shadow-lg"
                   >
-                    <div className='flex justify-start'>
+                    <div className='w-full h-full'>
                       <button
                         onClick={() => {
                           handleRemoveSet(index);
                           setOpenIndex(null);
                         }}
-                        className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 duration-300'
+                        className='flex p-2 items-center gap-1 text-sm font-bold rounded-md duration-300 hover:bg-[#FF3B30]'
                       >
-                        <Trash2 width={14} /> 刪除
+                        <div className='w-full h-full flex justify-center items-center'>
+                          <Trash2 className='w-5' />
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -183,7 +185,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
             )
               : (
                 <Button size='sm' type='button'>
-                  <Check className='w-5 text-green-300'/>
+                  <Check className='w-5 text-green-300' />
                 </Button>
               )}
           </div>

@@ -16,7 +16,7 @@ type TemplateCardListProps = {
   handleRemoveTemplate: (menuId: string) => void;
 };
 
-const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateCardListProps ) => {
+const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateCardListProps) => {
 
   return (
     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full gap-3 relative'>
@@ -33,7 +33,13 @@ const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateC
             exercises={work.exercises}
           />
         ))
-      ) : ''}
+      ) : (
+        <div className='flex justify-center items-center w-40 h-20 border p-2 border-dashed border-black rounded-lg'>
+          <p className='font-bold capitalize text-sm text-wrap'>
+            訓練模板
+          </p>
+        </div>
+      )}
     </div>
   );
 };

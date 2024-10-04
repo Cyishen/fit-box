@@ -48,6 +48,7 @@ interface BoxStore {
   menus: MenuType[];
   addMenu: (box: MenuType) => void;
   removeMenu: (id: string) => void;
+  editMenu: (id: string, updatedMenu: MenuType ) => void;
 }
 
 export const useMenuStore = create<BoxStore>()(
@@ -58,10 +59,16 @@ export const useMenuStore = create<BoxStore>()(
         set((state) => ({
           menus: [box, ...state.menus ],
         })),
-
       removeMenu: (id) =>
         set((state) => ({
           menus: state.menus.filter(box => box.menuId !== id),
+        })),
+      editMenu: (id, updatedMenu) =>
+        set((state) => ({
+          menus: state.menus.map(menu => menu.menuId === id
+            ? updatedMenu
+            : menu
+          ),
         })),
     }),
     {
