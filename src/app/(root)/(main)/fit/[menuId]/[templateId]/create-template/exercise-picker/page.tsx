@@ -1,6 +1,5 @@
 "use client";
 
-import Wrapper from '@/components/Wrapper';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { Exercise } from '../../ExerciseList';
@@ -57,9 +56,9 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
 
 
   return (
-    <div className='flex py-5 md:py-10'>
-      <Wrapper>
-        <div className="bg-gray-100 p-4 rounded-2xl">
+    <div className='flex pb-10 sm:pt-10'>
+      <div className='forMobile sm:forWeb'>
+        <div className="bg-gray-100 p-4 sm:rounded-2xl">
           <div className='flex justify-between'>
             <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
             <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
@@ -104,7 +103,7 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
             </div>
           </div>
         </div>
-      </Wrapper>
+      </div>
     </div>
   );
 };

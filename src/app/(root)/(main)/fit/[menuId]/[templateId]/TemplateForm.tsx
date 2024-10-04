@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import Wrapper from "@/components/Wrapper";
 import { ChangeEvent, useState } from "react"
 
 import ExerciseList, { Exercise } from "./ExerciseList";
@@ -44,9 +43,9 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
   };
 
   return (
-    <div className='flex pt-1 pb-10 sm:pt-10'>
-      <Wrapper className="mb-14">
-        <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-2xl">
+    <div className='flex pb-10 sm:pt-10'>
+      <div className="forMobile sm:forWeb">
+        <form onSubmit={handleSubmit} className="bg-gray-100 p-4 md:rounded-2xl">
           <div className="flex justify-between">
             <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
 
@@ -104,7 +103,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
             />
           </div>
         </form>
-      </Wrapper>
+      </div>
     </div>
   );
 };
