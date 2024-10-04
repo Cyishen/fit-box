@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TemplateType } from './TemplateForm';
 import { useRouter } from 'next/navigation';
 import { useTemplateStore } from '@/lib/store';
@@ -27,6 +27,12 @@ type ExerciseListProps = {
 
 const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListProps) => {
   const router = useRouter();
+
+  // openCardId 狀態控制
+  const [openExerciseId, setOpenExerciseId] = useState<string | null>(null);
+  const handleToggleExercise = (exerciseId: string) => {
+    setOpenExerciseId((prev) => (prev === exerciseId ? null : exerciseId));
+  };
 
   const updateTemplate = useTemplateStore(state => state.editTemplate);
 
@@ -76,13 +82,15 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
       </div>
 
       <div className='rounded-lg mt-5 overflow-y-scroll'>
-        <div className='flex flex-col gap-3 pb-20 max-h-[500px] min-h-[500px]'>
+        <div className='flex flex-col gap-3 max-h-[500px] min-h-[500px'>
           {exercises.map((exercise) => (
             <ExerciseListCard
               key={exercise.ExerciseId}
               exercise={exercise}
               handleRemoveExercise={handleRemoveExercise}
               onUpdateSets={handleUpdateSets}
+              isOpen={openExerciseId === exercise.ExerciseId}
+              onToggle={() => handleToggleExercise(exercise.ExerciseId)}
             />
           ))}
         </div>
