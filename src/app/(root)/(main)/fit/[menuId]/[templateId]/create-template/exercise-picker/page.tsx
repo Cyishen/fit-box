@@ -58,7 +58,7 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
   return (
     <div className='flex pb-10 sm:pt-10 bg-gray-100 sm:bg-white h-screen'>
       <div className='forMobile sm:forWeb'>
-        <div className="bg-gray-50 sm:bg-gray-100 p-4 sm:rounded-2xl">
+        <div className="bg-gray-100 p-4 sm:rounded-2xl">
           <div className='flex justify-between'>
             <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
             <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
