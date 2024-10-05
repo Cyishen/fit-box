@@ -24,15 +24,6 @@ const MenuList: React.FC<MenuListProps> = ({
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const templates = useTemplateStore((state) => state.templates);
 
-  // const router = useRouter();
-  // const addTemplate = useTemplateStore((state) => state.addTemplate);
-  // const existingMenu = useMenuStore((state) => state.menus);
-  // const lastOneMenu = existingMenu.slice(-1)[0]?.menuId
-
-  // const toggleMenuOptions = (menuId: string) => {
-  //   setOpenMenuId(openMenuId === menuId ? null : menuId);
-  // };
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (openMenuId && !((event.target as HTMLElement).closest('#outside-close'))) {
@@ -46,6 +37,15 @@ const MenuList: React.FC<MenuListProps> = ({
       document.removeEventListener("click", handleClickOutside);
     };
   }, [openMenuId]);
+
+  // const router = useRouter();
+  // const addTemplate = useTemplateStore((state) => state.addTemplate);
+  // const existingMenu = useMenuStore((state) => state.menus);
+  // const lastOneMenu = existingMenu.slice(-1)[0]?.menuId
+
+  // const toggleMenuOptions = (menuId: string) => {
+  //   setOpenMenuId(openMenuId === menuId ? null : menuId);
+  // };
 
   // const generateShortId = () => {
   //   return Math.random().toString(36).substring(2, 6);

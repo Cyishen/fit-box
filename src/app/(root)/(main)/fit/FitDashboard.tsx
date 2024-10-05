@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import TemplateCardList from './TemplateCardList';
 import MenuList from './MenuList';
 
+
 const FitDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<{ [key: string]: boolean }>({});
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
@@ -14,7 +15,6 @@ const FitDashboard = () => {
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
   const menus = useMenuStore((state) => state.menus);
-  // const removeMenu = useMenuStore((state) => state.removeMenu);
 
   useEffect(() => {
     const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
@@ -50,18 +50,6 @@ const FitDashboard = () => {
     .filter(template => template.menuId === selectedMenuId)
     .slice()
     .reverse();
-
-  // const handleRemoveMenu = (menuId: string) => {
-  //   const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
-  //   if (userConfirmed) {
-  //     removeMenu(menuId);
-
-  //     if (menuId === selectedMenuId) {
-  //       setSelectedMenuId(null);
-  //       localStorage.removeItem('selectedMenuId');
-  //     }
-  //   }
-  // };
 
   const handleRemoveTemplate = (templateId: string) => {
     const userConfirmed = confirm("刪除此模板");

@@ -39,7 +39,7 @@ export const MenuModal = () => {
     const newTemplate = {
       cardId: newCardId,
       category: "胸",
-      title: "換個訓練菜單名吧",
+      title: "未命名的訓練單 🏷️",
       menuId: menuId,
       exercises: []
     };
@@ -76,7 +76,7 @@ export const MenuModal = () => {
             {openMenu?.title}
           </DialogTitle>
           <DialogDescription className="text-center text-sm">
-            目前模板數量 {countTemplate.length}
+            模板數量 {countTemplate.length}
           </DialogDescription>
         </DialogHeader>
 
@@ -99,7 +99,7 @@ export const MenuModal = () => {
                   router.push(`/fit/${menuId}/menu-update`);
                 }}
               >
-                <SquarePen width={14} /> 編輯
+                <SquarePen width={14} /> 編輯盒子
               </button>
             </div>
 

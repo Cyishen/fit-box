@@ -80,7 +80,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
   };
 
   return (
-    <div className='flex w-full mt-2 px-2'>
+    <div className='flex w-full mt-4 px-2'>
       <div className='w-full'>
         <div className='flex flex-col'>
           {dynamicSets.map((set, index) => (
@@ -182,12 +182,11 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
               <Button size='sm' type='button' onClick={handleSaveSets}>
                 保存
               </Button>
-            )
-              : (
-                <Button size='sm' type='button'>
-                  <Check className='w-5 text-green-300' />
-                </Button>
-              )}
+            ) : (
+              <Button size='sm' type='button'>
+                <Check className='w-5 text-green-300' />
+              </Button>
+            )}
           </div>
         </div>
       </div>

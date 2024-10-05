@@ -11,7 +11,7 @@ const CreateMenu = () => {
 
   const [menu, setMenu] = useState<MenuType>({
     menuId:"",
-    title: "換個訓練表單名吧",
+    title: "未命名的訓練盒 🏷️",
   })
 
   const addMenu = useMenuStore((state) => state.addMenu);

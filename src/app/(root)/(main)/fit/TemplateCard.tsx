@@ -6,7 +6,6 @@ import { EllipsisVertical, Trash2, SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import { usePracticeModal } from '@/lib/use-practice-modal';
 import { Exercise } from './[menuId]/[templateId]/ExerciseList';
-// import { Button } from '@/components/ui/button';
 
 type Props = {
   iconSrc: string;
@@ -20,7 +19,6 @@ type Props = {
 
 const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, exercises }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  // const [isOpenImg, setIsOpenImg] = useState(false);
 
   const { open } = usePracticeModal();
   const handleOpen = () => {
