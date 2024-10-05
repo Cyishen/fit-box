@@ -69,7 +69,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
 
   return (
     <div
-      className={`relative flex flex-col justify-center rounded-2xl px-2 py-3 bg-white
+      className={`relative flex flex-col justify-center rounded-2xl px-2 py-4 bg-white
         ${isOpen ? 'h-full' : 'h-fit'}`}
       onTouchStart={handleTouchStart}  // 手機觸摸開始
       onTouchMove={handleTouchMove}    // 手機滑動
@@ -81,7 +81,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
           ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
       >
         <div className='min-w-14 min-h-14 max-w-14 max-h-14 flex justify-center items-center rounded-full border'>
-          <Image src="/icons/dumbbell.svg" alt='' width={50} height={50} className='w-full h-full' />
+          <Image src="/icons/dumbbell.svg" alt='dumbbell' width={50} height={50} className='w-full h-full' />
         </div>
 
         <div className='flex w-full rounded-md justify-between cursor-pointer hover:bg-gray-100 bg-gray-50'

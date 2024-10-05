@@ -3,11 +3,11 @@ import TemplateCard from './TemplateCard';
 import { TemplateType } from '../fit/[menuId]/[templateId]/TemplateForm';
 
 const CategoryIcons: { [key: string]: string } = {
-  "胸": "/icons/chest.svg",
+  "胸": "",
   "背": "/icons/back.svg",
   "肩": "/icons/shoulder.svg",
   "腿": "/icons/leg.svg",
-  "二頭": "/icons/biceps.svg",
+  "二頭": "",
   "三頭": "",
 };
 
