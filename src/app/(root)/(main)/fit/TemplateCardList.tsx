@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TemplateCard from './TemplateCard';
 import { TemplateType } from '../fit/[menuId]/[templateId]/TemplateForm';
 
@@ -18,30 +18,58 @@ type TemplateCardListProps = {
 
 const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateCardListProps) => {
   const [templates, setTemplates] = useState<TemplateType[]>([]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [touchY, setTouchY] = useState<number | null>(null);
+  const templateRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     setTemplates(selectedTemplates);
   }, [selectedTemplates]);
-
 
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, index: number) => {
     event.dataTransfer.setData('text/plain', index.toString());
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>, index: number) => {
-    const draggedIndex = parseInt(event.dataTransfer.getData('text/plain'));
-
-    if (draggedIndex !== index) {
-      const updatedTemplates = [...templates];
-      const [draggedTemplate] = updatedTemplates.splice(draggedIndex, 1);
-      updatedTemplates.splice(index, 0, draggedTemplate);
-
-      setTemplates(updatedTemplates);
-    }
+    const draggedIdx = parseInt(event.dataTransfer.getData('text/plain'));
+    handleReorder(draggedIdx, index);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+  };
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>, index: number) => {
+    setDraggedIndex(index);
+    setTouchY(event.touches[0].clientY);
+  };
+  
+  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (draggedIndex === null || touchY === null) return;
+
+    const currentY = event.touches[0].clientY;
+    const deltaY = currentY - touchY;
+
+    if (Math.abs(deltaY) > 20) {
+      const currentIndex = Math.floor((currentY - 60) / 80);
+      if (currentIndex >= 0 && currentIndex < templates.length && currentIndex !== draggedIndex) {
+        handleReorder(draggedIndex, currentIndex);
+        setDraggedIndex(currentIndex);
+        setTouchY(currentY);
+      }
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    setDraggedIndex(null);
+    setTouchY(null);
+  };
+
+  const handleReorder = (fromIndex: number, toIndex: number) => {
+    const updatedTemplates = [...templates];
+    const [draggedTemplate] = updatedTemplates.splice(fromIndex, 1);
+    updatedTemplates.splice(toIndex, 0, draggedTemplate);
+    setTemplates(updatedTemplates);
   };
 
   return (
@@ -50,10 +78,20 @@ const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateC
         templates.map((work, index) => (
           <div
             key={work.cardId}
+            ref={(el: HTMLDivElement | null) => {
+              templateRefs.current[index] = el;
+            }}
             draggable
             onDragStart={(event) => handleDragStart(event, index)}
             onDrop={(event) => handleDrop(event, index)}
             onDragOver={handleDragOver}
+            onTouchStart={(event) => handleTouchStart(event, index)}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            style={{
+              transition: 'transform 0.2s',
+              transform: draggedIndex === index ? 'scale(1.05)' : 'scale(1)',
+            }}
           >
             <TemplateCard
               iconSrc={CategoryIcons[work.category] || "/icons/dumbbell.svg"}
