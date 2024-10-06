@@ -1,8 +1,9 @@
+import { CustomDrop } from '@/components/NewDrop'
 import React from 'react'
 
 const RecordPage = () => {
   return (
-    <div>RecordPage</div>
+    <CustomDrop />
   )
 }
 
