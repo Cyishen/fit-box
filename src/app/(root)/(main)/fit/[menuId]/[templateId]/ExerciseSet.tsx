@@ -15,7 +15,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<Set[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [hasSave, setHasSave] = useState(false);
-
+  console.log('點到誰',openIndex)
   useEffect(() => {
     if (sets.length > 0) {
       setDynamicSets(sets);
@@ -146,7 +146,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 {openIndex === index && (
                   <div
                     id="outside-close"
-                    className="absolute -left-10 bottom-0 w-fit h-fit bg-black text-white z-[60] rounded-md shadow-lg"
+                    className="absolute -left-10 bottom-0 w-fit h-fit bg-black text-white z-50 rounded-md shadow-lg"
                   >
                     <div className='w-full h-full'>
                       <button
@@ -154,7 +154,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                           handleRemoveSet(index);
                           setOpenIndex(null);
                         }}
-                        className='flex p-2 items-center gap-1 text-sm font-bold rounded-md duration-300 hover:bg-[#FF3B30]'
+                        className='flex p-2 rounded-md duration-300 hover:bg-[#FF3B30]'
                       >
                         <div className='w-full h-full flex justify-center items-center'>
                           <Trash2 className='w-5' />
