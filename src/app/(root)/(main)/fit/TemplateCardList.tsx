@@ -82,7 +82,7 @@ const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateC
     setTemplates(updatedTemplates);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>, work: TemplateType) => {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (isDragging.current) {
       event.preventDefault();
       event.stopPropagation();
@@ -109,7 +109,7 @@ const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateC
             onTouchStart={(event) => handleTouchStart(event, index)}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            onClick={(event) => handleClick(event, work)}
+            onClick={(event) => handleClick(event)}
             style={{
               transition: 'transform 0.2s',
               transform: draggedIndex === index ? 'scale(1.05)' : 'scale(1)',
