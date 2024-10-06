@@ -85,13 +85,13 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
         <div className='flex flex-col'>
           {dynamicSets.map((set, index) => (
             <div key={index} className='flex items-center justify-between mb-2'>
-              <div className='flex gap-2 items-center'>
-                <div className='bg-gray-100 w-10 h-10 rounded-md flex justify-center items-center'>
-                  <p className='font-bold'>{index + 1}</p>
+              <div className='flex gap-2 items-center h-10'>
+                <div className='bg-gray-100 w-8 h-full rounded-md flex justify-center items-center'>
+                  <p className='font-bold text-sm'>{index + 1}</p>
                 </div>
 
                 <div className='relative w-fit rounded-md'>
-                  <p className='absolute top-0 left-2 text-[10px]'>左</p>
+                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>左</p>
 
                   <input
                     type="text"
@@ -104,7 +104,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 </div>
 
                 <div className='relative w-fit rounded-md'>
-                  <p className='absolute top-0 left-2 text-[10px]'>右</p>
+                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>右</p>
 
                   <input
                     type="text"
@@ -117,7 +117,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 </div>
 
                 <div className='relative w-fit rounded-md'>
-                  <p className='absolute top-0 left-2 text-[10px]'>次數</p>
+                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>次數</p>
 
                   <input
                     type="text"
@@ -130,7 +130,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 </div>
 
                 <div className='relative rounded-md'>
-                  <p className='absolute top-0 left-2 text-[10px]'>重量 kg</p>
+                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>重量 kg</p>
 
                   <div className="w-12 h-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold flex justify-end">
                     {set.totalWeight === 0 ? '' : set.totalWeight}
@@ -148,7 +148,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 {openIndex === index && (
                   <div
                     id="outside-close"
-                    className="absolute -left-10 top-0 translate-y-0 w-fit h-fit bg-[#FF3B30] rounded-md shadow-lg"
+                    className="absolute -left-10 top-0 translate-y-0 w-fit h-fit bg-black text-white rounded-md shadow-lg"
                   >
                     <button
                       onClick={() => {
