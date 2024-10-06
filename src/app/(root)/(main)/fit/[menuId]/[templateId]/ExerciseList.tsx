@@ -81,7 +81,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
         </button>
       </div>
 
-      <div className='mt-3 px-4 pt-0 rounded-2xl bg-gray-200'>
+      <div className='mt-3 px-3 pt-0 rounded-2xl bg-gray-200'>
         <div className='py-2 overflow-y-scroll'>
           <div className='pt-2'>
             <div className='flex flex-col gap-3 max-h-[500px] min-h-[500px]'>

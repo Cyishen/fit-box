@@ -84,7 +84,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
       <div className='w-full'>
         <div className='flex flex-col'>
           {dynamicSets.map((set, index) => (
-            <div key={index} className='flex items-center gap-3 mb-2'>
+            <div key={index} className='flex items-center gap-2 mb-2'>
               <div className='bg-gray-100 w-10 h-10 rounded-md flex justify-center items-center'>
                 <p className='font-bold'>{index + 1}</p>
               </div>

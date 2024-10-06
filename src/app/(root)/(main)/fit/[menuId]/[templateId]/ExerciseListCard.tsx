@@ -69,7 +69,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
 
   return (
     <div
-      className={`relative flex flex-col justify-center rounded-2xl px-2 py-4 bg-white
+      className={`relative flex flex-col justify-center rounded-2xl px-1 py-4 bg-white
         ${isOpen ? 'h-full' : 'h-fit'}`}
       onTouchStart={handleTouchStart}  // 手機觸摸開始
       onTouchMove={handleTouchMove}    // 手機滑動
