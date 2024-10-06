@@ -15,7 +15,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<Set[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [hasSave, setHasSave] = useState(false);
-  console.log('點到誰',openIndex)
+  console.log('點到誰', openIndex)
   useEffect(() => {
     if (sets.length > 0) {
       setDynamicSets(sets);
@@ -84,61 +84,63 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
       <div className='w-full'>
         <div className='flex flex-col'>
           {dynamicSets.map((set, index) => (
-            <div key={index} className='flex items-center gap-2 mb-2'>
-              <div className='bg-gray-100 w-10 h-10 rounded-md flex justify-center items-center'>
-                <p className='font-bold'>{index + 1}</p>
-              </div>
+            <div key={index} className='flex items-center justify-between mb-2'>
+              <div className='flex gap-2 items-center'>
+                <div className='bg-gray-100 w-10 h-10 rounded-md flex justify-center items-center'>
+                  <p className='font-bold'>{index + 1}</p>
+                </div>
 
-              <div className='relative w-fit rounded-md'>
-                <p className='absolute top-0 left-2 text-[10px]'>左</p>
+                <div className='relative w-fit rounded-md'>
+                  <p className='absolute top-0 left-2 text-[10px]'>左</p>
 
-                <input
-                  type="text"
-                  name="leftWeight"
-                  maxLength={3}
-                  value={set.leftWeight || ''}
-                  onChange={(e) => handleChange(index, e)}
-                  className="w-12 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
-                />
-              </div>
+                  <input
+                    type="text"
+                    name="leftWeight"
+                    maxLength={3}
+                    value={set.leftWeight || ''}
+                    onChange={(e) => handleChange(index, e)}
+                    className="w-12 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
+                  />
+                </div>
 
-              <div className='relative w-fit rounded-md'>
-                <p className='absolute top-0 left-2 text-[10px]'>右</p>
+                <div className='relative w-fit rounded-md'>
+                  <p className='absolute top-0 left-2 text-[10px]'>右</p>
 
-                <input
-                  type="text"
-                  name="rightWeight"
-                  maxLength={3}
-                  value={set.rightWeight || ''}
-                  onChange={(e) => handleChange(index, e)}
-                  className="w-12 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
-                />
-              </div>
+                  <input
+                    type="text"
+                    name="rightWeight"
+                    maxLength={3}
+                    value={set.rightWeight || ''}
+                    onChange={(e) => handleChange(index, e)}
+                    className="w-12 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
+                  />
+                </div>
 
-              <div className='relative w-fit rounded-md'>
-                <p className='absolute top-0 left-2 text-[10px]'>次數</p>
+                <div className='relative w-fit rounded-md'>
+                  <p className='absolute top-0 left-2 text-[10px]'>次數</p>
 
-                <input
-                  type="text"
-                  name="repetitions"
-                  maxLength={3}
-                  value={set.repetitions || ''}
-                  onChange={(e) => handleChange(index, e)}
-                  className="w-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
-                />
-              </div>
+                  <input
+                    type="text"
+                    name="repetitions"
+                    maxLength={3}
+                    value={set.repetitions || ''}
+                    onChange={(e) => handleChange(index, e)}
+                    className="w-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
+                  />
+                </div>
 
-              <div className='relative rounded-md'>
-                <p className='absolute top-0 left-2 text-[10px]'>重量 kg</p>
+                <div className='relative rounded-md'>
+                  <p className='absolute top-0 left-2 text-[10px]'>重量 kg</p>
 
-                <div className="w-12 h-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold flex justify-end">
-                  {set.totalWeight}
+                  <div className="w-12 h-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold flex justify-end">
+                    {set.totalWeight === 0 ? '' : set.totalWeight}
+                  </div>
                 </div>
               </div>
 
               {/* TODO:刪除按鈕 */}
               <div
-                className='flex items-center justify-center hover:bg-gray-100 min-w-10 h-10 rounded-full relative ml-auto cursor-pointer'
+                className='flex items-center justify-center hover:bg-gray-100 min-w-10 h-10 rounded-full relative cursor-pointer'
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
               >
                 <EllipsisVertical className='w-3' />
