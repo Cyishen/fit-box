@@ -1,21 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  horizontalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import React, { useState, useEffect, useRef } from 'react';
 import TemplateCard from './TemplateCard';
 import { TemplateType } from '../fit/[menuId]/[templateId]/TemplateForm';
 
@@ -31,102 +14,126 @@ const CategoryIcons: { [key: string]: string } = {
 type TemplateCardListProps = {
   selectedTemplates: TemplateType[];
   handleRemoveTemplate: (menuId: string) => void;
-  onReorder?: (reorderedTemplates: TemplateType[]) => void;  // 使 onReorder 成為可選的
 };
 
-interface SortableItemProps {
-  work: TemplateType;
-  handleRemoveTemplate: (menuId: string) => void;
-}
-
-const SortableItem: React.FC<SortableItemProps> = ({ work, handleRemoveTemplate }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id: work.cardId });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <TemplateCard
-        iconSrc={CategoryIcons[work.category] || "/icons/dumbbell.svg"}
-        category={work.category}
-        title={work.title}
-        onRemove={() => handleRemoveTemplate(work.cardId)}
-        menuId={work.menuId}
-        templateId={work.cardId}
-        exercises={work.exercises}
-      />
-    </div>
-  );
-};
-
-const TemplateCardList: React.FC<TemplateCardListProps> = ({
-  selectedTemplates,
-  handleRemoveTemplate,
-  onReorder,
-}) => {
-  const [items, setItems] = useState<TemplateType[]>([]);
+const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateCardListProps) => {
+  const [templates, setTemplates] = useState<TemplateType[]>([]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [touchY, setTouchY] = useState<number | null>(null);
+  const templateRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isDragging = useRef(false);
 
   useEffect(() => {
-    setItems(selectedTemplates);
+    setTemplates(selectedTemplates);
   }, [selectedTemplates]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  const handleDragStart = (event: React.DragEvent<HTMLDivElement>, index: number) => {
+    isDragging.current = true;
+    event.dataTransfer.setData('text/plain', index.toString());
+  };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>, index: number) => {
+    event.preventDefault();
+    const draggedIdx = parseInt(event.dataTransfer.getData('text/plain'));
+    handleReorder(draggedIdx, index);
+    isDragging.current = false;
+  };
 
-    if (over && active.id !== over.id) {
-      setItems((prevItems) => {
-        const oldIndex = prevItems.findIndex((item) => item.cardId === active.id);
-        const newIndex = prevItems.findIndex((item) => item.cardId === over.id);
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
 
-        const newItems = arrayMove(prevItems, oldIndex, newIndex);
-        
-        // 檢查 onReorder 是否為函數，如果是則調用它
-        if (typeof onReorder === 'function') {
-          onReorder(newItems);
-        }
+  const handleDragEnd = () => {
+    isDragging.current = false;
+  };
 
-        return newItems;
-      });
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>, index: number) => {
+    setDraggedIndex(index);
+    setTouchY(event.touches[0].clientY);
+    isDragging.current = true;
+  };
+  
+  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (draggedIndex === null || touchY === null) return;
+
+    const currentY = event.touches[0].clientY;
+    const deltaY = currentY - touchY;
+
+    if (Math.abs(deltaY) > 20) {
+      const currentIndex = Math.floor((currentY - 60) / 80);
+      if (currentIndex >= 0 && currentIndex < templates.length && currentIndex !== draggedIndex) {
+        handleReorder(draggedIndex, currentIndex);
+        setDraggedIndex(currentIndex);
+        setTouchY(currentY);
+      }
+    }
+  };
+  
+  const handleTouchEnd = () => {
+    setDraggedIndex(null);
+    setTouchY(null);
+    isDragging.current = false;
+  };
+
+  const handleReorder = (fromIndex: number, toIndex: number) => {
+    const updatedTemplates = [...templates];
+    const [draggedTemplate] = updatedTemplates.splice(fromIndex, 1);
+    updatedTemplates.splice(toIndex, 0, draggedTemplate);
+    setTemplates(updatedTemplates);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (isDragging.current) {
+      event.preventDefault();
+      event.stopPropagation();
+    } else {
+      // 在這裡處理正常的點擊事件，例如導航到詳細頁面
+      // 如果您沒有特定的點擊處理邏輯，可以省略這個 else 塊
     }
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={items.map((item) => item.cardId)}
-        strategy={horizontalListSortingStrategy}
-      >
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full gap-3 relative'>
-          {items.map((work) => (
-            <SortableItem 
-              key={work.cardId} 
-              work={work} 
-              handleRemoveTemplate={handleRemoveTemplate}
+    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full gap-3 relative'>
+      {templates.length > 0 ? (
+        templates.map((work, index) => (
+          <div
+            key={work.cardId}
+            ref={(el: HTMLDivElement | null) => {
+              templateRefs.current[index] = el;
+            }}
+            draggable
+            onDragStart={(event) => handleDragStart(event, index)}
+            onDrop={(event) => handleDrop(event, index)}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+            onTouchStart={(event) => handleTouchStart(event, index)}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={(event) => handleClick(event)}
+            style={{
+              transition: 'transform 0.2s',
+              transform: draggedIndex === index ? 'scale(1.05)' : 'scale(1)',
+            }}
+          >
+            <TemplateCard
+              iconSrc={CategoryIcons[work.category] || "/icons/dumbbell.svg"}
+              category={work.category}
+              title={work.title}
+              onRemove={() => handleRemoveTemplate(work.cardId)}
+              menuId={work.menuId}
+              templateId={work.cardId}
+              exercises={work.exercises}
             />
-          ))}
+          </div>
+        ))
+      ) : (
+        <div className='flex justify-center items-center w-40 h-20 border p-2 border-dashed border-black rounded-lg'>
+          <p className='font-bold capitalize text-sm text-wrap'>
+            訓練模板
+          </p>
         </div>
-      </SortableContext>
-    </DndContext>
+      )}
+    </div>
   );
 };
 
