@@ -109,7 +109,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
         </div>
       </div>
 
-      {/* 刪除按鈕 */}
+      {/* 左滑刪除 */}
       <div
         ref={cardRef}
         className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl

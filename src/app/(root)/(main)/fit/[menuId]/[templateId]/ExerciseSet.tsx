@@ -136,7 +136,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 </div>
               </div>
 
-              {/* 刪除按鈕 */}
+              {/* TODO:刪除按鈕 */}
               <div
                 className='flex items-center justify-center hover:bg-gray-100 min-w-10 h-10 rounded-full relative ml-auto cursor-pointer'
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
@@ -146,7 +146,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 {openIndex === index && (
                   <div
                     id="outside-close"
-                    className="absolute -left-10 bottom-0 w-fit h-fit bg-black text-white z-50 rounded-md shadow-lg"
+                    className="absolute -left-10 bottom-0 w-fit h-fit bg-[#FF3B30] z-50 rounded-md shadow-lg"
                   >
                     <div className='w-full h-full'>
                       <button
@@ -166,7 +166,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
               </div>
               {/* <div>
                 <Button variant='destructive' size='sm' type='button' onClick={() => handleRemoveSet(index)}>
-                  刪除
+                  X
                 </Button>
               </div> */}
             </div>
