@@ -85,10 +85,6 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
         <div
           className='relative w-full mt-2 bg-white rounded-lg hover:bg-[#66CCFF]'
           onClick={handleOpen}
-          // onClick={(e) => {
-          //   e.stopPropagation();
-          //   setIsOpenImg(true);
-          // }}
         >
           <p className='absolute top-0 right-0 font-bold text-sm bg-gray-100 px-3 py-1 rounded-bl-lg'>
             {category}
@@ -110,33 +106,6 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
           />
         </div>
       </div>
-
-      {/* <div onClick={() => setIsOpenImg(false)}>
-        {isOpenImg && (
-          <>
-            <div className='fixed inset-0 bg-black/80 flex justify-center items-center z-50' />
-
-            <div
-              className="absolute right-1/2 top-0 translate-x-1/2 w-[90vw] max-w-lg min-h-[200px] bg-white text-xl z-[60] rounded-md px-2 flex flex-col items-center justify-center"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className='flex flex-col items-center w-full'>
-                <h3 className='font-bold'>{title}</h3>
-
-                <p className='text-gray-500 text-lg'>堅持練習, 維持體態</p>
-
-                <div className='flex gap-3 w-full mt-10'>
-                  <Link href={`/fit/${menuId}/${templateId}/update`} className='w-full'>
-                    <Button className='w-full'>編輯</Button>
-                  </Link>
-
-                  <Button className='w-full'>開始訓練</Button>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div> */}
     </div>
   )
 }
