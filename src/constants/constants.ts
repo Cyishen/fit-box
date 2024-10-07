@@ -6,3 +6,12 @@ export const sideCategory = [
   { label: "二頭", icon: "/icons/dumbbell.svg", },
   { label: "三頭", icon: "/icons/dumbbell.svg", },
 ]
+
+export const exerciseTemplates: ExerciseType[] = [
+  { ExerciseId: '1', name: '啞鈴胸推', sets: [] },
+  { ExerciseId: '2', name: '深蹲', sets: [] },
+  { ExerciseId: '3', name: '肩推', sets: [] },
+  { ExerciseId: '4', name: '飛鳥', sets: [] },
+  { ExerciseId: '5', name: '划船', sets: [] },
+  { ExerciseId: '6', name: '寬距下拉', sets: [] },
+];

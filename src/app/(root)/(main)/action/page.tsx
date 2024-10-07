@@ -4,20 +4,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import FitSideBar from '../fit/[menuId]/[templateId]/create-template/exercise-picker/FitSideBar';
+import { exerciseTemplates } from '@/constants/constants';
 
-
-const exerciseTemplates: ExerciseType[] = [
-  { ExerciseId: '1', name: '啞鈴胸推', sets: [] },
-  { ExerciseId: '2', name: '深蹲', sets: [] },
-  { ExerciseId: '3', name: '肩推', sets: [] },
-  { ExerciseId: '4', name: '飛鳥', sets: [] },
-  { ExerciseId: '5', name: '划船', sets: [] },
-  { ExerciseId: '6', name: '寬距下拉', sets: [] },
-];
 
 const ActionPage = () => {
-
-
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
   const handleToggleExercise = (exercise: ExerciseType) => {

@@ -38,33 +38,6 @@ const MenuList: React.FC<MenuListProps> = ({
     };
   }, [openMenuId]);
 
-  // const router = useRouter();
-  // const addTemplate = useTemplateStore((state) => state.addTemplate);
-  // const existingMenu = useMenuStore((state) => state.menus);
-  // const lastOneMenu = existingMenu.slice(-1)[0]?.menuId
-
-  // const toggleMenuOptions = (menuId: string) => {
-  //   setOpenMenuId(openMenuId === menuId ? null : menuId);
-  // };
-
-  // const generateShortId = () => {
-  //   return Math.random().toString(36).substring(2, 6);
-  // };
-  // const handleAddTemplate = (menuId: string) => {
-  //   const newCardId = generateShortId();
-  //   const newTemplate = {
-  //     cardId: newCardId,
-  //     category: "胸",
-  //     title: "換個名字吧",
-  //     menuId: menuId,
-  //     exercises: []
-  //   };
-
-  //   addTemplate(newTemplate);
-
-  //   router.push(`/fit/${menuId}/${newCardId}/create-template`);
-  // };
-
   const { open } = useMenuModal();
   const handleOpen = (menuId: string) => {
     open(menuId);
@@ -104,39 +77,6 @@ const MenuList: React.FC<MenuListProps> = ({
             >
               <EllipsisVertical width={14}/>
             </div>
-
-            {/* <div
-              className='flex items-center justify-center hover:bg-gray-300 min-w-5 h-5 rounded-full relative'
-              onClick={() => toggleMenuOptions(menu.menuId)}
-            >
-              <EllipsisVertical width={14} />
-
-              {openMenuId === menu.menuId && (
-                <>
-                  <div className='fixed inset-0 bg-black/80 flex justify-center items-center z-50' />
-
-                  <div className={`absolute ${existingMenu.length === 1 ? '-right-20' : (menu.menuId === lastOneMenu ? 'right-6' : '-right-20')} top-0 w-fit h-fit bg-white text-xl z-50 rounded-md shadow-lg overflow-hidden p-2 text-nowrap text-black`}>
-                    <div className='flex justify-start'>
-                      <button
-                        className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 hover:text-white duration-300'
-                        onClick={() => onMenuRemove(menu.menuId)}
-                      >
-                        <Trash2 width={14} /> 刪除
-                      </button>
-                    </div>
-
-                    <div className='flex justify-start'>
-                      <button
-                        className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300'
-                        onClick={() => handleAddTemplate(menu.menuId)}
-                      >
-                        <Plus width={14} /> 新增
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div> */}
           </div>
         ))
       ) : (
