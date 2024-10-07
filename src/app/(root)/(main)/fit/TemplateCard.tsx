@@ -99,7 +99,7 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
             alt={iconSrc}
             width={50}
             height={50}
-            className='p-5 w-full pointer-events-none'
+            className='p-5 w-full pointer-events-none no-select'
             onError={(e) => {
               e.currentTarget.src = defaultIconSrc;
             }}
