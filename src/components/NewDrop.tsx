@@ -41,11 +41,7 @@ type ColumnProps = {
   setCards: Dispatch<SetStateAction<CardType[]>>;
 };
 
-const Column = ({
-  cards,
-  column,
-  setCards,
-}: ColumnProps) => {
+const Column = ({ cards, column, setCards, }: ColumnProps) => {
   const [active, setActive] = useState(false);
 
   const handleDragStart = (e: DragEvent, card: CardType) => {
@@ -152,17 +148,17 @@ const Column = ({
   const filteredCards = cards.filter((c) => c.column === column);
 
   return (
-    <div className="overflow-hidden w-full">
+    <div>
       <div
         onDrop={handleDragEnd}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`h-fit w-fit transition-colors ${
+        className={`flex h-fit w-fit transition-colors ${
           active ? "bg-neutral-800/50" : "bg-neutral-800/0"
         }`}
       >
         {filteredCards.map((c) => {
-          return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
+          return <Card key={c.id} {...c} handleDragStart={handleDragStart}/>;
         })}
         <DropIndicator beforeId={null} column={column} />
       </div>
@@ -218,8 +214,8 @@ type CardType = {
 
 const DEFAULT_CARDS: CardType[] = [
   // BACKLOG
-  { title: "Look into render bug in dashboard", id: "1", column: "backlog" },
-  { title: "SOX compliance checklist", id: "2", column: "backlog" },
-  { title: "[SPIKE] Migrate to Azure", id: "3", column: "backlog" },
-  { title: "Document Notifications service", id: "4", column: "backlog" },
+  { title: "Look into", id: "1", column: "backlog" },
+  { title: "SOX compliance", id: "2", column: "backlog" },
+  { title: "[SPIKE] Migrate", id: "3", column: "backlog" },
+  { title: "Document", id: "4", column: "backlog" },
 ];
