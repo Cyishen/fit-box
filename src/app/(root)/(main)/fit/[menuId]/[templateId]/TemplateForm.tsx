@@ -43,7 +43,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
   };
 
   return (
-    <div className='flex pb-10 sm:pt-10 bg-gray-100 sm:bg-white'>
+    <div className='flex pb-0 sm:pt-10 bg-gray-100 sm:bg-white'>
       <div className="forMobile sm:forWeb">
         <form onSubmit={handleSubmit} className="bg-gray-100 sm:rounded-2xl">
           <div className="p-4">

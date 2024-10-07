@@ -1,11 +1,10 @@
-import Wrapper from "../Wrapper"
 import { MobileItem } from "./MobileItem"
 
 const MobileFooter = () => {
   return (
-    <nav className="w-full fixed bottom-2 z-50 right-0">
-      <Wrapper className="flex items-center justify-center">
-        <div className="flex justify-between w-full md:w-fit rounded-full border bg-gray-50/10 backdrop-blur-lg">
+    <nav className="w-full fixed bottom-0 z-50 bg-slate-200 sm:bg-white py-1">
+      <div className="flex items-center justify-center px-3">
+        <div className="flex justify-between w-full md:w-fit rounded-full border bg-white backdrop-blur-lg">
           <MobileItem
             href="/fit"
             iconSrc="/icons/dumbbell.svg"
@@ -32,7 +31,7 @@ const MobileFooter = () => {
             title="我"
           />
         </div>
-      </Wrapper>
+      </div>
     </nav>
   )
 }

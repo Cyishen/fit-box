@@ -81,10 +81,10 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
         </button>
       </div>
 
-      <div className='mt-3 px-3 pt-0 rounded-2xl bg-gray-200'>
-        <div className='py-2 overflow-y-scroll'>
-          <div className='pt-2'>
-            <div className='flex flex-col gap-3 max-h-[500px] min-h-[500px]'>
+      <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200'>
+        <div className='pt-3'>
+          <div className='overflow-y-scroll max-h-[500px] min-h-[500px]'>
+            <div className='flex flex-col gap-3 pb-20'>
               {exercises.map((exercise) => (
                 <ExerciseListCard
                   key={exercise.ExerciseId}
