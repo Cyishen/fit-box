@@ -5,10 +5,6 @@ import Wrapper from "@/components/Wrapper";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react"
 
-export type MenuType = {
-  menuId: string;
-  title: string;
-};
 
 type Props = {
   type: string,

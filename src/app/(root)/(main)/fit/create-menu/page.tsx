@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import MenuForm, { MenuType } from './MenuForm'
+import MenuForm from './MenuForm'
 import { useMenuStore } from '@/lib/store'
 
 

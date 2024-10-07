@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTemplateStore } from '@/lib/store'
-import TemplateForm, { TemplateType } from '../TemplateForm'
+import TemplateForm from '../TemplateForm'
 
 
 const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {

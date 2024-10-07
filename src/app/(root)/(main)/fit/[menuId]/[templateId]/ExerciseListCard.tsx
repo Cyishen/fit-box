@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Exercise, Set } from './ExerciseList';
 import Image from 'next/image';
 import ExerciseSet from './ExerciseSet';
 import { Trash2, ChevronLeft } from 'lucide-react';
 
 interface ExerciseListCardProps {
-  exercise: Exercise;
+  exercise: ExerciseType;
   handleRemoveExercise: (exerciseId: string) => void;
-  onUpdateSets: (exerciseId: string, updatedSets: Set[]) => void;
+  onUpdateSets: (exerciseId: string, updatedSets: SetProps[]) => void;
   isOpen: boolean;
   onToggle: () => void;
 }

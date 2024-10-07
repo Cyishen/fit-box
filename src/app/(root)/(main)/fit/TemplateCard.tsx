@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 import { EllipsisVertical, Trash2, SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import { usePracticeModal } from '@/lib/use-practice-modal';
-import { Exercise } from './[menuId]/[templateId]/ExerciseList';
 
 type Props = {
   iconSrc: string;
@@ -14,7 +13,7 @@ type Props = {
   templateId: string;
   menuId: string;
   onRemove: () => void;
-  exercises: Exercise[]
+  exercises: ExerciseType[]
 };
 
 const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, exercises }: Props) => {

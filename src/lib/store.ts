@@ -1,4 +1,4 @@
-import { TemplateType } from '@/app/(root)/(main)/fit/[menuId]/[templateId]/TemplateForm';
+// import { TemplateType } from '@/app/(root)/(main)/fit/[menuId]/[templateId]/TemplateForm';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 
@@ -37,12 +37,6 @@ export const useTemplateStore = create<TemplateStore>()(
     }
   )
 );
-
-
-type MenuType = {
-  menuId: string;
-  title: string;
-};
 
 interface BoxStore {
   menus: MenuType[];

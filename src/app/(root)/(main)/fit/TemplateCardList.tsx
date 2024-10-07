@@ -1,6 +1,6 @@
 import React from 'react';
 import TemplateCard from './TemplateCard';
-import { TemplateType } from '../fit/[menuId]/[templateId]/TemplateForm';
+// import { TemplateType } from '../fit/[menuId]/[templateId]/TemplateForm';
 
 const CategoryIcons: { [key: string]: string } = {
   "胸": "",

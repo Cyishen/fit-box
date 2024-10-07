@@ -3,19 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { ChangeEvent, useState } from "react"
 
-import ExerciseList, { Exercise } from "./ExerciseList";
+import ExerciseList from "./ExerciseList";
 import { useRouter } from "next/navigation";
-
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
 
-export type TemplateType = {
-  cardId: string;
-  category: string;
-  title: string;
-  menuId: string;
-  exercises: Exercise[];
-};
+// export type TemplateType = {
+//   cardId: string;
+//   category: string;
+//   title: string;
+//   menuId: string;
+//   exercises: Exercise[];
+// };
 
 type Props = {
   type: string,

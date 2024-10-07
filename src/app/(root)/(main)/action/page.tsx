@@ -1,25 +1,82 @@
-import Wrapper from "@/components/Wrapper";
-import { sideCategory } from "@/constants/constants";
+"use client";
 
+
+import React, { useState } from 'react';
+import Image from 'next/image';
+import FitSideBar from '../fit/[menuId]/[templateId]/create-template/exercise-picker/FitSideBar';
+
+
+const exerciseTemplates: ExerciseType[] = [
+  { ExerciseId: '1', name: '啞鈴胸推', sets: [] },
+  { ExerciseId: '2', name: '深蹲', sets: [] },
+  { ExerciseId: '3', name: '肩推', sets: [] },
+  { ExerciseId: '4', name: '飛鳥', sets: [] },
+  { ExerciseId: '5', name: '划船', sets: [] },
+  { ExerciseId: '6', name: '寬距下拉', sets: [] },
+];
 
 const ActionPage = () => {
+
+
+  const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
+
+  const handleToggleExercise = (exercise: ExerciseType) => {
+    const isSelected = selectedExercises.some(ex => ex.ExerciseId === exercise.ExerciseId);
+
+    if (isSelected) {
+      setSelectedExercises(selectedExercises.filter(ex => ex.ExerciseId !== exercise.ExerciseId));
+    } else {
+      setSelectedExercises([...selectedExercises, exercise]);
+    }
+  };
+
+
   return (
-    <section>
-      <Wrapper>
-        <div className='flex py-10'>
-          <div className='flex flex-col w-14 md:w-36 h-screen p-10 bg-gray-100'>
-            <div className='space-y-2'>
-              {sideCategory?.map((item) => (
-                <div key={item.label}>
-                  <p> {item.label} </p>
-                </div>
-              ))}
+    <div className='flex pb-10 sm:pt-10 bg-gray-100 sm:bg-white h-screen'>
+      <div className='forMobile sm:forWeb'>
+        <div className="bg-gray-100 p-4 sm:rounded-2xl">
+          <div className='flex mt-5 gap-3'>
+            <div className='w-32'>
+              <h3 className="font-bold">選擇動作</h3>
+              <hr className='my-2'/>
+
+              <FitSideBar />
+            </div>
+
+            <div className='w-full'>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {exerciseTemplates.map((exercise) => (
+                  <div
+                    key={exercise.ExerciseId}
+                    onClick={() => handleToggleExercise(exercise)}
+                    className={`p-2 rounded-md cursor-pointer 
+                    ${selectedExercises.some(select => select.ExerciseId === exercise.ExerciseId) ? 'bg-[#66CCFF] ring-1 ring-offset-2 ring-blue-500' : 'bg-white'}`
+                    }
+                  >
+                    <div key={exercise.ExerciseId}>
+                      <div className="p-2">
+                        <div className="flex flex-col items-center">
+                          <Image
+                            src='/icons/dumbbell.svg'
+                            alt={exercise.name}
+                            width={36}
+                            height={36}
+                          />
+                          <p className={`text-sm mt-2 ${selectedExercises.some(select => select.ExerciseId === exercise.ExerciseId) ? 'text-black' : 'text-muted-foreground'}`}>
+                            {exercise.name}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </Wrapper>
-    </section>
-  )
-}
+      </div>
+    </div>
+  );
+};
 
-export default ActionPage
+export default ActionPage;

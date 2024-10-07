@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMenuStore } from '@/lib/store'
-import MenuForm, { MenuType } from '../../create-menu/MenuForm'
+import MenuForm from '../../create-menu/MenuForm'
 
 
 const CreateMenu = ({ params }: { params: { menuId: string } }) => {

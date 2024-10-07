@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
-import { TemplateType } from './TemplateForm';
 import { useRouter } from 'next/navigation';
 import { useTemplateStore } from '@/lib/store';
 import { CopyPlus } from 'lucide-react';
 import ExerciseListCard from './ExerciseListCard';
 
 
-export type Exercise = {
-  ExerciseId: string; // 唯一識別符
-  name: string; // 動作名稱，例如 "啞鈴胸推"
-  sets: Set[]; // 包含此動作的組
-};
+// export type Exercise = {
+//   ExerciseId: string; // 唯一識別符
+//   name: string; // 動作名稱，例如 "啞鈴胸推"
+//   sets: Set[]; // 包含此動作的組
+// };
 
-export type Set = {
-  leftWeight: number; // 左邊的重量
-  rightWeight: number; // 右邊的重量
-  repetitions: number; // 做的次數
-  totalWeight: number; // 此組的總重量（左重量 + 右重量 * 做的次數）
-};
+// export type Set = {
+//   leftWeight: number; // 左邊的重量
+//   rightWeight: number; // 右邊的重量
+//   repetitions: number; // 做的次數
+//   totalWeight: number; // 此組的總重量（左重量 + 右重量 * 做的次數）
+// };
 
 type ExerciseListProps = {
-  exercises: Exercise[];
+  exercises: ExerciseType[];
   template: TemplateType;
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
 };
@@ -48,7 +47,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
     setTemplateState(updatedTemplate);
   };
 
-  const handleUpdateSets = (exerciseId: string, updatedSets: Set[]) => {
+  const handleUpdateSets = (exerciseId: string, updatedSets: SetProps[]) => {
     const updatedExercises = exercises.map((exercise) =>
       exercise.ExerciseId === exerciseId
         ? { ...exercise, sets: updatedSets }

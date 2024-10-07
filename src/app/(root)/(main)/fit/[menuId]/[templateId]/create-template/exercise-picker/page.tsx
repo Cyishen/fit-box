@@ -2,14 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Exercise } from '../../ExerciseList';
 import { useTemplateStore } from '@/lib/store';
-import { TemplateType } from '../../TemplateForm';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import FitSideBar from './FitSideBar';
 
-const exerciseTemplates: Exercise[] = [
+const exerciseTemplates: ExerciseType[] = [
   { ExerciseId: '1', name: '啞鈴胸推', sets: [] },
   { ExerciseId: '2', name: '深蹲', sets: [] },
   { ExerciseId: '3', name: '肩推', sets: [] },
@@ -25,7 +23,7 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
   const templates = useTemplateStore(state => state.templates);
   const currentTemplate = templates.find(template => template.cardId === templateId);
 
-  const [selectedExercises, setSelectedExercises] = useState<Exercise[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
   useEffect(() => {
     if (currentTemplate) {
@@ -33,7 +31,7 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
     }
   }, [currentTemplate]);
 
-  const handleToggleExercise = (exercise: Exercise) => {
+  const handleToggleExercise = (exercise: ExerciseType) => {
     const isSelected = selectedExercises.some(ex => ex.ExerciseId === exercise.ExerciseId);
 
     if (isSelected) {

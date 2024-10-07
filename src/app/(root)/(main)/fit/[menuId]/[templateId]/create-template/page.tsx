@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import TemplateForm, { TemplateType } from '../TemplateForm'
+import TemplateForm from '../TemplateForm'
 import { useTemplateStore } from '@/lib/store'
 
 
