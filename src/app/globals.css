@@ -96,3 +96,8 @@ body {
 .hide_drop {
   opacity: 0;
 }
+
+.no-select {
+  user-select: none;
+}
+

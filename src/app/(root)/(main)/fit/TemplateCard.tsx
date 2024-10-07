@@ -46,7 +46,7 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
     <div className='w-full col-span-1 md:col-span-1' draggable>
       <div className='w-full h-full flex flex-col p-3 bg-gray-100 rounded-lg'>
         <div className='flex items-start justify-between h-full gap-0.5 cursor-grab'>
-          <p className='font-bold capitalize text-sm line-clamp-2 select-none'>{title}</p>
+          <p className='font-bold capitalize text-sm line-clamp-2 no-select'>{title}</p>
 
           <div
             className='flex items-center justify-center hover:bg-gray-300 min-w-5 h-5 rounded-full relative'
@@ -86,11 +86,11 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
           className='relative w-full mt-2 bg-white rounded-lg hover:bg-[#66CCFF] cursor-pointer'
           onClick={handleOpen}
         >
-          <p className='absolute top-0 right-0 font-bold text-sm bg-gray-100 px-3 py-1 rounded-bl-lg select-none'>
+          <p className='absolute top-0 right-0 font-bold text-sm bg-gray-100 px-3 py-1 rounded-bl-lg no-select'>
             {category}
           </p>
 
-          <p className='absolute top-0 left-0 font-bold text-sm px-3 py-1 select-none'>
+          <p className='absolute top-0 left-0 font-bold text-sm px-3 py-1 no-select'>
             {exercises.length} 動作
           </p>
 
