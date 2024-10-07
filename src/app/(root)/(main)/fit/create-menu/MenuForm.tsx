@@ -13,7 +13,6 @@ type Props = {
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
-
 const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
   const [count, setCount] = useState(0);
   const router = useRouter();

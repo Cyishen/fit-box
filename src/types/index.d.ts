@@ -25,10 +25,10 @@ type MenuType = {
 type ExerciseType = {
   ExerciseId: string; // 唯一識別符
   name: string; // 動作名稱，例如 "啞鈴胸推"
-  sets: SetProps[]; // 包含此動作的組
+  sets: SetType[]; // 包含此動作的組
 };
 
-type SetProps = {
+type SetType = {
   leftWeight: number; // 左邊的重量
   rightWeight: number; // 右邊的重量
   repetitions: number; // 做的次數

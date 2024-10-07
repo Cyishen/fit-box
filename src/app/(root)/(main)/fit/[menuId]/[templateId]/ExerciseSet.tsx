@@ -2,17 +2,16 @@
 
 import { Button } from '@/components/ui/button'
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { Set } from './ExerciseList'
 import { EllipsisVertical, Trash2, Check } from 'lucide-react'
 
 interface SetProps {
-  sets: Set[],
+  sets: SetType[],
   exerciseId: string,
-  onUpdateSets: (exerciseId: string, updatedSets: Set[]) => void
+  onUpdateSets: (exerciseId: string, updatedSets: SetType[]) => void
 }
 
 const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
-  const [dynamicSets, setDynamicSets] = useState<Set[]>([]);
+  const [dynamicSets, setDynamicSets] = useState<SetType[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [hasSave, setHasSave] = useState(false);
 

@@ -8,13 +8,6 @@ import { useRouter } from "next/navigation";
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
 
-// export type TemplateType = {
-//   cardId: string;
-//   category: string;
-//   title: string;
-//   menuId: string;
-//   exercises: Exercise[];
-// };
 
 type Props = {
   type: string,
@@ -22,7 +15,6 @@ type Props = {
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 };
-
 
 const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props) => {
   const [count, setCount] = useState(0);

@@ -6,7 +6,7 @@ import { Trash2, ChevronLeft } from 'lucide-react';
 interface ExerciseListCardProps {
   exercise: ExerciseType;
   handleRemoveExercise: (exerciseId: string) => void;
-  onUpdateSets: (exerciseId: string, updatedSets: SetProps[]) => void;
+  onUpdateSets: (exerciseId: string, updatedSets: SetType[]) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
