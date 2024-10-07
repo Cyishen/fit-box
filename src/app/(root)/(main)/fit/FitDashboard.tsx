@@ -65,7 +65,6 @@ const FitDashboard = () => {
         selectedMenuId={selectedMenuId}
         onMenuSelect={handleMenuClick}
         isMenuOpen={isMenuOpen}
-        onMenuRemove={()=>''}
       />
 
       <TemplateCardList

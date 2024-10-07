@@ -37,6 +37,7 @@ export const MenuModal = () => {
   const handleAddTemplate = (menuId: string) => {
     const newCardId = generateShortId();
     const newTemplate = {
+      userId: "Guest",
       cardId: newCardId,
       category: "胸",
       title: "未命名的訓練單 🏷️",

@@ -12,9 +12,9 @@ const CreateMenu = ({ params }: { params: { menuId: string } }) => {
 
   const menus = useMenuStore((state) => state.menus);
   const existingMenu = menus.find(menu => menu.menuId === menuId);
-  console.log(existingMenu)
 
   const [menu, setMenu] = useState<MenuType>({
+    userId: "Guest",
     menuId:"",
     title: "",
   })

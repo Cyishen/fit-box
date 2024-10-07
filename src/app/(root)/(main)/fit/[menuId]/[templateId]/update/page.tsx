@@ -16,6 +16,7 @@ const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
 
 
   const [template, setTemplate] = useState<TemplateType>({
+    userId: "",
     cardId: "",
     category: "",
     title: "",
@@ -36,6 +37,7 @@ const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
 
     if (template) {
       const editTemplateData: TemplateType = {
+        userId: template.userId,
         cardId: template.cardId, 
         category: template.category,
         title: template.title,

@@ -1,7 +1,6 @@
 declare type User = {
-  $id: string;
-  email: string;
   userId: string;
+  email: string;
   firstName: string;
   lastName: string;
   name: string;
@@ -9,6 +8,7 @@ declare type User = {
 };
 
 type TemplateType = {
+  userId?: string;
   cardId: string;
   category: string;
   title: string;
@@ -17,6 +17,7 @@ type TemplateType = {
 };
 
 type MenuType = {
+  userId?: string;
   menuId: string;
   title: string;
 };

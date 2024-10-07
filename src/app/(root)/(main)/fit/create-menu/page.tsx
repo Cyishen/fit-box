@@ -10,6 +10,7 @@ const CreateMenu = () => {
   const router = useRouter()
 
   const [menu, setMenu] = useState<MenuType>({
+    userId: "Guest",
     menuId:"",
     title: "未命名的訓練盒 🏷️",
   })

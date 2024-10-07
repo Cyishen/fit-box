@@ -18,6 +18,7 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   const editTemplate = useTemplateStore((state) => state.editTemplate);
 
   const [template, setTemplate] = useState<TemplateType>({
+    userId: "Guest",
     cardId: templateId,
     category: "",
     title: "",
