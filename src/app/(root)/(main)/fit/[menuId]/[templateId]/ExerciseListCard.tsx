@@ -113,7 +113,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
         ref={cardRef}
         className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
           ${isSwiped ? 'w-20' : 'w-0'}`}
-        onClick={() => handleRemoveExercise(exercise.ExerciseId)}
+        onClick={() => handleRemoveExercise(exercise.exerciseId)}
       >
         <Trash2 className=' w-full text-white h-8' />
       </div>
@@ -122,7 +122,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
       {isOpen && (
         <ExerciseSet
           sets={exercise.sets}
-          exerciseId={exercise.ExerciseId}
+          exerciseId={exercise.exerciseId}
           onUpdateSets={onUpdateSets}
         />
       )}

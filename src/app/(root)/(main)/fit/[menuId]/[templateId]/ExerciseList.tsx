@@ -23,7 +23,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
   const updateTemplate = useTemplateStore(state => state.editTemplate);
 
   const handleRemoveExercise = (exerciseId: string) => {
-    const updatedExercises = exercises.filter((exercise) => exercise.ExerciseId !== exerciseId);
+    const updatedExercises = exercises.filter((exercise) => exercise.exerciseId !== exerciseId);
 
     const updatedTemplate: TemplateType = {
       ...template,
@@ -36,7 +36,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
 
   const handleUpdateSets = (exerciseId: string, updatedSets: SetType[]) => {
     const updatedExercises = exercises.map((exercise) =>
-      exercise.ExerciseId === exerciseId
+      exercise.exerciseId === exerciseId
         ? { ...exercise, sets: updatedSets }
         : exercise
     );
@@ -73,12 +73,12 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
             <div className='flex flex-col gap-3 pb-20'>
               {exercises.map((exercise) => (
                 <ExerciseListCard
-                  key={exercise.ExerciseId}
+                  key={exercise.exerciseId}
                   exercise={exercise}
                   handleRemoveExercise={handleRemoveExercise}
                   onUpdateSets={handleUpdateSets}
-                  isOpen={openExerciseId === exercise.ExerciseId}
-                  onToggle={() => handleToggleExercise(exercise.ExerciseId)}
+                  isOpen={openExerciseId === exercise.exerciseId}
+                  onToggle={() => handleToggleExercise(exercise.exerciseId)}
                 />
               ))}
             </div>
