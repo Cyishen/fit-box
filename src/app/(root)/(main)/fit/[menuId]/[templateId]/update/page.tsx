@@ -12,14 +12,14 @@ const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
 
   // Todo?: 取得zustand 所有模板, 並找出 id 一樣的模板
   const templates = useTemplateStore((state) => state.templates);
-  const existingTemplate = templates.find(template => template.cardId === templateId);
+  const existingTemplate = templates.find(template => template.templateId === templateId);
 
 
   const [template, setTemplate] = useState<TemplateType>({
     userId: "",
-    cardId: "",
-    category: "",
-    title: "",
+    templateId: "",
+    templateCategory: "",
+    templateTitle: "",
     menuId: "",
     exercises: [],
   });
@@ -38,14 +38,14 @@ const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
     if (template) {
       const editTemplateData: TemplateType = {
         userId: template.userId,
-        cardId: template.cardId, 
-        category: template.category,
-        title: template.title,
+        templateId: template.templateId, 
+        templateCategory: template.templateCategory,
+        templateTitle: template.templateTitle,
         menuId: template.menuId,
         exercises: template.exercises || [],
       };
 
-      editTemplate(template.cardId, editTemplateData);
+      editTemplate(template.templateId, editTemplateData);
       router.push("/fit");
     }
   };

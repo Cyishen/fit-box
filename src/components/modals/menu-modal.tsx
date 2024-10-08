@@ -36,11 +36,11 @@ export const MenuModal = () => {
 
   const handleAddTemplate = (menuId: string) => {
     const newCardId = generateShortId();
-    const newTemplate = {
+    const newTemplate: TemplateType = {
       userId: "Guest",
-      cardId: newCardId,
-      category: "胸",
-      title: "未命名的訓練單 🏷️",
+      templateId: newCardId,
+      templateCategory: "胸",
+      templateTitle: "未命名的訓練單 🏷️",
       menuId: menuId,
       exercises: []
     };

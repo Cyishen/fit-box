@@ -9,16 +9,16 @@ const WorkoutPage = ({ params }: { params: { menuId: string; templateId: string 
 
   const [template, setTemplate] = useState<TemplateType>({
     userId: "",
-    cardId: "",
-    category: "",
-    title: "",
+    templateId: "",
+    templateCategory: "",
+    templateTitle: "",
     menuId: "",
     exercises: [],
   });
 
   const templates = useTemplateStore(state => state.templates);
   const useThisTemplate = templates.find(
-    template => template.cardId === templateId && template.menuId === menuId
+    template => template.templateId === templateId && template.menuId === menuId
   );
 
   useEffect(() => {
@@ -32,6 +32,7 @@ const WorkoutPage = ({ params }: { params: { menuId: string; templateId: string 
     <div>
       <StartWorkout
         template={template} 
+        isEditMode={false}
       />
     </div>
   )

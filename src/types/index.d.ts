@@ -27,9 +27,9 @@ type WorkoutSessionType = {
 
 type TemplateType = {
   userId?: string;
-  cardId: string;
-  category: string;
-  title: string;
+  templateId: string;
+  templateCategory: string;
+  templateTitle: string;
   menuId: string;
   exercises: ExerciseType[];
 };

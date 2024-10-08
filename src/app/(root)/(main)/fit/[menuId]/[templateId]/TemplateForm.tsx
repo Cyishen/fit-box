@@ -22,7 +22,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    if (name === "title") {
+    if (name === "templateTitle") {
       setCount(value.length);
     }
     setTemplateState((prevWork) => {
@@ -53,9 +53,9 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
                   <button
                     key={index}
                     type="button"
-                    className={`cursor-pointer py-1 px-5 text-sm rounded-full ${template.category === item ? "bg-black text-white" : "bg-white hover:bg-gray-200"}`}
+                    className={`cursor-pointer py-1 px-5 text-sm rounded-full ${template.templateCategory === item ? "bg-black text-white" : "bg-white hover:bg-gray-200"}`}
                     onClick={() => {
-                      setTemplateState({ ...template, category: item });
+                      setTemplateState({ ...template, templateCategory: item });
                     }}
                   >
                     {item}
@@ -77,8 +77,8 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
                   type="text"
                   placeholder="來取名吧 🤔"
                   onChange={handleChange}
-                  name="title"
-                  value={template.title}
+                  name="templateTitle"
+                  value={template.templateTitle}
                   required
                   maxLength={20}
                   className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-sm"

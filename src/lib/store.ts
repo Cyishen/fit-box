@@ -40,12 +40,12 @@ export const useTemplateStore = create<TemplateStore>()(
 
       removeTemplate: (id) =>
         set((state) => ({
-          templates: state.templates.filter(work => work.cardId !== id),
+          templates: state.templates.filter(work => work.templateId !== id),
         })),
 
       editTemplate: (id, updatedTemplate) =>
         set((state) => ({
-          templates: state.templates.map(template => template.cardId === id
+          templates: state.templates.map(template => template.templateId === id
             ? updatedTemplate
             : template
           ),

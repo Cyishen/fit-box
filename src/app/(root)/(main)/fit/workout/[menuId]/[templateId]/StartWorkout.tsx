@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import { CopyPlus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
-type TemplateProps = {
-  template: TemplateType
+type StartWorkoutProps = {
+  template: TemplateType | WorkoutSessionType;
+  isEditMode: boolean;
 }
 
-const StartWorkout = ({ template }: TemplateProps) => {
+const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
   const [currentSession, setCurrentSession] = useState<WorkoutSessionType | null>(null);
   const router = useRouter();
 
@@ -18,31 +19,52 @@ const StartWorkout = ({ template }: TemplateProps) => {
   const { workoutSessions, addWorkoutSession, editWorkoutSession } = useWorkoutStore();
 
   useEffect(() => {
+    if ('sessionId' in template) {
+      setCurrentSession(template as WorkoutSessionType);
+    } else {
+      setCurrentSession({
+        sessionId: new Date().getTime().toString(),
+        userId: template.userId || 'Guest',
+        menuId: template.menuId,
+        templateId: template.templateId,
+        templateTitle: template.templateTitle,
+        date: new Date().toISOString().slice(0, 10),
+        exercises: JSON.parse(JSON.stringify(template.exercises))
+      } as WorkoutSessionType);
+    }
+  }, [template]);
+
+  useEffect(() => {
     const existingSessionId = localStorage.getItem('currentSessionId');
 
-    if (!existingSessionId && template.menuId && template.cardId) {
-      const newSession: WorkoutSessionType = {
-        sessionId: Date.now().toString(),
-        userId: user,
-        menuId: template.menuId,
-        templateId: template.cardId,
-        templateTitle: template.title,
-        date: new Date().toISOString().slice(0, 10),
-        exercises: JSON.parse(JSON.stringify(template.exercises)),
-      };
-      addWorkoutSession(newSession);
-      setCurrentSession(newSession);
-
-      // 保存新的 sessionId 到 localStorage
-      localStorage.setItem('currentSessionId', newSession.sessionId);
-    } else if (existingSessionId) {
-      // 如果 localStorage 有 sessionId，則直接從 `workoutSessions` 中找到並設置
+    if (isEditMode) {
+      // 編輯模式下，使用現有的 sessionId
       const existingSession = workoutSessions.find(session => session.sessionId === existingSessionId);
       if (existingSession) {
         setCurrentSession(existingSession);
       }
+    } else {
+      if (!existingSessionId && template.menuId && template.templateId) {
+        const newSession: WorkoutSessionType = {
+          sessionId: Date.now().toString(),
+          userId: user,
+          menuId: template.menuId,
+          templateId: template.templateId,
+          templateTitle: template.templateTitle,
+          date: new Date().toISOString().slice(0, 10),
+          exercises: JSON.parse(JSON.stringify(template.exercises)),
+        };
+        addWorkoutSession(newSession);
+        setCurrentSession(newSession);
+        localStorage.setItem('currentSessionId', newSession.sessionId);
+      } else if (existingSessionId) {
+        const existingSession = workoutSessions.find(session => session.sessionId === existingSessionId);
+        if (existingSession) {
+          setCurrentSession(existingSession);
+        }
+      }
     }
-  }, [template, user, workoutSessions, addWorkoutSession]);
+  }, [template, user, workoutSessions, addWorkoutSession, isEditMode]);
 
 
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
@@ -93,8 +115,8 @@ const StartWorkout = ({ template }: TemplateProps) => {
             <h3 className="font-bold">今日訓練紀錄</h3>
             <Button
               onClick={handleCompleteWorkout}
-              size='sm' 
-              className='font-bold' 
+              size='sm'
+              className='font-bold'
             >
               完成
             </Button>

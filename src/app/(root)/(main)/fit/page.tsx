@@ -19,15 +19,14 @@ const FixPage = () => {
   const canCreateNewMenu = menus.length < NOT_USER_MAX_MENU;
 
   const { workoutSessions } = useWorkoutStore();
-
+  console.log(workoutSessions)
   const handleEditWorkout = (sessionId: string) => {
     const sessionToEdit = workoutSessions.find(session => session.sessionId === sessionId);
     if (sessionToEdit) {
-      router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}?sessionId=${sessionId}`);
+      router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${sessionId}`);
     }
   };
-  
-  
+
 
   return (
     <section>
@@ -43,7 +42,10 @@ const FixPage = () => {
                 onClick={() => handleEditWorkout(session.sessionId)}
               >
                 <p className='font-bold'>{session.templateTitle}</p>
-                <p className='text-[10px] text-muted-foreground'>共 {session.exercises[0].sets.length} 組</p>
+                <div className='flex gap-1 text-[10px] text-muted-foreground'>
+                  <p>{session.exercises.length} 動作 /</p>
+                  <p>共 {session.exercises.reduce((total, e) => total + e.sets.length, 0)} 組</p>
+                </div>
               </div>
             ))}
             

@@ -31,7 +31,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
       exercises: updatedExercises,
     };
     // 更新刪除後的儲存
-    updateTemplate(template.cardId, updatedTemplate);
+    updateTemplate(template.templateId, updatedTemplate);
     setTemplateState(updatedTemplate);
   };
 
@@ -48,7 +48,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
       exercises: updatedExercises,
     };
     // 更新組數設定
-    updateTemplate(template.cardId, updatedTemplate);
+    updateTemplate(template.templateId, updatedTemplate);
     setTemplateState(updatedTemplate);
   };
 
@@ -60,7 +60,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
 
         <button
           type="button"
-          onClick={() => router.push(`/fit/${template.menuId}/${template.cardId}/create-template/exercise-picker`)}
+          onClick={() => router.push(`/fit/${template.menuId}/${template.templateId}/create-template/exercise-picker`)}
           className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
         >
           <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>

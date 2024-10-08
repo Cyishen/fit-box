@@ -23,13 +23,13 @@ const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateC
       {selectedTemplates.length > 0 ? (
         selectedTemplates.map((work) => (
           <TemplateCard
-            key={work.cardId}
-            iconSrc={CategoryIcons[work.category] || "/icons/dumbbell.svg"}
-            category={work.category}
-            title={work.title}
-            onRemove={() => handleRemoveTemplate(work.cardId)}
+            key={work.templateId}
+            iconSrc={CategoryIcons[work.templateCategory] || "/icons/dumbbell.svg"}
+            templateCategory={work.templateCategory}
+            templateTitle={work.templateTitle}
+            onRemove={() => handleRemoveTemplate(work.templateId)}
             menuId={work.menuId}
-            templateId={work.cardId}
+            templateId={work.templateId}
             exercises={work.exercises}
           />
         ))

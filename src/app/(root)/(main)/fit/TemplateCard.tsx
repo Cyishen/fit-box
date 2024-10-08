@@ -8,15 +8,15 @@ import { usePracticeModal } from '@/lib/use-practice-modal';
 
 type Props = {
   iconSrc: string;
-  category: string;
-  title?: string;
+  templateCategory: string;
+  templateTitle?: string;
   templateId: string;
   menuId: string;
   onRemove: () => void;
   exercises: ExerciseType[]
 };
 
-const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, exercises }: Props) => {
+const TemplateCard = ({ iconSrc, templateCategory, templateTitle, onRemove, templateId, menuId, exercises }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { open } = usePracticeModal();
@@ -45,7 +45,7 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
     <div className='w-full col-span-1 md:col-span-1' draggable>
       <div className='w-full h-full flex flex-col p-3 bg-gray-100 rounded-lg'>
         <div className='flex items-start justify-between h-full gap-0.5 cursor-grab'>
-          <p className='font-bold capitalize text-sm line-clamp-2 no-select'>{title}</p>
+          <p className='font-bold capitalize text-sm line-clamp-2 no-select'>{templateTitle}</p>
 
           <div
             className='flex items-center justify-center hover:bg-gray-300 min-w-5 h-5 rounded-full relative'
@@ -86,7 +86,7 @@ const TemplateCard = ({ iconSrc, category, title, onRemove, templateId, menuId, 
           onClick={handleOpen}
         >
           <p className='absolute top-0 right-0 font-bold text-sm bg-gray-100 px-3 py-1 rounded-bl-lg no-select'>
-            {category}
+            {templateCategory}
           </p>
 
           <p className='absolute top-0 left-0 font-bold text-sm px-3 py-1 no-select'>

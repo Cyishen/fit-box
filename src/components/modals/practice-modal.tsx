@@ -22,7 +22,7 @@ export const PracticeModal = () => {
   const { isOpen, close, menuId, templateId } = usePracticeModal();
 
   const templates = useTemplateStore(state => state.templates);
-  const openTemplate = templates.find(template => template.cardId === templateId);
+  const openTemplate = templates.find(template => template.templateId === templateId);
 
   useEffect(() => setIsClient(true), []);
 
@@ -35,7 +35,7 @@ export const PracticeModal = () => {
       <DialogContent className="max-w-md rounded-lg">
         <DialogHeader>
           <DialogTitle className="text-center font-bold text-xl">
-            {openTemplate?.title}
+            {openTemplate?.templateTitle}
           </DialogTitle>
           <DialogDescription className="text-center text-sm">
             持續訓練, 維持體態

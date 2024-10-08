@@ -12,16 +12,16 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   const router = useRouter()
 
   const templates = useTemplateStore(state => state.templates);
-  const existingTemplate = templates.find(template => template.cardId === templateId);
+  const existingTemplate = templates.find(template => template.templateId === templateId);
 
   const addTemplate = useTemplateStore((state) => state.addTemplate);
   const editTemplate = useTemplateStore((state) => state.editTemplate);
 
   const [template, setTemplate] = useState<TemplateType>({
     userId: "Guest",
-    cardId: templateId,
-    category: "",
-    title: "",
+    templateId: templateId,
+    templateCategory: "",
+    templateTitle: "",
     menuId,
     exercises: [],
   });

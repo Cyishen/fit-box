@@ -14,7 +14,7 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
   const { templateId } = params;
 
   const templates = useTemplateStore(state => state.templates);
-  const currentTemplate = templates.find(template => template.cardId === templateId);
+  const currentTemplate = templates.find(template => template.templateId === templateId);
 
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
