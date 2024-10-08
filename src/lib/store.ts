@@ -1,6 +1,27 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+type UserModelStore = {
+  user: UserModel;
+  setUser: (newUser: UserModel) => void;
+}
+
+export const useUserStore = create<UserModelStore>()(
+  persist(
+    (set) => ({
+      user: {
+        userId: "Guest",
+        workoutSessions: [],
+      } as UserModel,
+      setUser: (newUser: UserModel) => set({ user: newUser }),
+    }),
+    { 
+      name: 'user-storage', 
+      storage: createJSONStorage(() => localStorage) 
+    }
+  )
+);
+
 interface TemplateStore {
   templates: TemplateType[];
   addTemplate: (work: TemplateType) => void;
@@ -71,20 +92,24 @@ export const useMenuStore = create<BoxStore>()(
   )
 );
 
-type WorkoutStore = {
+interface WorkoutStore {
   workoutSessions: WorkoutSessionType[];
+  // currentSessionId: string | null;
+  // setCurrentSessionId: (id: string | null) => void;
   addWorkoutSession: (session: WorkoutSessionType) => void;
   removeWorkoutSession: (id: string) => void;
   editWorkoutSession: (id: string, updatedSession: WorkoutSessionType) => void;
-};
+}
 
 export const useWorkoutStore = create<WorkoutStore>()(
   persist(
     (set) => ({
       workoutSessions: [],
+      // currentSessionId: null,
+      // setCurrentSessionId: (id) => set(() => ({ currentSessionId: id })),
       addWorkoutSession: (session) =>
         set((state) => ({
-          workoutSessions: [...state.workoutSessions, session],
+          workoutSessions: [...state.workoutSessions, session]
         })),
       removeWorkoutSession: (id) =>
         set((state) => ({
@@ -104,3 +129,4 @@ export const useWorkoutStore = create<WorkoutStore>()(
     }
   )
 );
+

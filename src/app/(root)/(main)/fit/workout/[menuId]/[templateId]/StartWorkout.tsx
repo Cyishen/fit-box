@@ -1,7 +1,8 @@
-"use client"
-
 import { useEffect, useState } from "react";
+import { useWorkoutStore } from "@/lib/store";
+import { useUserStore } from "@/lib/store";
 import ExerciseListCard from '../../../[menuId]/[templateId]/ExerciseListCard';
+import { useRouter } from "next/navigation";
 import { CopyPlus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
@@ -10,33 +11,77 @@ type TemplateProps = {
 }
 
 const StartWorkout = ({ template }: TemplateProps) => {
+  const [currentSession, setCurrentSession] = useState<WorkoutSessionType | null>(null);
+  const router = useRouter();
 
-  // 狀態用於保存複製的訓練項目
-  const [copiedExercises, setCopiedExercises] = useState<ExerciseType[]>([]);
+  const user = useUserStore(state => state.user.userId);
+  const { workoutSessions, addWorkoutSession, editWorkoutSession } = useWorkoutStore();
 
   useEffect(() => {
-    setCopiedExercises(JSON.parse(JSON.stringify(template.exercises)));
-  }, [template]);
+    const existingSessionId = localStorage.getItem('currentSessionId');
 
+    if (!existingSessionId && template.menuId && template.cardId) {
+      const newSession: WorkoutSessionType = {
+        sessionId: Date.now().toString(),
+        userId: user,
+        menuId: template.menuId,
+        templateId: template.cardId,
+        templateTitle: template.title,
+        date: new Date().toISOString().slice(0, 10),
+        exercises: JSON.parse(JSON.stringify(template.exercises)),
+      };
+      addWorkoutSession(newSession);
+      setCurrentSession(newSession);
+
+      // 保存新的 sessionId 到 localStorage
+      localStorage.setItem('currentSessionId', newSession.sessionId);
+    } else if (existingSessionId) {
+      // 如果 localStorage 有 sessionId，則直接從 `workoutSessions` 中找到並設置
+      const existingSession = workoutSessions.find(session => session.sessionId === existingSessionId);
+      if (existingSession) {
+        setCurrentSession(existingSession);
+      }
+    }
+  }, [template, user, workoutSessions, addWorkoutSession]);
+
+
+  const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
+    editWorkoutSession(updatedSession.sessionId, updatedSession);
+    setCurrentSession(updatedSession);
+  };
+
+  // 修改動作組數
+  const handleUpdateSets = (exerciseId: string, updatedSets: SetType[]) => {
+    if (currentSession) {
+      const updatedExercises = currentSession.exercises.map(exercise =>
+        exercise.exerciseId === exerciseId ? { ...exercise, sets: updatedSets } : exercise
+      );
+      const updatedSession = { ...currentSession, exercises: updatedExercises };
+      updateCurrentSession(updatedSession);
+    }
+  };
+
+  // 左滑後, 點擊刪除
+  const handleRemoveExercise = (exerciseId: string) => {
+    if (currentSession) {
+      const updatedExercises = currentSession.exercises.filter(
+        exercise => exercise.exerciseId !== exerciseId
+      );
+      const updatedSession = { ...currentSession, exercises: updatedExercises };
+      updateCurrentSession(updatedSession);
+    }
+  };
+
+  // 動作下拉, 打開動作的組數設定
   const [openExerciseId, setOpenExerciseId] = useState<string | null>(null);
-
   const handleToggleExercise = (exerciseId: string) => {
     setOpenExerciseId((prev) => (prev === exerciseId ? null : exerciseId));
   };
 
-  const handleRemoveExercise = (exerciseId: string) => {
-    setCopiedExercises(prev =>
-      prev.filter(exercise => exercise.exerciseId !== exerciseId)
-    );
-  };
+  const handleCompleteWorkout = () => {
+    localStorage.removeItem('currentSessionId');
 
-  const handleUpdateSets = (exerciseId: string, updatedSets: SetType[]) => {
-    setCopiedExercises(prev =>
-      prev.map(exercise => exercise.exerciseId === exerciseId 
-        ? { ...exercise, sets: updatedSets } 
-        : exercise
-      )
-    );
+    router.push('/fit');
   };
 
 
@@ -46,7 +91,13 @@ const StartWorkout = ({ template }: TemplateProps) => {
         <div className="p-4">
           <div className='flex justify-between items-center'>
             <h3 className="font-bold">今日訓練紀錄</h3>
-            <Button size='sm' className='font-bold'>完成</Button>
+            <Button
+              onClick={handleCompleteWorkout}
+              size='sm' 
+              className='font-bold' 
+            >
+              完成
+            </Button>
           </div>
         </div>
 
@@ -71,26 +122,28 @@ const StartWorkout = ({ template }: TemplateProps) => {
         </div>
       </div>
 
-      <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200'>
-        <div className='pt-3'>
-          <div className='overflow-y-scroll max-h-[500px] min-h-[500px]'>
-            <div className='flex flex-col gap-3 pb-20'>
-              {copiedExercises.map((exercise) => (
-                <ExerciseListCard
-                  key={exercise.exerciseId}
-                  exercise={exercise}
-                  handleRemoveExercise={handleRemoveExercise}
-                  onUpdateSets={handleUpdateSets}
-                  isOpen={openExerciseId === exercise.exerciseId}
-                  onToggle={() => handleToggleExercise(exercise.exerciseId)}
-                />
-              ))}
+      {currentSession && (
+        <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200'>
+          <div className='pt-3'>
+            <div className='overflow-y-scroll max-h-[500px] min-h-[500px]'>
+              <div className='flex flex-col gap-3 pb-20'>
+                {currentSession.exercises.map((exercise) => (
+                  <ExerciseListCard
+                    key={exercise.exerciseId}
+                    exercise={exercise}
+                    handleRemoveExercise={handleRemoveExercise}
+                    onUpdateSets={handleUpdateSets}
+                    isOpen={openExerciseId === exercise.exerciseId}
+                    onToggle={() => handleToggleExercise(exercise.exerciseId)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default StartWorkout
+export default StartWorkout;

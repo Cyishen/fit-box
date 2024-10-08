@@ -6,6 +6,7 @@ declare type UserModel = {
   name?: string;                    
   dateOfBirth?: string;            
   workoutSessions?: WorkoutSessionType[]; 
+  lastActiveDate?: string;
 };
 
 // TODO: 用戶每天的訓練紀錄
@@ -13,8 +14,13 @@ type WorkoutSessionType = {
   sessionId: string;
   userId: string;
   menuId: string;
+  templateId: string;
+  templateTitle: string;
   date: string;
   exercises: ExerciseType[];
+  startTime?: string;     
+  endTime?: string; 
+  notes?: string; 
 };
 
 // 分割線 =========================== 分割線

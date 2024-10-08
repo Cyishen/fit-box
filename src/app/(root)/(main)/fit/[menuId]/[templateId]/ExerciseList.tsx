@@ -14,14 +14,15 @@ type ExerciseListProps = {
 const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListProps) => {
   const router = useRouter();
 
-  // openCardId 狀態控制
+  const updateTemplate = useTemplateStore(state => state.editTemplate);
+
+  // 點擊下拉, 打開動作的組數設定
   const [openExerciseId, setOpenExerciseId] = useState<string | null>(null);
   const handleToggleExercise = (exerciseId: string) => {
     setOpenExerciseId((prev) => (prev === exerciseId ? null : exerciseId));
   };
 
-  const updateTemplate = useTemplateStore(state => state.editTemplate);
-
+  // 左滑後, 點擊刪除
   const handleRemoveExercise = (exerciseId: string) => {
     const updatedExercises = exercises.filter((exercise) => exercise.exerciseId !== exerciseId);
 
@@ -29,11 +30,12 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
       ...template,
       exercises: updatedExercises,
     };
-
+    // 更新刪除後的儲存
     updateTemplate(template.cardId, updatedTemplate);
     setTemplateState(updatedTemplate);
   };
 
+  // 修改動作組數
   const handleUpdateSets = (exerciseId: string, updatedSets: SetType[]) => {
     const updatedExercises = exercises.map((exercise) =>
       exercise.exerciseId === exerciseId
@@ -45,7 +47,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
       ...template,
       exercises: updatedExercises,
     };
-
+    // 更新組數設定
     updateTemplate(template.cardId, updatedTemplate);
     setTemplateState(updatedTemplate);
   };
