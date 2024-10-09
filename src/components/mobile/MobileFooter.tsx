@@ -27,7 +27,7 @@ const MobileFooter = () => {
           />
           <MobileItem
             href="/profile"
-            iconSrc="/imgs/cap.png"
+            iconSrc="/imgs/cap2.png"
             title="我"
           />
         </div>

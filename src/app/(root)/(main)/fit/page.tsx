@@ -10,13 +10,24 @@ import FitProfile from './FitProfile'
 import { useMenuStore, useWorkoutStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
 import ShowTrainingCard from './ShowTrainingCard'
+import { useEffect, useState } from 'react'
 // import { format } from "date-fns"
 
+// const boxImage = [
+//   '/imgs/cap.png',
+//   '/imgs/hulk.png',
+//   '/imgs/iron.png',
+//   '/imgs/thor.png',
+//   '/imgs/girl.png',
+// ];
+
+// const randomBoxImage = boxImage[Math.floor(Math.random() * boxImage.length)];
 
 const FixPage = () => {
   const NOT_USER_MAX_MENU = 3
   const menus = useMenuStore((state) => state.menus);
   const router = useRouter();
+  const [randomBoxImage, setRandomBoxImage] = useState('');
 
   const canCreateNewMenu = menus.length < NOT_USER_MAX_MENU;
 
@@ -36,6 +47,19 @@ const FixPage = () => {
   // TODO: 篩選用戶當天紀錄
   // const todayDate = format(new Date(), 'yyyy-MM-dd');
   // const todayTrainingCard = workoutSessions.filter(session => session.date === todayDate);
+
+  useEffect(() => {
+    const images = [
+      '/imgs/cap.png',
+      '/imgs/hulk.png',
+      '/imgs/iron.png',
+      '/imgs/thor.png',
+      '/imgs/girl.png',
+    ];
+    const randomIndex = Math.floor(Math.random() * images.length);
+    const randomImage = images[randomIndex];
+    setRandomBoxImage(randomImage);
+  }, []);
 
   return (
     <section>
@@ -57,7 +81,16 @@ const FixPage = () => {
               ))}
             </div>
 
-            <div className='flex items-center justify-between p-3 rounded-lg bg-gray-100 mt-2'>
+            <div
+              className='flex items-center justify-between p-3 rounded-lg bg-gray-100 mt-2'
+              style={{
+                backgroundImage: `url(${randomBoxImage})`,
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'repeat',
+                backgroundBlendMode: 'overlay',
+              }}
+            >
               <h1 className='font-bold'>你的訓練</h1>
 
               {canCreateNewMenu ? (

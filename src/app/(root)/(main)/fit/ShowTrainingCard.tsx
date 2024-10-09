@@ -12,7 +12,7 @@ type Props = {
   handleRemoveWorkoutSession: (sessionId: string) => void
 }
 
-const images = [
+const heroImage = [
   '/imgs/cap.png',
   '/imgs/hulk.png',
   '/imgs/iron.png',
@@ -21,7 +21,7 @@ const images = [
 ];
 
 const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSession }: Props) => {
-  const randomImage = images[Math.floor(Math.random() * images.length)];
+  const randomImage = heroImage[Math.floor(Math.random() * heroImage.length)];
 
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -77,7 +77,6 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
   return (
     <div
       className='relative flex py-3 px-2 rounded-lg bg-slate-100 hover:bg-blue-100 cursor-pointer group'
-      // onClick={() => handleEditWorkout(session.sessionId)}
       style={{
         backgroundImage: `url(${randomImage})`,
         backgroundSize: 'contain',
