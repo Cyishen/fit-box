@@ -100,7 +100,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
           <div className="group relative h-full cursor-pointer">
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden group-hover:flex items-center justify-center w-full h-full">
               <ChevronLeft className='w-6 text-gray-200'/>
-              <span className="text-gray-200 text-xs px-2">
+              <span className="text-muted-foreground text-xs px-2">
                 左滑刪除
               </span>
             </div>

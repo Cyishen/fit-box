@@ -19,13 +19,17 @@ const FixPage = () => {
 
   const canCreateNewMenu = menus.length < NOT_USER_MAX_MENU;
 
-  const { workoutSessions } = useWorkoutStore();
-  console.log(workoutSessions)
+  const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
+
   const handleEditWorkout = (sessionId: string) => {
     const sessionToEdit = workoutSessions.find(session => session.sessionId === sessionId);
     if (sessionToEdit) {
       router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${sessionId}`);
     }
+  };
+
+  const handleRemoveWorkoutSession = (sessionId: string) => {
+    removeWorkoutSession(sessionId);
   };
 
 
@@ -41,6 +45,7 @@ const FixPage = () => {
                 key={session.sessionId}
                 session={session}
                 handleEditWorkout={handleEditWorkout}
+                handleRemoveWorkoutSession={handleRemoveWorkoutSession}
               />
             ))}
 

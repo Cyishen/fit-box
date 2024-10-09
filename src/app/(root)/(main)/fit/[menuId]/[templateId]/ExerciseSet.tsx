@@ -119,6 +119,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                     name="rightWeight"
                     maxLength={4}
                     value={set.rightWeight || ''}
+                    inputMode='decimal'
                     onChange={(e) => handleChange(index, e)}
                     onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
                     onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
@@ -130,10 +131,11 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                   <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>次數</p>
 
                   <input
-                    type="number"
+                    type="text"
                     name="repetitions"
                     maxLength={2}
                     value={set.repetitions || ''}
+                    inputMode='decimal'
                     onChange={(e) => handleChange(index, e)}
                     onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
                     onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
