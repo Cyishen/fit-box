@@ -10,6 +10,7 @@ import FitProfile from './FitProfile'
 import { useMenuStore, useWorkoutStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
 import ShowTrainingCard from './ShowTrainingCard'
+// import { format } from "date-fns"
 
 
 const FixPage = () => {
@@ -32,6 +33,9 @@ const FixPage = () => {
     removeWorkoutSession(sessionId);
   };
 
+  // TODO: 篩選用戶當天紀錄
+  // const todayDate = format(new Date(), 'yyyy-MM-dd');
+  // const todayTrainingCard = workoutSessions.filter(session => session.date === todayDate);
 
   return (
     <section>
@@ -40,17 +44,21 @@ const FixPage = () => {
           <div className="flex flex-col w-full gap-3">
             <FitProfile />
 
-            {workoutSessions.map((session: WorkoutSessionType) => (
-              <ShowTrainingCard
-                key={session.sessionId}
-                session={session}
-                handleEditWorkout={handleEditWorkout}
-                handleRemoveWorkoutSession={handleRemoveWorkoutSession}
-              />
-            ))}
+            <div className='flex flex-col w-full gap-3'>
+              <h1 className='font-bold'>最近的訓練</h1>
 
-            <div className='flex items-center justify-between p-3 rounded-lg bg-gray-100'>
-              <h1 className='font-bold text-lg'>你的訓練</h1>
+              {workoutSessions.map((session: WorkoutSessionType) => (
+                <ShowTrainingCard
+                  key={session.sessionId}
+                  session={session}
+                  handleEditWorkout={handleEditWorkout}
+                  handleRemoveWorkoutSession={handleRemoveWorkoutSession}
+                />
+              ))}
+            </div>
+
+            <div className='flex items-center justify-between p-3 rounded-lg bg-gray-100 mt-2'>
+              <h1 className='font-bold'>你的訓練</h1>
 
               {canCreateNewMenu ? (
                 <Link href='/fit/create-menu'>
@@ -63,7 +71,7 @@ const FixPage = () => {
               )}
             </div>
 
-            <div className='mt-5 overflow-hidden mb-20'>
+            <div className='overflow-hidden mb-20'>
               <FitDashboard />
             </div>
           </div>

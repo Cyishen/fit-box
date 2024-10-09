@@ -16,19 +16,18 @@ export const MobileItem = ({ iconSrc, href, title }: Props) => {
   const active = pathname === href;
 
   return (
-    <div className={`flex flex-col justify-center items-center p-1 w-16 h-16 ${active ? "bg-gray-200 rounded-full" : ""}`}>
-      <div className="p-1">
-        <Link href={href}>
+    <Link href={href}>
+      <div className={`flex flex-col justify-center items-center p-3 w-16 h-16 rounded-full ${active ? "bg-slate-200 rounded-full" : ""}`}>
+        <div className={`duration-300 ${active ? "translate-y-[-10px] scale-150" : ""}`}>
           <Image
             src={iconSrc}
             alt={iconSrc}
-            height={30}
-            width={30}
+            height={70}
+            width={70}
           />
-        </Link>
+        </div>
+        <p className="text-sm">{title}</p>
       </div>
-
-      <p className="text-sm">{title}</p>
-    </div>
+    </Link>
   );
 };

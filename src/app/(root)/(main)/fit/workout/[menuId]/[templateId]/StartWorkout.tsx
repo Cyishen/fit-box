@@ -130,7 +130,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
           </div>
         </div>
 
-        <div className='flex justify-between items-center px-4'>
+        <div className='flex items-center justify-end gap-3 px-4'>
           <h3 className="font-bold">添加動作</h3>
 
           <button

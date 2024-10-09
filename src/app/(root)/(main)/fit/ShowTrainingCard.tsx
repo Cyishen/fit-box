@@ -76,7 +76,7 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
 
   return (
     <div
-      className='relative flex p-3 rounded-lg bg-slate-100 hover:bg-blue-100 cursor-pointer group'
+      className='relative flex py-3 px-2 rounded-lg bg-slate-100 hover:bg-blue-100 cursor-pointer group'
       // onClick={() => handleEditWorkout(session.sessionId)}
       style={{
         backgroundImage: `url(${randomImage})`,
@@ -93,19 +93,23 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
       <div className='flex flex-col w-[70%] p-1 rounded-xl group-hover:bg-white'
         onClick={() => handleEditWorkout(session.sessionId)}
       >
-        <p className='font-bold'>{session.templateTitle}</p>
+        <p className='font-bold line-clamp-1'>{session.templateTitle}</p>
 
         <div className='flex items-center gap-1 text-[10px]'>
           <div className='flex items-center'>
             <div>
               <Image src='/icons/dumbbell.svg' width={20} height={20} alt='dumbbell' />
             </div>
-            <p className='border px-1 rounded-full bg-black text-white group-hover:text-[#66CCFF]'>{session.exercises.length} 動作</p>
+            <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>{session.exercises.length} 動作</p>
           </div>
 
           <div className='flex items-center gap-1'>
             <ListOrdered width={16} />
-            <p className='border px-1 rounded-full bg-black text-white group-hover:text-[#66CCFF]'>共 {session.exercises.reduce((total, e) => total + e.sets.length, 0)} 組</p>
+            <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>共 {session.exercises.reduce((total, e) => total + e.sets.length, 0)} 組</p>
+          </div>
+
+          <div className='text-muted-foreground line-clamp-1'>
+            <p>日期 {session.date}</p>
           </div>
         </div>
       </div>
@@ -113,7 +117,7 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
       <div className='w-[15%]'>
         <div className="relative h-full cursor-pointer">
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-full hidden group-hover:flex">
-            <span className="h-full flex items-center justify-end text-xs px-3 text-muted-foreground">
+            <span className="h-full flex items-center justify-end text-xs px-3 text-gray-400">
               左滑刪除
             </span>
           </div>

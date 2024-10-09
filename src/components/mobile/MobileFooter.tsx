@@ -4,15 +4,15 @@ const MobileFooter = () => {
   return (
     <nav className="w-full fixed bottom-0 z-50 bg-slate-200 sm:bg-white py-1">
       <div className="flex items-center justify-center px-3">
-        <div className="flex justify-between w-full md:w-fit rounded-full border bg-white backdrop-blur-lg">
+        <div className="flex justify-between w-full md:w-fit rounded-full sm:border bg-white backdrop-blur-lg">
           <MobileItem
             href="/fit"
-            iconSrc="/icons/dumbbell.svg"
+            iconSrc="/imgs/hulk.png"
             title="訓練"
           />
           <MobileItem
             href="/action"
-            iconSrc="/icons/dumbbell.svg"
+            iconSrc="/imgs/iron.png"
             title="動作"
           />
           <MobileItem
@@ -22,12 +22,12 @@ const MobileFooter = () => {
           />
           <MobileItem
             href="/record"
-            iconSrc="/icons/dumbbell.svg"
+            iconSrc="/imgs/thor.png"
             title="記錄"
           />
           <MobileItem
             href="/profile"
-            iconSrc="/icons/dumbbell.svg"
+            iconSrc="/imgs/cap.png"
             title="我"
           />
         </div>
