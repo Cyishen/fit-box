@@ -9,6 +9,7 @@ import FitProfile from './FitProfile'
 
 import { useMenuStore, useWorkoutStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
+import ShowTrainingCard from './ShowTrainingCard'
 
 
 const FixPage = () => {
@@ -35,20 +36,14 @@ const FixPage = () => {
           <div className="flex flex-col w-full gap-3">
             <FitProfile />
 
-            {workoutSessions.map((session) => (
-              <div 
-                key={session.sessionId} 
-                className='flex flex-col p-3 rounded-lg bg-slate-100'
-                onClick={() => handleEditWorkout(session.sessionId)}
-              >
-                <p className='font-bold'>{session.templateTitle}</p>
-                <div className='flex gap-1 text-[10px] text-muted-foreground'>
-                  <p>{session.exercises.length} 動作 /</p>
-                  <p>共 {session.exercises.reduce((total, e) => total + e.sets.length, 0)} 組</p>
-                </div>
-              </div>
+            {workoutSessions.map((session: WorkoutSessionType) => (
+              <ShowTrainingCard
+                key={session.sessionId}
+                session={session}
+                handleEditWorkout={handleEditWorkout}
+              />
             ))}
-            
+
             <div className='flex items-center justify-between p-3 rounded-lg bg-gray-100'>
               <h1 className='font-bold text-lg'>你的訓練</h1>
 
@@ -63,7 +58,7 @@ const FixPage = () => {
               )}
             </div>
 
-            <div className='mt-5 overflow-hidden'>
+            <div className='mt-5 overflow-hidden mb-20'>
               <FitDashboard />
             </div>
           </div>

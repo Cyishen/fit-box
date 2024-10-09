@@ -26,16 +26,22 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
   const handleChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedSets = [...dynamicSets];
-
-    const newValue = Number(value) || 0;
+  
+    const isValidNumber = /^\d*\.?\d{0,1}$/.test(value);
+    
+    if (!isValidNumber && value !== '') {
+      return;
+    }
 
     updatedSets[index] = {
       ...updatedSets[index],
-      [name]: newValue,
+      [name]: value === '' ? '' : value,
     };
 
-    updatedSets[index].totalWeight = (updatedSets[index].leftWeight + updatedSets[index].rightWeight) * updatedSets[index].repetitions;
-
+    const leftWeight = Number(updatedSets[index].leftWeight) || 0; 
+    const rightWeight = Number(updatedSets[index].rightWeight) || 0;
+    updatedSets[index].totalWeight = (leftWeight + rightWeight) * updatedSets[index].repetitions;
+  
     setDynamicSets(updatedSets);
   };
 
@@ -95,10 +101,13 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                   <input
                     type="text"
                     name="leftWeight"
-                    maxLength={3}
+                    maxLength={4}
                     value={set.leftWeight || ''}
+                    inputMode='decimal'
                     onChange={(e) => handleChange(index, e)}
-                    className="w-12 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
+                    onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
+                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
+                    className="w-12 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
                   />
                 </div>
 
@@ -108,10 +117,12 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                   <input
                     type="text"
                     name="rightWeight"
-                    maxLength={3}
+                    maxLength={4}
                     value={set.rightWeight || ''}
                     onChange={(e) => handleChange(index, e)}
-                    className="w-12 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
+                    onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
+                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
+                    className="w-12 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
                   />
                 </div>
 
@@ -119,11 +130,13 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                   <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>次數</p>
 
                   <input
-                    type="text"
+                    type="number"
                     name="repetitions"
-                    maxLength={3}
+                    maxLength={2}
                     value={set.repetitions || ''}
                     onChange={(e) => handleChange(index, e)}
+                    onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
+                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
                     className="w-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
                   />
                 </div>
@@ -131,8 +144,8 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
                 <div className='relative rounded-md'>
                   <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>重量 kg</p>
 
-                  <div className="w-12 h-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold flex justify-end">
-                    {set.totalWeight === 0 ? '' : set.totalWeight}
+                  <div className="w-12 h-10 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold flex justify-end">
+                    {set.totalWeight === 0 ? '' : set.totalWeight.toFixed(1)}
                   </div>
                 </div>
               </div>
