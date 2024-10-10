@@ -94,14 +94,14 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
         <div className={`flex w-full
         ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
         >
-          <div className='flex w-[70%] flex-col px-1 rounded-xl group-hover:bg-white'
+          <div className='flex w-[70%] flex-col px-2 rounded-xl group-hover:bg-white py-1'
             onClick={() => handleEditWorkout(session.sessionId)}
           >
             <p className='font-bold line-clamp-1'>{session.templateTitle}</p>
 
             <div className='flex items-center gap-1 text-[10px]'>
               <div className='flex items-center'>
-                <div>
+                <div className='w-5 h-5'>
                   <Image src='/icons/dumbbell.svg' width={20} height={20} alt='dumbbell' />
                 </div>
                 <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>{session.exercises.length} 動作</p>
