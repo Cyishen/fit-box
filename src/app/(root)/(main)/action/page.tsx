@@ -5,9 +5,12 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import FitSideBar from '../fit/[menuId]/[templateId]/create-template/exercise-picker/FitSideBar';
 import { exerciseTemplates } from '@/constants/constants';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 
 const ActionPage = () => {
+  const router = useRouter();
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
   const handleToggleExercise = (exercise: ExerciseType) => {
@@ -25,6 +28,11 @@ const ActionPage = () => {
     <div className='flex pb-10 sm:pt-10 bg-gray-100 sm:bg-white h-screen'>
       <div className='forMobile sm:forWeb'>
         <div className="bg-gray-100 p-4 sm:rounded-2xl">
+          <div className='flex justify-between'>
+            <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
+            <Button size='sm' type='button'>儲存 {selectedExercises.length}</Button>
+          </div>
+
           <div className='flex mt-5 gap-3'>
             <div className='w-32'>
               <h3 className="font-bold">選擇動作</h3>

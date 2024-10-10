@@ -55,7 +55,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
 
   return (
     <div>
-      <div className='flex justify-between items-center px-4'>
+      <div className='flex justify-end items-center gap-3 px-4'>
         <h3 className="font-bold">添加動作</h3>
 
         <button

@@ -11,6 +11,7 @@ import { useMenuStore, useWorkoutStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
 import ShowTrainingCard from './ShowTrainingCard'
 import { useEffect, useState } from 'react'
+
 // import { format } from "date-fns"
 
 // const boxImage = [
@@ -68,7 +69,7 @@ const FixPage = () => {
           <div className="flex flex-col w-full gap-3">
             <FitProfile />
 
-            <div className='flex flex-col w-full gap-3'>
+            <div className='flex flex-col w-full gap-3 overflow-hidden'>
               <h1 className='font-bold'>最近的訓練</h1>
 
               {workoutSessions.map((session: WorkoutSessionType) => (

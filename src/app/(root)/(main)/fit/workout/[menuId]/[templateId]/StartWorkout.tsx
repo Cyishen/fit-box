@@ -135,6 +135,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
 
           <button
             type="button"
+            onClick={() => router.push(`/action`)}
             className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
           >
             <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>
