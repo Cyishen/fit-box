@@ -49,7 +49,7 @@ const MenuList: React.FC<MenuListProps> = ({
         menus.map((menu) => (
           <div
             key={menu.menuId}
-            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-slate-100"}`}
+            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-slate-300"}`}
           >
             <div
               className='flex items-center gap-2'

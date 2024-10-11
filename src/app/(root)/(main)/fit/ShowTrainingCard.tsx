@@ -29,6 +29,7 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
 
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // 手機觸摸事件處理
   const handleTouchStart = (e: React.TouchEvent) => {
     setStartX(e.touches[0].clientX); // 記錄觸摸的開始位置
   };

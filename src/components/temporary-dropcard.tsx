@@ -140,38 +140,22 @@
 
 
 
-//TODO: workout top ui
-// import { CopyPlus } from 'lucide-react';
-// import { Button } from "@/components/ui/button";
-
-{/* <div>
-<div className="p-4">
-  <div className='flex justify-between items-center'>
-    <h3 className="font-bold">今日訓練紀錄</h3>
-    <Button size='sm' className='font-bold'>完成</Button>
-  </div>
-</div>
-
-<div className="px-4 pb-3">
-  <div className='flex items-center justify-end gap-3'>
-    <h3 className="font-bold">計時器</h3>
-    <p className="font-bold text-3xl border px-2 py-1 rounded-lg">00:00</p>
-  </div>
-</div>
-
-<div className='flex justify-between items-center px-4'>
-  <h3 className="font-bold">添加動作</h3>
-
-  <button
-    type="button"
-    className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
-  >
-    <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>
-      <CopyPlus className='w-5' />
-    </div>
-  </button>
-</div>
-</div> */}
+//TODO: 編輯訓練卡, 沒拿到資料先用這個
+  // useEffect(() => {
+  //   if ('sessionId' in template) {
+  //     setCurrentSession(template as WorkoutSessionType);
+  //   } else {
+  //     setCurrentSession({
+  //       sessionId: new Date().getTime().toString(),
+  //       userId: template.userId || 'Guest',
+  //       menuId: template.menuId,
+  //       templateId: template.templateId,
+  //       templateTitle: template.templateTitle,
+  //       date: new Date().toISOString().slice(0, 10),
+  //       exercises: JSON.parse(JSON.stringify(template.exercises))
+  //     } as WorkoutSessionType);
+  //   }
+  // }, [template]);
 
 
 // "use client"

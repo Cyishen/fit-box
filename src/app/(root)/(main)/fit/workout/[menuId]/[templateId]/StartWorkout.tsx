@@ -12,27 +12,11 @@ type StartWorkoutProps = {
 }
 
 const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
-  const [currentSession, setCurrentSession] = useState<WorkoutSessionType | null>(null);
+  const [currentSession, setCurrentSession] = useState<WorkoutSessionType | null>();
   const router = useRouter();
 
   const user = useUserStore(state => state.user.userId);
   const { workoutSessions, addWorkoutSession, editWorkoutSession } = useWorkoutStore();
-
-  useEffect(() => {
-    if ('sessionId' in template) {
-      setCurrentSession(template as WorkoutSessionType);
-    } else {
-      setCurrentSession({
-        sessionId: new Date().getTime().toString(),
-        userId: template.userId || 'Guest',
-        menuId: template.menuId,
-        templateId: template.templateId,
-        templateTitle: template.templateTitle,
-        date: new Date().toISOString().slice(0, 10),
-        exercises: JSON.parse(JSON.stringify(template.exercises))
-      } as WorkoutSessionType);
-    }
-  }, [template]);
 
   useEffect(() => {
     const existingSessionId = localStorage.getItem('currentSessionId');
@@ -40,6 +24,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
     if (isEditMode) {
       // 編輯模式下，使用現有的 sessionId
       const existingSession = workoutSessions.find(session => session.sessionId === existingSessionId);
+
       if (existingSession) {
         setCurrentSession(existingSession);
       }
@@ -57,11 +42,6 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
         addWorkoutSession(newSession);
         setCurrentSession(newSession);
         localStorage.setItem('currentSessionId', newSession.sessionId);
-      } else if (existingSessionId) {
-        const existingSession = workoutSessions.find(session => session.sessionId === existingSessionId);
-        if (existingSession) {
-          setCurrentSession(existingSession);
-        }
       }
     }
   }, [template, user, workoutSessions, addWorkoutSession, isEditMode]);
@@ -112,7 +92,14 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
       <div>
         <div className="p-4">
           <div className='flex justify-between items-center'>
-            <h3 className="font-bold">今日訓練紀錄</h3>
+            {isEditMode ? (
+              <h3 className="font-bold">繼續訓練 
+                <span className="text-gray-400 pl-2 text-sm">{template.templateTitle}</span>
+              </h3>
+            ):(
+              <h3 className="font-bold">開始訓練</h3>
+            )}
+
             <Button
               onClick={handleCompleteWorkout}
               size='sm'

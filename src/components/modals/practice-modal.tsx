@@ -15,9 +15,11 @@ import { usePracticeModal } from "@/lib/use-practice-modal";
 import Link from "next/link";
 import { useTemplateStore } from "@/lib/store";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 
 export const PracticeModal = () => {
+  const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const { isOpen, close, menuId, templateId } = usePracticeModal();
 
@@ -29,6 +31,11 @@ export const PracticeModal = () => {
   if (!isClient) {
     return null;
   }
+
+  const handleNewWorkout = () => {
+    router.push(`/fit/workout/${menuId}/${templateId}`);
+    localStorage.removeItem('currentSessionId');
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={close}>
@@ -73,14 +80,16 @@ export const PracticeModal = () => {
               </Button>
             </Link>
 
-            <Link href={`/fit/workout/${menuId}/${templateId}`} className="flex w-full">
+            <div className="flex w-full"
+              onClick={handleNewWorkout}
+            >
               <Button
                 onClick={close}
                 className="w-full"
               >
                 開始訓練
               </Button>
-            </Link>
+            </div>
           </div>
         </DialogFooter>
       </DialogContent>

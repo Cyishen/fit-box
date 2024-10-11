@@ -7,9 +7,10 @@ import StartWorkout from '../StartWorkout';
 
 const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: string; sessionId: string } }) => {
   const { menuId, templateId, sessionId } = params;
+  const user = useUserStore(state => state.user.userId);
 
   const [session, setSession] = useState<WorkoutSessionType | null>(null);
-  const user = useUserStore(state => state.user.userId);
+
   const templates = useTemplateStore(state => state.templates);
   const workoutSessions = useWorkoutStore(state => state.workoutSessions);
 
@@ -22,13 +23,13 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
       template => template.templateId === templateId && template.menuId === menuId
     );
     const sessionToEdit = workoutSessions.find(session => session.sessionId === sessionId);
-  
+
     if (sessionToEdit) {
       setSession(sessionToEdit);
     } else if (template) {
       setSession({
         sessionId: sessionId,
-        userId: template.userId || "Guest",
+        userId: user,
         menuId: menuId,
         templateId: templateId,
         templateTitle: template.templateTitle,
@@ -37,6 +38,7 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
       });
     }
   }, [menuId, templateId, sessionId, templates, user, workoutSessions]);
+
 
   return (
     <div>

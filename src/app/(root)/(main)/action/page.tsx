@@ -1,17 +1,29 @@
 "use client";
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import FitSideBar from '../fit/[menuId]/[templateId]/create-template/exercise-picker/FitSideBar';
 import { exerciseTemplates } from '@/constants/constants';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useWorkoutStore } from '@/lib/store';
 
 
 const ActionPage = () => {
   const router = useRouter();
+  const existingSessionId = localStorage.getItem('currentSessionId');
+
+  const { workoutSessions, editWorkoutSession } = useWorkoutStore();
+  const currentSession = workoutSessions.find(session => session.sessionId === existingSessionId);
+
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
+
+  useEffect(() => {
+    if (currentSession) {
+      setSelectedExercises(currentSession.exercises);
+    }
+  }, [currentSession]);
 
   const handleToggleExercise = (exercise: ExerciseType) => {
     const isSelected = selectedExercises.some(ex => ex.exerciseId === exercise.exerciseId);
@@ -23,14 +35,32 @@ const ActionPage = () => {
     }
   };
 
+  const handleSaveExercises = () => {
+    if (currentSession && existingSessionId) {
+      const updatedSession: WorkoutSessionType = {
+        ...currentSession,
+        exercises: selectedExercises,
+      };
+
+      editWorkoutSession(existingSessionId, updatedSession);
+
+      router.back();
+    }
+  };
+
 
   return (
     <div className='flex pb-10 sm:pt-10 bg-gray-100 sm:bg-white h-screen'>
       <div className='forMobile sm:forWeb'>
         <div className="bg-gray-100 p-4 sm:rounded-2xl">
-          <div className='flex justify-between'>
-            <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
-            <Button size='sm' type='button'>儲存 {selectedExercises.length}</Button>
+          {existingSessionId && (
+            <div className='flex justify-between'>
+              <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
+              <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
+            </div>
+          )}
+          <div className='flex'>
+            <h3 className="font-bold">查看動作</h3>
           </div>
 
           <div className='flex mt-5 gap-3'>

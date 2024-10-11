@@ -43,7 +43,7 @@ const TemplateCard = ({ iconSrc, templateCategory, templateTitle, onRemove, temp
 
   return (
     <div className='w-full col-span-1 md:col-span-1' draggable>
-      <div className='w-full h-full flex flex-col p-3 bg-gray-100 rounded-lg'>
+      <div className='w-full h-full flex flex-col p-3 bg-slate-200 rounded-lg'>
         <div className='flex items-start justify-between h-full gap-0.5 cursor-grab'>
           <p className='font-bold capitalize text-sm line-clamp-2 no-select'>{templateTitle}</p>
 
@@ -85,7 +85,7 @@ const TemplateCard = ({ iconSrc, templateCategory, templateTitle, onRemove, temp
           className='relative w-full mt-2 bg-white rounded-lg hover:bg-[#66CCFF] cursor-pointer'
           onClick={handleOpen}
         >
-          <p className='absolute top-0 right-0 font-bold text-sm bg-gray-100 px-3 py-1 rounded-bl-lg no-select'>
+          <p className='absolute top-0 right-0 font-bold text-sm bg-slate-200 px-3 py-1 rounded-bl-lg no-select'>
             {templateCategory}
           </p>
 

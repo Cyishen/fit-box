@@ -94,8 +94,6 @@ export const useMenuStore = create<BoxStore>()(
 
 interface WorkoutStore {
   workoutSessions: WorkoutSessionType[];
-  // currentSessionId: string | null;
-  // setCurrentSessionId: (id: string | null) => void;
   addWorkoutSession: (session: WorkoutSessionType) => void;
   removeWorkoutSession: (id: string) => void;
   editWorkoutSession: (id: string, updatedSession: WorkoutSessionType) => void;
@@ -105,8 +103,6 @@ export const useWorkoutStore = create<WorkoutStore>()(
   persist(
     (set) => ({
       workoutSessions: [],
-      // currentSessionId: null,
-      // setCurrentSessionId: (id) => set(() => ({ currentSessionId: id })),
       addWorkoutSession: (session) =>
         set((state) => ({
           workoutSessions: [...state.workoutSessions, session]
