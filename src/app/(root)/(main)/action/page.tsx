@@ -12,18 +12,25 @@ import { useWorkoutStore } from '@/lib/store';
 
 const ActionPage = () => {
   const router = useRouter();
-  const existingSessionId = localStorage.getItem('currentSessionId');
-
   const { workoutSessions, editWorkoutSession } = useWorkoutStore();
-  const currentSession = workoutSessions.find(session => session.sessionId === existingSessionId);
+
+  const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
+  const [currentSession, setCurrentSession] = useState<WorkoutSessionType | null>(null);
 
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
   useEffect(() => {
-    if (currentSession) {
-      setSelectedExercises(currentSession.exercises);
+    const sessionId = localStorage.getItem('currentSessionId');
+    setExistingSessionId(sessionId);
+
+    if (sessionId) {
+      const session = workoutSessions.find(session => session.sessionId === sessionId);
+      setCurrentSession(session ?? null);
+      if (session) {
+        setSelectedExercises(session.exercises);
+      }
     }
-  }, [currentSession]);
+  }, [workoutSessions]);
 
   const handleToggleExercise = (exercise: ExerciseType) => {
     const isSelected = selectedExercises.some(ex => ex.exerciseId === exercise.exerciseId);
