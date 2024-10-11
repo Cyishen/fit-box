@@ -75,18 +75,18 @@ const FitPage = () => {
               ))}
             </div>
 
-            <div
-              className='flex flex-col p-2 rounded-lg bg-gray-100 mt-2'
-              style={{
-                backgroundImage: `url(${randomBoxImage})`,
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'repeat',
-                backgroundBlendMode: 'overlay',
-                backgroundColor: '#f3f4f6',
-              }}
-            >
-              <div className='flex items-center justify-between w-full py-3'>
+            <div className='flex flex-col p-2 rounded-lg bg-gray-100 mt-2'>
+              <div 
+                className='flex items-center justify-between w-full py-3'
+                style={{
+                  backgroundImage: `url(${randomBoxImage})`,
+                  backgroundSize: 'contain',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'repeat',
+                  backgroundBlendMode: 'overlay',
+                  backgroundColor: '#f3f4f6',
+                }}
+              >
                 <h1 className='font-bold'>你的訓練</h1>
 
                 {canCreateNewMenu ? (
