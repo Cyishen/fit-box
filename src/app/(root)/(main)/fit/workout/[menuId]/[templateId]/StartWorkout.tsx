@@ -138,7 +138,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
       </div>
 
       {currentSession && (
-        <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200'>
+        <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200 mb-16'>
           <div className='pt-3'>
             <div className='overflow-y-scroll max-h-[500px] min-h-[500px]'>
               <div className='flex flex-col gap-3 pb-20'>
