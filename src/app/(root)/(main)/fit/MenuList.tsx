@@ -49,7 +49,7 @@ const MenuList: React.FC<MenuListProps> = ({
         menus.map((menu) => (
           <div
             key={menu.menuId}
-            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-slate-300"}`}
+            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-slate-200"}`}
           >
             <div
               className='flex items-center gap-2'
@@ -57,8 +57,8 @@ const MenuList: React.FC<MenuListProps> = ({
             >
               <div className='flex flex-col'>
                 <p className='font-bold'>{menu.title}</p>
-                <p className='text-muted-foreground text-[10px]'>
-                  模版{templates.filter(template => template.menuId === menu.menuId).length}
+                <p className='text-gray-400 text-[10px]'>
+                  模板數量 {templates.filter(template => template.menuId === menu.menuId).length}
                 </p>
               </div>
 

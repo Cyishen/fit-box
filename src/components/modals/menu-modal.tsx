@@ -40,7 +40,7 @@ export const MenuModal = () => {
       userId: "Guest",
       templateId: newCardId,
       templateCategory: "胸",
-      templateTitle: "未命名的訓練單 🏷️",
+      templateTitle: "未命名的訓練卡🗒︎",
       menuId: menuId,
       exercises: []
     };

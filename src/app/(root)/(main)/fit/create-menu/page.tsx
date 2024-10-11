@@ -12,7 +12,7 @@ const CreateMenu = () => {
   const [menu, setMenu] = useState<MenuType>({
     userId: "Guest",
     menuId:"",
-    title: "未命名的訓練盒 🏷️",
+    title: "未命名的訓練盒🗒︎",
   })
 
   const addMenu = useMenuStore((state) => state.addMenu);

@@ -122,7 +122,7 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
           <div className='flex flex-col w-[15%]'>
             <div className="relative h-full cursor-pointer">
               <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full h-full hidden group-hover:flex">
-                <span className="h-full flex items-center justify-end text-[10px] px-3 text-gray-400">
+                <span className="h-full flex items-center justify-end text-[10px] px-3 text-gray-400 no-select">
                   左滑刪除
                 </span>
               </div>
