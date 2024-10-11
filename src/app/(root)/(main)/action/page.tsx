@@ -19,6 +19,7 @@ const ActionPage = () => {
 
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
+
   useEffect(() => {
     const sessionId = localStorage.getItem('currentSessionId');
     setExistingSessionId(sessionId);
@@ -51,7 +52,11 @@ const ActionPage = () => {
 
       editWorkoutSession(existingSessionId, updatedSession);
 
-      router.back();
+      const menuId = currentSession?.menuId;
+      const templateId = currentSession?.templateId;
+      const sessionId = currentSession?.sessionId;
+
+      router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);
     }
   };
 
