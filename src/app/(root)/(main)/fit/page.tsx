@@ -82,7 +82,8 @@ const FitPage = () => {
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'repeat',
-                backgroundBlendMode: 'screen',
+                backgroundBlendMode: 'overlay',
+                backgroundColor: '#f3f4f6',
               }}
             >
               <div className='flex items-center justify-between w-full py-3'>
