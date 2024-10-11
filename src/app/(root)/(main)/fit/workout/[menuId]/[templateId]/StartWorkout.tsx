@@ -88,29 +88,34 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
 
 
   return (
-    <div className="sm:py-10">
+    <div className="sm:py-10 bg-gray-100">
       <div>
-        <div className="p-4">
+        <div className="px-4 pt-4">
           <div className='flex justify-between items-center'>
             {isEditMode ? (
-              <h3 className="font-bold">繼續訓練 
-                <span className="text-gray-400 pl-2 text-sm">{template.templateTitle}</span>
+              <h3 className="font-bold text-xl whitespace-nowrap">繼續訓練
               </h3>
-            ):(
-              <h3 className="font-bold">開始訓練</h3>
+            ) : (
+              <h3 className="font-bold text-xl whitespace-nowrap">開始訓練</h3>
             )}
 
-            <Button
-              onClick={handleCompleteWorkout}
-              size='sm'
-              className='font-bold'
-            >
-              完成
-            </Button>
+            <div className="flex w-full">
+              <div className='w-full flex justify-end items-center px-1'>
+                <p className="line-clamp-1 text-gray-400">{template.templateTitle}</p>
+              </div>
+
+              <Button
+                onClick={handleCompleteWorkout}
+                size='sm'
+                className='font-bold'
+              >
+                完成
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="px-4 pb-3">
+        <div className="px-4 py-3">
           <div className='flex items-center justify-end gap-3'>
             <h3 className="font-bold">計時器</h3>
             <p className="font-bold text-3xl border px-2 py-1 rounded-lg">00:00</p>

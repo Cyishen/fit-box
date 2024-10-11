@@ -63,17 +63,19 @@ const ActionPage = () => {
           {existingSessionId && (
             <div className='flex justify-between'>
               <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
+
+              <div className='w-full flex justify-end items-center px-1'>
+                <p className="line-clamp-1 text-gray-400">{currentSession?.templateTitle}</p>
+              </div>
+
               <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
             </div>
           )}
-          <div className='flex'>
-            <h3 className="font-bold">查看動作</h3>
-          </div>
 
           <div className='flex mt-5 gap-3'>
             <div className='w-32'>
               <h3 className="font-bold">選擇動作</h3>
-              <hr className='my-2'/>
+              <hr className='my-2' />
 
               <FitSideBar />
             </div>

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import ExerciseSet from './ExerciseSet';
 import { Trash2, ChevronLeft } from 'lucide-react';
+import RippleAni from '@/components/RippleAni';
+
 
 interface ExerciseListCardProps {
   exercise: ExerciseType;
@@ -83,23 +85,25 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
           <Image src="/icons/dumbbell.svg" alt='dumbbell' width={50} height={50} className='w-full h-full' />
         </div>
 
-        <div className='flex w-full rounded-md justify-between cursor-pointer hover:bg-gray-100 bg-gray-50'
-          onClick={onToggle}
-        >
-          <div className='flex flex-col justify-center px-1'>
-            <p>{exercise.name}</p>
+        <RippleAni className='flex w-full'>
+          <div className='flex w-full rounded-md justify-between cursor-pointer hover:bg-blue-100 bg-gray-50'
+            onClick={onToggle}
+          >
+            <div className='flex flex-col justify-center px-1'>
+              <p>{exercise.name}</p>
 
-            <div className='flex gap-0 text-xs text-muted-foreground'>
-              <p>{exercise.sets.length} 組・</p>
-              <p>{totalWeights} kg</p>
+              <div className='flex gap-0 text-xs text-muted-foreground'>
+                <p>{exercise.sets.length} 組・</p>
+                <p>{totalWeights} kg</p>
+              </div>
             </div>
           </div>
-        </div>
+        </RippleAni>
 
         <div className='w-[30%]'>
           <div className="group relative h-full cursor-pointer">
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden group-hover:flex items-center justify-center w-full h-full">
-              <ChevronLeft className='w-6 text-gray-200'/>
+              <ChevronLeft className='w-6 text-gray-200' />
               <span className="text-gray-400 text-xs px-2">
                 左滑刪除
               </span>
