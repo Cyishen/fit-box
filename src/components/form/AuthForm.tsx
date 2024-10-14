@@ -64,7 +64,7 @@ const AuthForm = ({ type }: { type: string }) => {
   }
 
   return (
-    <section className="flex min-h-screen w-full max-w-[90%] sm:max-w-[490px] flex-col justify-center gap-5 md:gap-8">
+    <section className="flex min-h-screen w-full max-sm:w-[90%] sm:max-w-[490px] flex-col justify-center gap-5 md:gap-8">
       <header className='flex flex-col gap-5 md:gap-8'>
         <Link href="/" className="cursor-pointer flex items-center gap-1">
           <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">FitBox</h1>
