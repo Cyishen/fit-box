@@ -31,7 +31,7 @@ const AuthForm = ({ type }: { type: string }) => {
   })
 
   //TODO: 連結資料庫
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async () => {
     setIsLoading(true)
 
     // try {
