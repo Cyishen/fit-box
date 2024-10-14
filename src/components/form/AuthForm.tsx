@@ -64,10 +64,10 @@ const AuthForm = ({ type }: { type: string }) => {
   }
 
   return (
-    <section className="flex min-h-screen w-full max-sm:w-[90%] sm:max-w-[490px] flex-col justify-center gap-5 md:gap-8">
+    <section className="flex min-h-screen w-full px-4 sm:max-w-[490px] flex-col justify-center gap-5 md:gap-8">
       <header className='flex flex-col gap-5 md:gap-8'>
         <Link href="/" className="cursor-pointer flex items-center gap-1">
-          <h1 className="text-26 font-ibm-plex-serif font-bold text-black-1">FitBox</h1>
+          <h1 className="text-3xl font-bold">FitBox</h1>
         </Link>
       </header>
 
@@ -80,7 +80,7 @@ const AuthForm = ({ type }: { type: string }) => {
                   id='userName'
                   control={form.control}
                   name='userName'
-                  label="userName"
+                  label="UserName"
                   placeholder='username'
                 />
               </div>
@@ -117,12 +117,12 @@ const AuthForm = ({ type }: { type: string }) => {
       </Form>
 
       <footer className="flex justify-center gap-2">
-        <p className="text-14 font-normal text-gray-600">
+        <p className="text-base font-normal text-gray-600">
           {type === 'sign-in'
             ? "還沒有帳號?"
             : "已經有帳號?"}
         </p>
-        <Link href={type === 'sign-in' ? '/sign-up' : '/sign-in'} className="text-14 cursor-pointer font-medium text-blue-400">
+        <Link href={type === 'sign-in' ? '/sign-up' : '/sign-in'} className="text-base cursor-pointer font-medium text-blue-400">
           {type === 'sign-in' ? 'Sign up' : 'Sign in'}
         </Link>
       </footer>
