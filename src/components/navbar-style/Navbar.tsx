@@ -28,9 +28,9 @@ const Navbar = () => {
             FitBox
           </Link>
 
-          <div className="flex gap-8">
-            <div className="hidden lg:flex lg:items-center lg:gap-8">
-              <Link href="/login" className={`px-8 py-2 rounded-full text-primary border`}>
+          <div className='flex'>
+            <div className='flex items-center'>
+              <Link href="/sign-in" className='px-8 py-2 rounded-full border hover:bg-black hover:text-white transition duration-500'>
                 Sign in
               </Link>
             </div>
