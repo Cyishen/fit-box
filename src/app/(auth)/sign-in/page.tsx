@@ -6,9 +6,7 @@ import React from 'react'
 
 const SingInPage = () => {
   return (
-    <div className="flex justify-center size-full">
-      <AuthForm type="sign-in" />
-    </div>
+    <AuthForm type="sign-in" />
   )
 }
 

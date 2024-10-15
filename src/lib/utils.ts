@@ -9,10 +9,16 @@ export function cn(...inputs: ClassValue[]) {
 
 export const authFormSchema = (type: string) => z.object({
   // sign up
-  userName: type === 'sign-in' 
-    ? z.string().optional() 
-    : z.string().min(3, { message:'最少3個字' }),
+  userName: type === 'sign-in'
+    ? z.string().optional()
+    : z.string()
+      .trim()
+      .min(2, { message: '最少2個字' })
+      .max(20, { message: '最多20個字' })
+      .regex(/^\S+$/, { message: '不能包含空格' }),
   // both
-  email: z.string().email({ message:'輸入正確email' }),
-  password: z.string().min(6, { message:'最少6個數字' }),
+  email: z.string().email({ message: '輸入正確email' }),
+  password: type === 'sign-in'
+    ? z.string().min(1, { message: '輸入密碼' })
+    : z.string().min(6, { message: '最少6個數字' }),
 })
