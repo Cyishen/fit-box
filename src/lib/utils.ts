@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const authFormSchema = (type: string) => z.object({
   // sign up
-  userName: type === 'sign-in'
+  name: type === 'sign-in'
     ? z.string().optional()
     : z.string()
       .trim()

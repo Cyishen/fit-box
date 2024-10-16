@@ -4,6 +4,9 @@ import "./globals.css";
 import { PracticeModal } from "@/components/modals/practice-modal";
 import { MenuModal } from "@/components/modals/menu-modal";
 
+import { QueryProvider } from "@/components/query-provider";
+
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -30,10 +33,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <QueryProvider>
+          {children}
 
-        <PracticeModal />
-        <MenuModal />
+          <PracticeModal />
+          <MenuModal />
+        </QueryProvider>
       </body>
     </html>
   );

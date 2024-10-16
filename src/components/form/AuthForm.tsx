@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React, { useState } from 'react'
-// import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { Form } from "@/components/ui/form"
 import { Button } from '../ui/button'
@@ -14,12 +14,17 @@ import { authFormSchema } from '@/lib/utils'
 import CustomInput from './CustomInput'
 import OAuth from './OAuth';
 
-// import { signIn, signUp } from '@/lib/actions/user.actions'
+import { useLogin } from '@/app/api/use-login';
+import { useSignUp } from '@/app/api/use-signup';
+
 
 
 const AuthForm = ({ type }: { type: string }) => {
   const [isLoading, setIsLoading] = useState(false);
-  // const router = useRouter();
+  const router = useRouter();
+
+  const { mutate: login } = useLogin();
+  const { mutate: signUp } = useSignUp();
 
   const formSchema = authFormSchema(type);
 
@@ -32,31 +37,54 @@ const AuthForm = ({ type }: { type: string }) => {
   })
 
   //TODO: 連結資料庫
-  const onSubmit = async () => {
-    setIsLoading(true)
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
 
+    if (type === 'sign-in') {
+      login(data, {
+        onSuccess: () => {
+          router.push('/fit');
+        },
+        onError: (error) => {
+          alert(error.message);
+        },
+        onSettled: () => {
+          setIsLoading(false);
+        }
+      });
+    } else {
+      signUp(data, {
+        onSuccess: (data) => {
+          alert(data.message);  
+          router.push('/sign-in');
+        },
+        onError: (error) => {
+          alert(error.message);
+        },
+        onSettled: () => {
+          setIsLoading(false);
+        }
+      });
+    }
+
+    // todo* other method fetch
     // try {
-    //   if(type === 'sign-up') {
-    //     const userData = {
-    //       userName: data.userName!,
-    //       email: data.email,
-    //       password: data.password
-    //     }
-
-    //     const newUser = await signUp(userData)
-
-    //     setUser(newUser)
+    //   const response = await fetch(`/api/auth/${type === 'sign-in' ? 'sign-in' : 'sign-up'}`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(data),
+    //   });
+  
+    //   if (response.ok) {
+    //     const responseData = await response.json();
+    //     console.log(type === 'sign-in' ? '登入成功:' : '註冊成功:', responseData);
+  
+    //   } else {
+    //     console.error(type === 'sign-in' ? '登入失敗' : '註冊失敗');
     //   }
-
-    //   if(type === 'sign-in') {
-    //     const response = await signIn({
-    //       email: data.email,
-    //       password: data.password,
-    //     })
-
-    //     if(response) router.push('/fit')
-    //   }
-
+      
     // } catch (error) {
     //   console.log(error)
     // } finally {
@@ -80,11 +108,11 @@ const AuthForm = ({ type }: { type: string }) => {
               <>
                 <div className="flex">
                   <CustomInput
-                    id='userName'
+                    id='name'
                     control={form.control}
-                    name='userName'
-                    label="UserName"
-                    placeholder='username'
+                    name='name'
+                    label="Name"
+                    placeholder='name'
                     disabled={isLoading}
                   />
                 </div>
