@@ -44,6 +44,7 @@ const auth = new Hono()
           httpOnly: true,
           sameSite: "strict",
           secure: true,
+          maxAge: 60 * 60 * 24 * 30,
         })
 
         return c.json({ email, name: user.name }, 200);
