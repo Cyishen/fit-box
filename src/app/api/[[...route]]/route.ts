@@ -71,7 +71,7 @@ const auth = new Hono()
     }
   )
   .post('/logout', (c) => {
-    deleteCookie(c, "fit-user-session");
+    deleteCookie(c, "fit-user-session", { path: '/' });
 
     return c.json({ success: true });
   });
