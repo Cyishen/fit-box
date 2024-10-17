@@ -38,7 +38,7 @@ export const useSignUp = () => {
 }
 
 export const useLogout = () => {
-  return useMutation<LogoutResponseType, Error>({
+  return useMutation({
     mutationFn: async () => {
       const response = await client.api.auth.logout['$post']()
       return handleResponse(response)
