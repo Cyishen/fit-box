@@ -14,9 +14,7 @@ import { authFormSchema } from '@/lib/utils'
 import CustomInput from './CustomInput'
 import OAuth from './OAuth';
 
-import { useLogin } from '@/app/api/use-login';
-import { useSignUp } from '@/app/api/use-signup';
-
+import { useLogin, useSignUp } from '@/lib/actions/user-auth-hook';
 
 
 const AuthForm = ({ type }: { type: string }) => {
