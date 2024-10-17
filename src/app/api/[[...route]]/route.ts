@@ -4,7 +4,7 @@ import { handle } from 'hono/vercel'
 import { zValidator } from '@hono/zod-validator'
 import { authFormSchema } from '@/lib/utils'
 
-import { getCookie, setCookie } from 'hono/cookie'
+import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 
 export const runtime = 'edge'
 const app = new Hono().basePath('/api')
@@ -70,6 +70,11 @@ const auth = new Hono()
       }
     }
   )
+  .post('/logout', (c) => {
+    deleteCookie(c, "fit-user-session");
+
+    return c.json({ success: true });
+  });
 
 // const project = new Hono()
 //   .get('/project/:projectId', (c) => {

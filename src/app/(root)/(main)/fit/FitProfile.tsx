@@ -1,11 +1,24 @@
-import useSession from '@/lib/actions/useSession';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
 import { useWorkoutStore } from '@/lib/store';
+
+import useSession from '@/lib/actions/useSession';
+import { useLogout } from '@/lib/actions/user-auth-hook';
+
 
 
 const FitProfile = () => {
   const { workoutSessions } = useWorkoutStore();
 
   const { isSignedIn, user } = useSession();
+  const { mutate: logout } = useLogout();
+  console.log(isSignedIn)
+
+  const handleLogout = async () => {
+    logout(); 
+    window.location.reload();
+  };
 
   return (
     <div className='sticky top-0 flex items-center p-3 bg-gray-100 gap-5 z-50'>
@@ -24,15 +37,23 @@ const FitProfile = () => {
         </div>
 
         {isSignedIn ? (
-          <div className='text-sm'>
-            <p>用戶: {user?.name}</p>
-            <p>電子郵件: {user?.email}</p>
+          <div className='flex justify-between'>
+            <div className='text-sm'>
+              <p>用戶: {user?.name}</p>
+              <p>電子郵件: {user?.email}</p>
+            </div>
+
+            <div className='flex items-center'>
+              <Button onClick={handleLogout} variant='outline' size='sm'>登出</Button>
+            </div>
           </div>
         ) : (
-          ''
+          <div className='flex items-center mt-4'>
+            <Link href="/sign-in">
+              <Button variant='outline' size='sm'>登入</Button>
+            </Link>
+          </div>
         )}
-
-        <p className="text-sm mt-5">基本資料</p>
       </div>
     </div>
   )
