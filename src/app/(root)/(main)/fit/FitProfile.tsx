@@ -15,7 +15,7 @@ const FitProfile = () => {
   const { mutate: logout } = useLogout();
 
   const handleLogout = async () => {
-    logout(); 
+    await logout(); 
     window.location.reload();
   };
 
