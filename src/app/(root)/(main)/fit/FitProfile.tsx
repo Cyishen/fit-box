@@ -5,6 +5,7 @@ import { useWorkoutStore } from '@/lib/store';
 
 import useSession from '@/lib/actions/useSession';
 import { useLogout } from '@/lib/actions/user-auth-hook';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -14,8 +15,11 @@ const FitProfile = () => {
   const { isSignedIn, user } = useSession();
   const { mutate: logout } = useLogout();
 
+  const router = useRouter();
+
   const handleLogout = async () => {
     await logout(); 
+    router.push('/');
   };
 
   return (
