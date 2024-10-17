@@ -9,6 +9,8 @@ type LoginRequestType = InferRequestType<typeof client.api.auth['sign-in']['$pos
 type SignUpResponseType = InferResponseType<typeof client.api.auth['sign-up']['$post']>
 type SignUpRequestType = InferRequestType<typeof client.api.auth['sign-up']['$post']>['json']
 
+type LogoutResponseType = InferResponseType<typeof client.api.auth['logout']['$post']>
+
 const handleResponse = async (response: Response) => {
   const data = await response.json()
   if (!response.ok) {
@@ -36,9 +38,9 @@ export const useSignUp = () => {
 }
 
 export const useLogout = () => {
-  return useMutation({
+  return useMutation<LogoutResponseType, Error>({
     mutationFn: async () => {
-      const response = await client.api.auth['logout']['$post']()
+      const response = await client.api.auth.logout['$post']()
       return handleResponse(response)
     }
   })
