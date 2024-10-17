@@ -4,21 +4,27 @@ import { handle } from 'hono/vercel'
 import { zValidator } from '@hono/zod-validator'
 import { authFormSchema } from '@/lib/utils'
 
+import { getCookie, setCookie } from 'hono/cookie'
 
 export const runtime = 'edge'
 const app = new Hono().basePath('/api')
 
 const fakeUsers = [
-  { name: 'Test User', email: 'test@gmail.com', password: '123' }
+  { name: 'Cyi', email: 'test@gmail.com', password: '123' }
 ];
 
 const auth = new Hono()
-  .get('/users', (c) => {
-    const safeUsers = fakeUsers.map(({ name, email }) => ({ name, email }));
-    return c.json(safeUsers);
+  .get('/session', (c) => {
+    const cookie = getCookie(c, "fit-user-session")
+
+    if (cookie) {
+      const userData = JSON.parse(Buffer.from(cookie, 'base64').toString())
+      return c.json({ isSignedIn: true, userData }, 200)
+    } else {
+      return c.json({ isSignedIn: false, userData: null }, 401)
+    }
   })
-  .post(
-    '/sign-in',
+  .post('/sign-in',
     zValidator('json', authFormSchema('sign-in')),
     (c) => {
       const { email, password } = c.req.valid('json');
@@ -26,14 +32,27 @@ const auth = new Hono()
       const user = fakeUsers.find(user => user.email === email && user.password === password);
 
       if (user) {
+        const session = JSON.stringify({
+          email: user.email,
+          name: user.name,
+        });
+
+        const encodedSessionSecret = Buffer.from(session).toString('base64');
+
+        setCookie(c, "fit-user-session", encodedSessionSecret, {
+          path: "/",
+          httpOnly: true,
+          sameSite: "strict",
+          secure: true,
+        })
+
         return c.json({ email, name: user.name }, 200);
       } else {
         return c.json({ message: '無效的電子郵件或密碼' }, 401);
       }
     }
   )
-  .post(
-    '/sign-up',
+  .post('/sign-up',
     zValidator('json', authFormSchema('sign-up')),
     (c) => {
       const { name, email, password } = c.req.valid('json');
@@ -44,7 +63,7 @@ const auth = new Hono()
 
       if (name && email && password) {
         fakeUsers.push({ name, email, password });
-        return c.json({ message: '註冊成功', name, email }, 201);
+        return c.json({ message: '註冊成功', name, email }, 200);
       } else {
         return c.json({ message: '註冊資料不完整' }, 400);
       }

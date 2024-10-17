@@ -1,9 +1,11 @@
+import useSession from '@/lib/actions/useSession';
 import { useWorkoutStore } from '@/lib/store';
-import React from 'react'
 
 
 const FitProfile = () => {
   const { workoutSessions } = useWorkoutStore();
+
+  const { isSignedIn, user } = useSession();
 
   return (
     <div className='sticky top-0 flex items-center p-3 bg-gray-100 gap-5 z-50'>
@@ -17,9 +19,18 @@ const FitProfile = () => {
         <p className="text-sm">健身開始日 2024/10/01</p>
 
         <div className='flex gap-2'>
-          <p className="text-sm">健身持續 21天 🔥 /</p>
+          <p className="text-sm">運動持續 21天 🔥 /</p>
           <p className="text-sm">累積訓練 {workoutSessions.length}次 👍︎</p>
         </div>
+
+        {isSignedIn ? (
+          <div className='text-sm'>
+            <p>用戶: {user?.name}</p>
+            <p>電子郵件: {user?.email}</p>
+          </div>
+        ) : (
+          ''
+        )}
 
         <p className="text-sm mt-5">基本資料</p>
       </div>

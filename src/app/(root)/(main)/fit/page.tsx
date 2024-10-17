@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Wrapper from '@/components/Wrapper'
 import { Button } from '@/components/ui/button'
@@ -10,21 +11,22 @@ import FitProfile from './FitProfile'
 import { useMenuStore, useWorkoutStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
 import ShowTrainingCard from './ShowTrainingCard'
-import { useEffect, useState } from 'react'
+
 
 // import { format } from "date-fns"
 
 
 const FitPage = () => {
-  const NOT_USER_MAX_MENU = 3
-  const menus = useMenuStore((state) => state.menus);
   const router = useRouter();
   const [randomBoxImage, setRandomBoxImage] = useState('');
 
+  const NOT_USER_MAX_MENU = 3
+  const menus = useMenuStore((state) => state.menus);
   const canCreateNewMenu = menus.length < NOT_USER_MAX_MENU;
 
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
+  //card method
   const handleEditWorkout = (sessionId: string) => {
     const sessionToEdit = workoutSessions.find(session => session.sessionId === sessionId);
 
