@@ -13,7 +13,7 @@ const FitProfile = () => {
 
   const { isSignedIn, user } = useSession();
   const { mutate: logout } = useLogout();
-  console.log('查看', user)
+
   const handleLogout = async () => {
     await logout(); 
   };

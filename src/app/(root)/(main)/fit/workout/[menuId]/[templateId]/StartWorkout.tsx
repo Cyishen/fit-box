@@ -88,7 +88,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
 
 
   return (
-    <div className="sm:py-10 bg-gray-100">
+    <div className="sm:pt-10 bg-gray-100">
       <div>
         <div className="px-4 pt-4">
           <div className='flex justify-between items-center'>
@@ -138,10 +138,10 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
       </div>
 
       {currentSession && (
-        <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200 mb-16'>
+        <div className='mt-3 px-3 rounded-t-2xl sm:rounded-t-2xl bg-slate-200'>
           <div className='pt-3'>
-            <div className='overflow-y-scroll max-h-[500px] min-h-[500px]'>
-              <div className='flex flex-col gap-3 pb-20'>
+            <div className='overflow-y-scroll h-full min-h-[500px] rounded-t-2xl'>
+              <div className='flex flex-col gap-3 mb-32'>
                 {currentSession.exercises.map((exercise) => (
                   <ExerciseListCard
                     key={exercise.exerciseId}

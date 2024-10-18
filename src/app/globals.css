@@ -86,7 +86,7 @@ input[type="number"] {
   } 
 
   .forMobile {
-    @apply h-full mx-auto w-full mb-14
+    @apply h-full mx-auto w-full mb-0
   }
 }
 
