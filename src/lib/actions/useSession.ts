@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 
 
-const useSession = () => {
+const useHonoSession = () => {
   const [user, setUser] = useState<UserModelType | null>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     const fetchUserSession = async () => {
-      const response = await fetch('/api/auth/session');
+      const response = await fetch('/api/hono/session');
       if (response.ok) {
         const { isSignedIn, userData } = await response.json();
         setIsSignedIn(isSignedIn);
@@ -24,4 +24,4 @@ const useSession = () => {
   return { isSignedIn, user };
 };
 
-export default useSession;
+export default useHonoSession;

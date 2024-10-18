@@ -84,7 +84,7 @@ const auth = new Hono()
 //   });
 
 const routes = app
-  .route('/auth', auth)
+  .route('/hono', auth)
 // .route('/', project)
 
 

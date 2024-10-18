@@ -1,8 +1,23 @@
 import Image from 'next/image'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { signIn, useSession } from "next-auth/react"
+import { useRouter } from 'next/navigation'
 
 
 const OAuth = () => {
+  const router = useRouter()
+  const { status } = useSession()
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/fit");
+    }
+  }, [status, router]);
+
+  const handleLogin = () => {
+    signIn('google');
+  };
+
   return (
     <div>
       <div className="flex flex-row justify-center items-center gap-x-3">
@@ -13,7 +28,7 @@ const OAuth = () => {
 
       <button
         className="w-full flex justify-center items-center mt-5 py-2 rounded-md bg-gray-100 hover:bg-gray-200 font-bold gap-2"
-        onClick={() => console.log('use Google')}
+        onClick={handleLogin}
       >
         <Image
           src="/media/google.svg"
