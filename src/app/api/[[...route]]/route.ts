@@ -19,9 +19,9 @@ const auth = new Hono()
 
     if (cookie) {
       const userData = JSON.parse(Buffer.from(cookie, 'base64').toString())
-      return c.json({ isSignedIn: true, userData }, 200)
+      return c.json({ isSignedIn: true, userData })
     } else {
-      return c.json({ isSignedIn: false, userData: null }, 401)
+      return c.json({ isSignedIn: false, userData: null }, 200)
     }
   })
   .post('/sign-in',
@@ -35,6 +35,7 @@ const auth = new Hono()
         const session = JSON.stringify({
           email: user.email,
           name: user.name,
+          date: new Date().toISOString().slice(0, 10),
         });
 
         const encodedSessionSecret = Buffer.from(session).toString('base64');

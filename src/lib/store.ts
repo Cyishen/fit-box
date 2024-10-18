@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 type UserModelStore = {
-  user: UserModel;
-  setUser: (newUser: UserModel) => void;
+  user: UserModelType;
+  setUser: (newUser: UserModelType) => void;
 }
 
 export const useUserStore = create<UserModelStore>()(
@@ -12,8 +12,8 @@ export const useUserStore = create<UserModelStore>()(
       user: {
         userId: "Guest",
         workoutSessions: [],
-      } as UserModel,
-      setUser: (newUser: UserModel) => set({ user: newUser }),
+      } as UserModelType,
+      setUser: (newUser: UserModelType) => set({ user: newUser }),
     }),
     { 
       name: 'user-storage', 

@@ -13,7 +13,7 @@ const FitProfile = () => {
 
   const { isSignedIn, user } = useSession();
   const { mutate: logout } = useLogout();
-
+  console.log('查看', user)
   const handleLogout = async () => {
     await logout(); 
   };
@@ -37,8 +37,8 @@ const FitProfile = () => {
         {isSignedIn ? (
           <div className='flex justify-between'>
             <div className='text-sm'>
-              <p>用戶: {user?.name}</p>
-              <p>電子郵件: {user?.email}</p>
+              <p>用戶 {user?.name}</p>
+              <p>郵件 {user?.email}</p>
             </div>
 
             <div className='flex items-center'>

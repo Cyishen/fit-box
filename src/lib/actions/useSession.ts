@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 
-interface User {
-  email: string;
-  name: string;
-}
 
 const useSession = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserModelType | null>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {

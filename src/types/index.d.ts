@@ -1,4 +1,4 @@
-declare type UserModel = {
+declare type UserModelType = {
   userId: string;                  
   email?: string;                   
   firstName?: string;               
@@ -6,6 +6,8 @@ declare type UserModel = {
   name?: string;                    
   dateOfBirth?: string;            
   workoutSessions?: WorkoutSessionType[]; 
+  createdAt?: string;
+  updatedAt?: string;
   lastActiveDate?: string;
 };
 
@@ -42,6 +44,7 @@ type MenuType = {
 
 type ExerciseType = {
   exerciseId: string; // 動作ID，例如 "1"
+  exerciseCategory?: string; // 動作類別
   name: string; // 動作名稱，例如 "啞鈴胸推"
   sets: SetType[];
 };
