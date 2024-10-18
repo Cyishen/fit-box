@@ -41,7 +41,11 @@ export const useLogout = () => {
   return useMutation<LogoutResponseType, Error>({
     mutationFn: async () => {
       const response = await client.api.auth['logout']['$post']()
+      console.log("回應有什麼", response)
       return handleResponse(response)
+    },
+    onSuccess: () => {
+      window.location.reload()
     }
   })
 }
