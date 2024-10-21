@@ -12,7 +12,6 @@ import { useMenuStore, useWorkoutStore } from '@/lib/store'
 import { useRouter } from 'next/navigation'
 import ShowTrainingCard from './ShowTrainingCard'
 
-
 // import { format } from "date-fns"
 
 

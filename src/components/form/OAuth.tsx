@@ -27,7 +27,7 @@ const OAuth = () => {
       </div>
 
       <button
-        className="w-full flex justify-center items-center mt-5 py-2 rounded-md bg-gray-100 hover:bg-gray-200 font-bold gap-2"
+        className="w-full flex justify-center items-center mt-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 font-bold gap-2"
         onClick={handleLogin}
       >
         <Image

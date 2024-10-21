@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import { Form } from "@/components/ui/form"
 import { Button } from '../ui/button'
@@ -12,87 +11,80 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { authFormSchema } from '@/lib/utils'
 import CustomInput from './CustomInput'
+
 import OAuth from './OAuth';
 
-import { useLogin, useSignUp } from '@/lib/actions/user-auth-hook';
+import { loginAuth, signUpAuth } from '@/actions/user-actions';
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/navigation';
 
 
 const AuthForm = ({ type }: { type: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const { mutate: login } = useLogin();
-  const { mutate: signUp } = useSignUp();
+  const { update } = useSession();
 
   const formSchema = authFormSchema(type);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: type === 'sign-up' ? '' : undefined,
       email: '',
       password: '',
     },
   })
 
-  //TODO: 連結資料庫
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
-    if (type === 'sign-in') {
-      login(data, {
-        onSuccess: () => {
-          router.push('/fit');
-        },
-        onError: (error) => {
-          alert(error.message);
-        },
-        onSettled: () => {
-          setIsLoading(false);
-        }
-      });
-    } else {
-      signUp(data, {
-        onSuccess: (data) => {
-          alert(data.message);  
-          router.push('/sign-in');
-        },
-        onError: (error) => {
-          alert(error.message);
-        },
-        onSettled: () => {
-          setIsLoading(false);
-        }
-      });
+    if (type === 'sign-up') {
+      const result = await signUpAuth(data);
+      if (result.success) {
+        router.push('/sign-in');
+      } else {
+        alert(result.error);
+      }
     }
 
-    // todo* other method fetch
-    // try {
-    //   const response = await fetch(`/api/auth/${type === 'sign-in' ? 'sign-in' : 'sign-up'}`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   });
-  
-    //   if (response.ok) {
-    //     const responseData = await response.json();
-    //     console.log(type === 'sign-in' ? '登入成功:' : '註冊成功:', responseData);
-  
-    //   } else {
-    //     console.error(type === 'sign-in' ? '登入失敗' : '註冊失敗');
+    if (type === 'sign-in') {
+      const result = await loginAuth(data);
+      if (result.success) {
+        await update();
+        alert(result.success)
+        router.push('/fit');
+      } else {
+        alert(result.error);
+      }
+    }
+    // todo* 客戶端登入
+    // if (type === 'sign-in') {
+    //   try {
+    //     const result = await signIn('credentials', {
+    //       email: data.email,
+    //       password: data.password,
+    //       redirect: false,
+    //     })
+
+    //     if (result?.error) {
+    //       alert('帳號或密碼錯誤')
+    //     } else {
+    //       alert('登入成功')
+    //       router.push('/fit')
+    //     }
+    //   } catch (error) {
+    //     console.error("授權過程中出錯:", error)
     //   }
-      
-    // } catch (error) {
-    //   console.log(error)
-    // } finally {
-    //   setIsLoading(false)
     // }
+
+    setIsLoading(false);
   }
 
   return (
     <div className="flex justify-center size-full">
-      <div className="flex min-h-screen w-full px-4 sm:max-w-[490px] flex-col justify-center gap-5 md:gap-8">
+      <div className="flex min-h-screen w-full px-4 sm:max-w-[490px] flex-col justify-center gap-3 md:gap-8">
         <header>
           <Link href="/" className="flex items-center cursor-pointer hover:text-blue-500">
             <ChevronLeft size={20} />
@@ -101,7 +93,7 @@ const AuthForm = ({ type }: { type: string }) => {
         </header>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
             {type === 'sign-up' && (
               <>
                 <div className="flex">
@@ -135,7 +127,7 @@ const AuthForm = ({ type }: { type: string }) => {
               disabled={isLoading}
             />
 
-            <div className="flex flex-col">
+            <div className="flex flex-col pt-2">
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <>
@@ -148,7 +140,7 @@ const AuthForm = ({ type }: { type: string }) => {
           </form>
         </Form>
 
-        <footer className="flex justify-center gap-2">
+        <footer className="flex justify-center gap-2 mt-3">
           <p className="text-base font-normal text-gray-600">
             {type === 'sign-in'
               ? "還沒有帳號?"

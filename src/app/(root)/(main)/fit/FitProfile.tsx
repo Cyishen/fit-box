@@ -1,10 +1,10 @@
+"use client"
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 import { useWorkoutStore } from '@/lib/store';
 
-import useHonoSession from '@/lib/actions/useSession';
-import { useLogout } from '@/lib/actions/user-auth-hook';
 import { useSession, signOut } from "next-auth/react"
 import Image from 'next/image';
 
@@ -12,19 +12,14 @@ import Image from 'next/image';
 const FitProfile = () => {
   const { workoutSessions } = useWorkoutStore();
 
-  const { isSignedIn, user } = useHonoSession();
-  const { mutate: logout } = useLogout();
+  const { data: session, status } = useSession()
 
   // OAuth for google
-  const { data: session, status } = useSession()
   const googleImage = session?.user?.image;
-
 
   const handleLogout = async () => {
     if (status === "authenticated") {
       await signOut()
-    } else {
-      await logout();
     }
   };
 
@@ -50,11 +45,11 @@ const FitProfile = () => {
           <p className="text-sm">累積訓練 {workoutSessions.length}次 👍︎</p>
         </div>
 
-        {isSignedIn || status === "authenticated"  ? (
+        {status === "authenticated"  ? (
           <div className='flex justify-between'>
             <div className='text-sm'>
-              <p>用戶 {user?.name || session?.user?.name}</p>
-              <p>郵件 {user?.email || session?.user?.email}</p>
+              <p>用戶 {session?.user?.name}</p>
+              <p>郵件 {session?.user?.email}</p>
             </div>
 
             <div className='flex items-center'>

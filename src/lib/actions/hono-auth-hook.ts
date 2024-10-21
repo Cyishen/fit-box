@@ -19,7 +19,7 @@ const handleResponse = async (response: Response) => {
   return data
 }
 
-export const useLogin = () => {
+export const useHonoLogin = () => {
   return useMutation<LoginResponseType, Error, LoginRequestType>({
     mutationFn: async (json) => {
       const response = await client.api.hono['sign-in']['$post']({ json })
@@ -28,7 +28,7 @@ export const useLogin = () => {
   })
 }
 
-export const useSignUp = () => {
+export const useHonoSignUp = () => {
   return useMutation<SignUpResponseType, Error, SignUpRequestType>({
     mutationFn: async (json) => {
       const response = await client.api.hono['sign-up']['$post']({ json })
@@ -37,7 +37,7 @@ export const useSignUp = () => {
   })
 }
 
-export const useLogout = () => {
+export const useHonoLogout = () => {
   return useMutation<LogoutResponseType, Error>({
     mutationFn: async () => {
       const response = await client.api.hono['logout']['$post']()
@@ -48,3 +48,31 @@ export const useLogout = () => {
     }
   })
 }
+
+// todo* hono login
+// if (type === 'sign-in') {
+//   login(data, {
+//     onSuccess: () => {
+//       router.push('/fit');
+//     },
+//     onError: (error) => {
+//       alert(error.message);
+//     },
+//     onSettled: () => {
+//       setIsLoading(false);
+//     }
+//   });
+// } else {
+//   signUp(data, {
+//     onSuccess: (data) => {
+//       alert(data.message);  
+//       router.push('/sign-in');
+//     },
+//     onError: (error) => {
+//       alert(error.message);
+//     },
+//     onSettled: () => {
+//       setIsLoading(false);
+//     }
+//   });
+// }

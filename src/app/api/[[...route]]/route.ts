@@ -6,7 +6,7 @@ import { authFormSchema } from '@/lib/utils'
 
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie'
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 const app = new Hono().basePath('/api')
 
 const fakeUsers = [
