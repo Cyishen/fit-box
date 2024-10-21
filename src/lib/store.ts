@@ -1,4 +1,3 @@
-import { MenuType, TemplateType, UserModelType, WorkoutSessionType } from '@/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 

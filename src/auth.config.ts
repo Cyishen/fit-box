@@ -4,6 +4,7 @@ import type { NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials";
 import { authFormSchema } from "./lib/utils";
 import { prismaDb } from "./lib/db";
+
 import { compare } from "bcryptjs";
 import { UserRole } from "@prisma/client";
 import { getUserById } from "./data/queries";

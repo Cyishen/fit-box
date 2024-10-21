@@ -6,8 +6,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // uncomment next line if you use Prisma <5.10
-  // directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 enum UserRole {
@@ -16,15 +14,21 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  password      String?
-  role          UserRole  @default(USER)
-  accounts      Account[]
-  sessions      Session[]
+  id             String    @id @default(cuid())
+  name           String? // 姓名
+  email          String?   @unique // 電子郵件
+  emailVerified  DateTime? @map("email_verified")
+  image          String? // 頭像 URL
+  password       String? // 密碼
+  role           UserRole  @default(USER)
+  dateOfBirth    DateTime? // 出生日期
+  createdAt      DateTime  @default(now()) // 用戶創建時間
+  updatedAt      DateTime  @updatedAt // 最近更新時間
+  lastActiveDate DateTime? // 最近活躍時間
+
+  accounts        Account[] // 與用戶相關的帳戶
+  sessions        Session[] // 與用戶相關的會話
+  workoutSessions WorkoutSession[] // 用戶的訓練紀錄
 
   @@map("users")
 }
@@ -55,8 +59,47 @@ model Session {
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@map("sessions")
 }
 
+// 訓練紀錄模型
+model WorkoutSession {
+  sessionId     String     @id @default(cuid())
+  userId        String     @map("user_id")
+  menuId        String     @map("menu_id")
+  templateId    String     @map("template_id")
+  templateTitle String     @map("template_title")
+  date          DateTime // 訓練日期
+  startTime     DateTime? // 開始時間
+  endTime       DateTime? // 結束時間
+  notes         String? // 註解
+  exercises     Exercise[] // 包含的動作
 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("workout_sessions")
+}
+
+// 動作模型
+model Exercise {
+  exerciseId       String  @id @default(cuid())
+  exerciseCategory String? 
+  name             String
+  sets             Set[]
+
+  workoutSessionId String?
+  workoutSession   WorkoutSession? @relation(fields: [workoutSessionId], references: [sessionId])
+}
+
+// 組數模型
+model Set {
+  id          String @id @default(cuid()) // 組數唯一ID
+  leftWeight  Int // 左側重量
+  rightWeight Int // 右側重量
+  repetitions Int // 重複次數
+  totalWeight Int // 總重量
+
+  exerciseId String   @map("exercise_id")
+  exercise   Exercise @relation(fields: [exerciseId], references: [exerciseId], onDelete: Cascade)
+}
