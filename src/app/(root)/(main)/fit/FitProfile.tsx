@@ -24,16 +24,22 @@ const FitProfile = () => {
   };
 
   return (
-    <div className='sticky top-0 flex items-center p-3 bg-gray-100 gap-5 z-50'>
+    <div className='sticky top-0 flex items-center p-3 bg-gray-200/50 backdrop-blur-lg gap-5 z-50 whitespace-nowrap'>
       <div className='min-w-[50px] min-h-[50px] rounded-full border border-gray-800 flex justify-center items-center'>
         <div className='w-full h-full flex justify-center items-center'>
-          <Image
-            src={googleImage || "/icons/dumbbell.svg"}
-            width={46}
-            height={46}
-            alt="google user"
-            className='rounded-full object-contain'
-          />
+          {session?.user.image ? (
+            <Image
+              src={googleImage || "/icons/dumbbell.svg"}
+              width={46}
+              height={46}
+              alt="google user"
+              className='rounded-full object-contain'
+            />
+          ) : (
+            <p className='rounded-full w-[46px] h-[46px] flex justify-center items-center bg-black text-white text-xl'>
+              {typeof session?.user?.name === 'string' ? session.user.name[0] : 'U'}
+            </p>
+          )}
         </div>
       </div>
 
@@ -45,7 +51,7 @@ const FitProfile = () => {
           <p className="text-sm">累積訓練 {workoutSessions.length}次 👍︎</p>
         </div>
 
-        {status === "authenticated"  ? (
+        {status === "authenticated" ? (
           <div className='flex justify-between'>
             <div className='text-sm'>
               <p>用戶 {session?.user?.name}</p>

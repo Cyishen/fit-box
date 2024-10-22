@@ -1,24 +1,9 @@
-"use client"
-
 import Link from 'next/link'
 import Wrapper from '../Wrapper'
-// import { Button } from '../ui/button'
-// import MobileMenu from '../MobileMenu';
+import { auth } from '@/auth'
 
-// import { Loader } from "lucide-react";
-// import { 
-//   ClerkLoaded, 
-//   ClerkLoading,
-//   SignedIn,
-//   SignedOut,
-//   SignInButton,
-//   UserButton,
-//   useAuth,
-// } from "@clerk/nextjs";
-
-
-const Navbar = () => {
-  // const { isSignedIn } = useAuth();
+const Navbar = async () => {
+  const session = await auth()
 
   return (
     <nav className='sticky z-[100] h-14 inset-x-0 top-0 w-full border-b bg-white/55 backdrop-blur-lg transition-all'>
@@ -30,38 +15,29 @@ const Navbar = () => {
 
           <div className='flex'>
             <div className='flex items-center'>
-              <Link href="/sign-in" className='px-8 py-2 rounded-full border hover:bg-black hover:text-white transition duration-500'>
-                Sign in
-              </Link>
+              {session?.user.id ? (
+                <div className='min-w-[36px] min-h-[36px] max-w-[36px] max-h-[36px] rounded-full border border-gray-500 flex justify-center items-center'>
+                  {session?.user.image ? (
+                    <img src={session?.user?.image || 'User'}
+                      width={32}
+                      height={32}
+                      alt="User Avatar"
+                      className='rounded-full object-contain'
+                    />
+                  ) : (
+                    <p className='rounded-full w-[32px] h-[32px] flex justify-center items-center bg-black text-white'>
+                      {typeof session?.user?.name === 'string' ? session.user.name[0] : 'U'}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <Link href="/sign-in" className='px-8 py-2 rounded-full border hover:bg-black hover:text-white transition duration-500'>
+                  Sign in
+                </Link>
+              )
+              }
             </div>
           </div>
-
-          {/* <div className="flex items-center justify-center gap-3">
-            <ClerkLoading>
-              <Loader className="h-5 w-5 text-muted-foreground animate-spin" />
-            </ClerkLoading>
-
-            <ClerkLoaded>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-
-              <SignedOut>
-                <SignInButton
-                  mode="modal"
-                  forceRedirectUrl="/"
-                  signUpFallbackRedirectUrl="/"
-                  signUpForceRedirectUrl="/"
-                >
-                  <Button size="sm" variant="ghost">
-                    登入
-                  </Button>
-                </SignInButton>
-              </SignedOut>
-            </ClerkLoaded>
-
-            <MobileMenu />
-          </div> */}
         </div>
       </Wrapper>
     </nav>
