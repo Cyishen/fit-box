@@ -16,12 +16,15 @@ import OAuth from './OAuth';
 
 import { loginAuth, signUpAuth } from '@/actions/user-actions';
 import { useSession } from "next-auth/react";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 
 const AuthForm = ({ type }: { type: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const urlError = searchParams.get('error') === 'OAuthAccountNotLinked' ? "Email already in use" : "";
 
   const { update } = useSession();
 
@@ -128,7 +131,7 @@ const AuthForm = ({ type }: { type: string }) => {
             />
 
             <div className="flex flex-col pt-2">
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} className='py-5'>
                 {isLoading ? (
                   <>
                     <Loader size={20} className="animate-spin" /> &nbsp;
@@ -139,6 +142,8 @@ const AuthForm = ({ type }: { type: string }) => {
             </div>
           </form>
         </Form>
+
+        {urlError && <p className="text-sm text-red-500">{urlError}</p>} 
 
         <footer className="flex justify-center gap-2 mt-3">
           <p className="text-base font-normal text-gray-600">

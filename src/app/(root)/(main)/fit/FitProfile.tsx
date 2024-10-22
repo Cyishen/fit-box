@@ -36,7 +36,7 @@ const FitProfile = () => {
               className='rounded-full object-contain'
             />
           ) : (
-            <p className='rounded-full w-[46px] h-[46px] flex justify-center items-center bg-black text-white text-xl'>
+            <p className='rounded-full w-[46px] h-[46px] flex justify-center items-center bg-black text-white text-xl  capitalize'>
               {typeof session?.user?.name === 'string' ? session.user.name[0] : 'U'}
             </p>
           )}
@@ -54,8 +54,8 @@ const FitProfile = () => {
         {status === "authenticated" ? (
           <div className='flex justify-between'>
             <div className='text-sm'>
-              <p>{session?.user?.name}</p>
-              <p className='text-[10px]'>ID {session?.user?.email}</p>
+              <p className='capitalize'>{session?.user?.name}</p>
+              <p className='text-[10px]'>{session?.user?.email}</p>
             </div>
 
             <div className='flex items-center'>

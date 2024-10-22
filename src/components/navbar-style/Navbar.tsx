@@ -25,7 +25,7 @@ const Navbar = async () => {
                       className='rounded-full object-contain'
                     />
                   ) : (
-                    <p className='rounded-full w-[32px] h-[32px] flex justify-center items-center bg-black text-white'>
+                    <p className='rounded-full w-[32px] h-[32px] flex justify-center items-center bg-black text-white capitalize'>
                       {typeof session?.user?.name === 'string' ? session.user.name[0] : 'U'}
                     </p>
                   )}

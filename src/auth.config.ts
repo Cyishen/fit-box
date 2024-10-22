@@ -72,4 +72,12 @@ export default {
       return token;
     }
   },
+  events: {
+    async linkAccount({ user }) {
+      await prismaDb.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() }
+      })
+    }
+  }
 } satisfies NextAuthConfig

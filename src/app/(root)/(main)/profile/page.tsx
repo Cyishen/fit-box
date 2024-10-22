@@ -26,7 +26,7 @@ const ProfilePage = async () => {
                   className='rounded-full object-contain'
                 />
               ) : (
-                <p className='rounded-full w-[46px] h-[46px] flex justify-center items-center bg-black text-white text-xl'>
+                <p className='rounded-full w-[46px] h-[46px] flex justify-center items-center bg-black text-white text-xl capitalize'>
                   {typeof session?.user?.name === 'string' ? session.user.name[0] : 'U'}
                 </p>
               )}
@@ -36,7 +36,7 @@ const ProfilePage = async () => {
           <div className='flex flex-col w-full'>
             <div className='flex flex-col leading-4 font-bold'>
               {session?.user ? (
-                <p>{session?.user.name}</p>
+                <p className='capitalize'>{session?.user.name}</p>
               ) : (
                 <p>Guest</p>
               )}
