@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 
 
 type Props = {
@@ -18,7 +18,9 @@ const AuthLayout = ({ children }: Props) => {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-screen-xl flex justify-center">
-        {children}
+        <Suspense fallback={<div>Loading...</div>}>
+          {children}
+        </Suspense>
       </div>
     </main>
   );
