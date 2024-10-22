@@ -25,7 +25,7 @@ const FitProfile = () => {
 
   return (
     <div className='sticky top-0 flex items-center p-3 bg-gray-200/50 backdrop-blur-lg gap-5 z-50 whitespace-nowrap'>
-      <div className='min-w-[50px] min-h-[50px] rounded-full border border-gray-800 flex justify-center items-center'>
+      <div className='min-w-[50px] min-h-[50px] rounded-full border border-gray-500 flex justify-center items-center'>
         <div className='w-full h-full flex justify-center items-center'>
           {session?.user.image ? (
             <Image
@@ -47,15 +47,15 @@ const FitProfile = () => {
         <p className="text-sm">健身開始日 2024/10/01</p>
 
         <div className='flex gap-2'>
-          <p className="text-sm">運動持續 21天 🔥 /</p>
+          <p className="text-sm">運動持續 21天 🔥</p>
           <p className="text-sm">累積訓練 {workoutSessions.length}次 👍︎</p>
         </div>
 
         {status === "authenticated" ? (
           <div className='flex justify-between'>
             <div className='text-sm'>
-              <p>用戶 {session?.user?.name}</p>
-              <p>郵件 {session?.user?.email}</p>
+              <p>{session?.user?.name}</p>
+              <p className='text-[10px]'>ID {session?.user?.email}</p>
             </div>
 
             <div className='flex items-center'>
