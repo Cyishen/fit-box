@@ -7,7 +7,7 @@ import BarChart from './barChart'
 
 const RecordPage = () => {
   return (
-    <section className='flex flex-col bg-[#f3f2f8] h-screen'>
+    <section className='flex flex-col bg-[#f3f2f8] h-screen no-select'>
       <Wrapper>
         <h1 className='text-2xl font-bold mt-5'>紀錄</h1>
         <div className='mt-5'>

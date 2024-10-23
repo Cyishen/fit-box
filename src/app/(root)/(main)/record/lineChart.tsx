@@ -27,9 +27,10 @@ const LineChart = () => {
         const data = params[0].data;
         return `${data[0]}<br/>總重量 ${data[1]}`;
       },
-      // alwaysShowContent: true,
-      // position: ['70%', '10%'],
+      alwaysShowContent: true,
+      position: ['80%', '10%'],
       backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      shadowColor: 'none',
       padding: 5,
       borderWidth: 0,
       textStyle: {
@@ -103,30 +104,33 @@ const LineChart = () => {
         areaStyle: { color: 'rgba(59, 130, 246, 0.5)' },
         lineStyle: { color: 'black', width: 0.2, type: 'solid' },
         markPoint: {
-          symbolSize: 0,
+          data: [{ type: 'max', name: '最高' }],
           symbol: 'pin',
+          symbolSize: 0,
           label: {
             position: 'top',
             fontWeight: 'bold',
-            fontSize: 10
-          },
-          data: [{ type: 'max', name: '最高' }]
+            fontSize: 8
+          }
         },
         markLine: {
+          data: [{ type: 'average', name: '平均'}],
           symbol: 'none',
           silent: true,
           label: {
             position: 'insideEndBottom',
             fontWeight: 'bold',
-            fontSize: 10
+            fontSize: 8,
           },
-          data: [{ type: 'average', name: '平均' }]
+          lineStyle: {
+            width: 0.5,
+            color: 'rgba(0, 0, 0, 0.6)'
+          }
         }
       }
     ]
   };
 
-  
 
   return (
     <div className='flex flex-col px-0 py-1 pb-3 rounded-lg'>
@@ -141,7 +145,7 @@ const LineChart = () => {
                 className={`flex items-center cursor-pointer py-1 px-5 text-sm 
                   ${activeCategory === item
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100'
+                    : 'bg-white'
                   } whitespace-nowrap rounded-full`}
               >
                 {item}
