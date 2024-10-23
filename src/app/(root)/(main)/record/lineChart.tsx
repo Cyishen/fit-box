@@ -153,7 +153,7 @@ const LineChart = () => {
 
 
   return (
-    <div className='flex flex-col px-0 py-1 pb-3 rounded-lg'>
+    <div className='flex flex-col py-1 pb-3 rounded-lg'>
       <div className='px-1'>
         <div className="flex overflow-x-scroll py-2">
           <div className="flex gap-3">
