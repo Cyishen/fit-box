@@ -25,11 +25,27 @@ const LineChart = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter: function (params: any) {
         const data = params[0].data;
-        return `日期 ${data[0]}<br/>總重量 ${data[1]}kg`;
-      }
+        return `${data[0]}<br/>總重量 ${data[1]}`;
+      },
+      // alwaysShowContent: true,
+      // position: ['70%', '10%'],
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      padding: 5,
+      borderWidth: 0,
+      textStyle: {
+        fontSize: 8,
+        color: 'white',
+        fontWeight: 'bold',
+      },
+      // axisPointer: {
+      //   type: 'cross',
+      //   label: {
+      //     backgroundColor: 'black'
+      //   }
+      // },
     },
     grid: {
-      left: '4%',
+      left: '0%',
       right: '4%',
       bottom: '16%',
       containLabel: true
@@ -37,8 +53,9 @@ const LineChart = () => {
     xAxis: {
       type: 'time',
       axisLabel: {
-        formatter: '{MM}-{dd}',
-        hideOverlap: true
+        formatter: '{MM}/{dd}',
+        hideOverlap: true,
+        fontSize: 8,
       },
     },
     yAxis: {
@@ -50,9 +67,11 @@ const LineChart = () => {
       nameGap: 30,
       axisLabel: {
         formatter: '{value}k',
+        fontSize: 8,
       },
       nameTextStyle: {
-        align: "center"
+        align: "left",
+        fontSize: 12,
       }
     },
     dataZoom: [
@@ -65,7 +84,7 @@ const LineChart = () => {
         height: 30
       },
       {
-        type: 'inside',
+        type: 'slider',
         xAxisIndex: [0],
         start: 50,
         end: 100,
@@ -81,22 +100,27 @@ const LineChart = () => {
         symbolSize: 6,
         sampling: 'lttb',
         data: chartData.map(item => [item.date, item.totalWeight]),
-        areaStyle: {
-          color: 'rgba(59, 130, 246, 0.5)'
-        },
-        lineStyle: {
-          color: 'black',
-          width: 1,
-          type: 'solid'
-        },
+        areaStyle: { color: 'rgba(59, 130, 246, 0.5)' },
+        lineStyle: { color: 'black', width: 0.2, type: 'solid' },
         markPoint: {
-          data: [
-            { type: 'max', name: '最高' },
-            // { type: 'min', name: '最低' }
-          ]
+          symbolSize: 0,
+          symbol: 'pin',
+          label: {
+            position: 'top',
+            fontWeight: 'bold',
+            fontSize: 10
+          },
+          data: [{ type: 'max', name: '最高' }]
         },
         markLine: {
-          // data: [{ type: 'average', name: '平均' }]
+          symbol: 'none',
+          silent: true,
+          label: {
+            position: 'insideEndBottom',
+            fontWeight: 'bold',
+            fontSize: 10
+          },
+          data: [{ type: 'average', name: '平均' }]
         }
       }
     ]
@@ -105,8 +129,8 @@ const LineChart = () => {
   
 
   return (
-    <div className='flex flex-col bg-white px-2 py-1 pb-3 rounded-lg'>
-      <div>
+    <div className='flex flex-col px-0 py-1 pb-3 rounded-lg'>
+      <div className='px-1'>
         <div className="flex overflow-x-scroll py-2">
           <div className="flex gap-3">
             {categories.map((item) => (
