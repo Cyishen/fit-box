@@ -15,9 +15,11 @@ const LineChart = () => {
     // 生成過去365天的模擬數據
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 365);
-    const mockData = generateMockData(activeCategory, startDate, 365);
+
+    const mockData = generateMockData(activeCategory, startDate, 180);
     setChartData(mockData);
   }, [activeCategory]);
+
 
   const option: EChartsOption = {
     tooltip: {
@@ -95,13 +97,31 @@ const LineChart = () => {
     series: [
       {
         name: activeCategory,
+        data: chartData.map(item => [item.date, item.totalWeight]),
         type: 'line',
         smooth: false,
         symbol: 'circle',
-        symbolSize: 6,
+        symbolSize: 5,
         sampling: 'lttb',
-        data: chartData.map(item => [item.date, item.totalWeight]),
-        areaStyle: { color: 'rgba(59, 130, 246, 0.5)' },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+                { offset: 0, color: 'rgba(59, 130, 246, 0.5)' }, // 渐变起始颜色
+                { offset: 0.7, color: 'rgba(130, 180, 250, 0.7)' },
+                { offset: 1, color: 'rgba(255, 255, 255, 0.5)' }  // 渐变结束颜色
+            ],
+            global: false
+          }
+        },
+        itemStyle: {
+          color: 'rgb(59, 130, 246)',
+          opacity: 0.8,
+        },
         lineStyle: { color: 'black', width: 0.2, type: 'solid' },
         markPoint: {
           data: [{ type: 'max', name: '最高' }],
@@ -179,15 +199,15 @@ type WorkoutRecord = {
 // mockData.ts
 const generateMockData = (category: string, startDate: Date, days: number): WorkoutRecord[] => {
   const data: WorkoutRecord[] = [];
-  const baseWeight = Math.floor(Math.random() * 100) + 150; // 基礎重量介於 150-250
+  const baseWeight = Math.floor(Math.random() * 100) + 150;
 
   for (let i = 0; i < days; i++) {
-    // 每 2-4 天生成一條記錄
+    // 每 2-4 天生成一條記錄, 先產生 0-1內的數字, 在乘3, 再加上 2, 最後Math.floor取整數
     if (i % Math.floor(Math.random() * 3 + 2) === 0) {
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + i);
 
-      // 在基礎重量上增加一些隨機變化 (-20 到 +20)
+      // 在基礎重量上增加一些隨機變化, 隨機 0-40後減 20 = (-20 到 20)
       const weightVariation = Math.floor(Math.random() * 40) - 20;
 
       data.push({
