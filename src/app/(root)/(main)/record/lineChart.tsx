@@ -1,71 +1,124 @@
 "use client"
 
+import React, { useState, useEffect } from 'react';
+import ReactECharts from 'echarts-for-react';
+import type { EChartsOption } from 'echarts';
 
-import React from 'react'
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
-
-const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"];
+const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"] as const;
+type Category = typeof categories[number];
 
 const LineChart = () => {
-  const data = {
-    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-    datasets: [
-      {
-        label: '重量',
-        data: [12, 19, 18, 20, 22, 27, 15, 32, 20, 40, 38, 45],
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-        fill: true,
-      },
-    ],
-  };
+  const [activeCategory, setActiveCategory] = useState<Category>("胸");
+  const [chartData, setChartData] = useState<WorkoutRecord[]>([]);
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: '每次總重量',
+  useEffect(() => {
+    // 生成過去365天的模擬數據
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 365);
+    const mockData = generateMockData(activeCategory, startDate, 365);
+    setChartData(mockData);
+  }, [activeCategory]);
+
+  const option: EChartsOption = {
+    tooltip: {
+      trigger: 'axis',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter: function (params: any) {
+        const data = params[0].data;
+        return `日期 ${data[0]}<br/>總重量 ${data[1]}kg`;
+      }
+    },
+    grid: {
+      left: '4%',
+      right: '4%',
+      bottom: '16%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'time',
+      axisLabel: {
+        formatter: '{MM}-{dd}',
+        hideOverlap: true
       },
     },
+    yAxis: {
+      type: 'value',
+      boundaryGap: ['10%', '10%'],
+      scale: true,
+      name: '總重量(kg)',
+      nameLocation: 'end',
+      nameGap: 30,
+      axisLabel: {
+        formatter: '{value}k',
+      },
+      nameTextStyle: {
+        align: "center"
+      }
+    },
+    dataZoom: [
+      {
+        type: 'slider',
+        show: true,
+        xAxisIndex: [0],
+        start: 80,
+        end: 100,
+        height: 30
+      },
+      {
+        type: 'inside',
+        xAxisIndex: [0],
+        start: 50,
+        end: 100,
+        zoomOnMouseWheel: 'shift'
+      }
+    ],
+    series: [
+      {
+        name: activeCategory,
+        type: 'line',
+        smooth: false,
+        symbol: 'circle',
+        symbolSize: 6,
+        sampling: 'lttb',
+        data: chartData.map(item => [item.date, item.totalWeight]),
+        areaStyle: {
+          color: 'rgba(59, 130, 246, 0.5)'
+        },
+        lineStyle: {
+          color: 'black',
+          width: 1,
+          type: 'solid'
+        },
+        markPoint: {
+          data: [
+            { type: 'max', name: '最高' },
+            // { type: 'min', name: '最低' }
+          ]
+        },
+        markLine: {
+          // data: [{ type: 'average', name: '平均' }]
+        }
+      }
+    ]
   };
+
+  
 
   return (
     <div className='flex flex-col bg-white px-2 py-1 pb-3 rounded-lg'>
       <div>
         <div className="flex overflow-x-scroll py-2">
           <div className="flex gap-3">
-            {categories.map((item, index) => (
+            {categories.map((item) => (
               <button
-                key={index}
+                key={item}
                 type="button"
-                className={`flex items-center  cursor-pointer py-1 px-5 text-sm bg-gray-100 whitespace-nowrap rounded-full`}
+                onClick={() => setActiveCategory(item)}
+                className={`flex items-center cursor-pointer py-1 px-5 text-sm 
+                  ${activeCategory === item
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100'
+                  } whitespace-nowrap rounded-full`}
               >
                 {item}
               </button>
@@ -74,14 +127,48 @@ const LineChart = () => {
         </div>
       </div>
 
-      <div className='text-sm mt-1'>1月-12月</div>
-
-      {/* todo: 曲線圖 */}
-      <div className='w-full h-52 mt-2 border rounded-lg px-1'>
-        <Line data={data} options={options} />
+      <div className="h-[300px]">
+        <ReactECharts
+          option={option}
+          style={{ height: '100%', width: '100%' }}
+          opts={{ renderer: 'svg' }}
+        />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default LineChart;
+
+
+// types.ts
+type WorkoutRecord = {
+  date: string;
+  totalWeight: number;
+  category: string;
+};
+
+// mockData.ts
+const generateMockData = (category: string, startDate: Date, days: number): WorkoutRecord[] => {
+  const data: WorkoutRecord[] = [];
+  const baseWeight = Math.floor(Math.random() * 100) + 150; // 基礎重量介於 150-250
+
+  for (let i = 0; i < days; i++) {
+    // 每 2-4 天生成一條記錄
+    if (i % Math.floor(Math.random() * 3 + 2) === 0) {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + i);
+
+      // 在基礎重量上增加一些隨機變化 (-20 到 +20)
+      const weightVariation = Math.floor(Math.random() * 40) - 20;
+
+      data.push({
+        date: currentDate.toISOString().split('T')[0],
+        totalWeight: baseWeight + weightVariation,
+        category
+      });
+    }
+  }
+
+  return data;
+};
