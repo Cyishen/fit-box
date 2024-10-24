@@ -2,6 +2,7 @@ import Wrapper from '@/components/Wrapper'
 import React from 'react'
 import LineChart from './lineChart'
 import BarChart from './barChart'
+import PieChart from './pieChart'
 
 
 const RecordPage = () => {
@@ -15,6 +16,10 @@ const RecordPage = () => {
 
         <div className='mt-5'>
           <BarChart />
+        </div>
+
+        <div className='mt-5'>
+          <PieChart />
         </div>
       </Wrapper>
     </section>

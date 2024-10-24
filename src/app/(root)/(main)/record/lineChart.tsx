@@ -23,12 +23,12 @@ const LineChart = () => {
 
   const option: EChartsOption = {
     title: {
-      text: "訓練量",
-      subtext: '重量x次數x組數',
+      text: "訓練量 🏋️",
+      subtext: '重量 x 次數 x 組數 kg',
       itemGap: 5,
       top: 5,
-      left: "center",
-      textAlign: 'left',
+      // left: "center",
+      // textAlign: 'left',
       textStyle: {
         fontSize: 14
       },
@@ -41,7 +41,7 @@ const LineChart = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter: function (params: any) {
         const data = params[0].data;
-        return `${data[0]}<br/>重量 ${data[1]}`;
+        return `${data[0]}<br/>總重量 ${data[1]}`;
       },
       alwaysShowContent: true,
       position: ['80%', '10%'],
@@ -79,7 +79,7 @@ const LineChart = () => {
       type: 'value',
       boundaryGap: ['10%', '10%'],
       scale: true,
-      name: '重量(kg)',
+      // name: '重量(kg)',
       nameLocation: 'end',
       nameGap: 30,
       axisLabel: {

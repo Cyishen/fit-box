@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 
+import AnimatedBackground from './AnimatedBackground';
+
 const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"] as const;
 type Category = typeof categories[number];
 
@@ -18,12 +20,12 @@ const BarChart = () => {
 
   const option: EChartsOption = {
     title: {
-      text: "完成組數",
+      text: "完成組數 ✅",
       subtext: '與上週期對比',
       itemGap: 5,
       top: 5,
-      left: "center",
-      textAlign: 'left',
+      // left: "center",
+      // textAlign: 'left',
       textStyle: {
         fontSize: 14
       },
@@ -38,14 +40,14 @@ const BarChart = () => {
     // },
     tooltip: {
       trigger: 'axis',
-      alwaysShowContent: false,
-      position: ['70%', '5%'],
+      alwaysShowContent: true,
+      position: ['70%', '3%'],
       backgroundColor: 'transparent',
       shadowColor: 'none',
       padding: 0,
       borderWidth: 0,
       textStyle: {
-        fontSize: 12,
+        fontSize: 11,
         color: 'gray',
         fontWeight: 'bold',
       },
@@ -66,7 +68,7 @@ const BarChart = () => {
     yAxis: {
       type: 'value',
       boundaryGap: ['0%', '10%'],
-      name: '組數',
+      // name: '組數',
       nameLocation: 'end',
       axisLabel: {
         fontSize: 8,
@@ -140,6 +142,9 @@ const BarChart = () => {
   );
 };
 
+export default BarChart;
+
+
 // 生成假資料的函式
 const generateMockData = (timeFrame: '週' | '月' | '年') => {
   const data: { category: Category, count: number }[] = [];
@@ -173,17 +178,11 @@ const generateMockData = (timeFrame: '週' | '月' | '年') => {
   return data;
 };
 
-export default BarChart;
-
-
-
-import AnimatedBackground from './AnimatedBackground';
-
+// 動態選單
 interface AnimatedTabsHoverProps {
   activeTab: '週' | '月' | '年';
   onChange: (tab: '週' | '月' | '年') => void;
 }
-
 function AnimatedTabsHover({ activeTab, onChange }: AnimatedTabsHoverProps) {
   const TABS = [
     { label: '週', icon: null },
