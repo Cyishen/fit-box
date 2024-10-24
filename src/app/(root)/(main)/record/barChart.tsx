@@ -24,8 +24,8 @@ const BarChart = () => {
     // },
     tooltip: {
       trigger: 'axis',
-      alwaysShowContent: true,
-      position: ['80%', '5%'],
+      alwaysShowContent: false,
+      position: ['50%', '5%'],
       backgroundColor: 'transparent',
       shadowColor: 'none',
       padding: 0,
@@ -67,6 +67,13 @@ const BarChart = () => {
         name: '本次',
         type: 'bar',
         data: chartData.map(item => item.count),
+        label: {
+          show: true,
+          position: 'top',
+          fontSize: 8,
+          fontWeight: 'bold',
+          // formatter: (params: { value: number }) => `${params.value}`
+        },
         itemStyle: {
           color: (params: { dataIndex: number }) => {
             switch (chartData[params.dataIndex].category) {
@@ -92,11 +99,17 @@ const BarChart = () => {
         name: '上次',
         type: 'bar',
         data: chartData.map(() => 50),
+        label: {
+          show: true,
+          position: 'top',
+          fontSize: 8,
+          color: 'gray',
+        },
         itemStyle: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          color: 'rgba(59, 130, 246, 0.1)',
         }
       }
-    ]
+    ],
   };
 
   return (
