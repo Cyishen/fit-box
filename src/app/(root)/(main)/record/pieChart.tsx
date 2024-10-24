@@ -29,14 +29,13 @@ const generateCurrentYearData = (): WorkoutCategory[] => {
   const startOfYear = new Date(new Date().getFullYear(), 0, 1);
   const today = new Date();
   const daysSinceStartOfYear = Math.floor((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24));
-  
+
   return categories.map(category => {
     // 假設平均每週訓練該部位1-2次，每次3-5組
-    // 根據已經過去的週數生成合理的組數範圍
     const weeksElapsed = Math.floor(daysSinceStartOfYear / 7);
     const minSets = weeksElapsed * 3; // 最少每週一次，每次3組
     const maxSets = weeksElapsed * 10; // 最多每週兩次，每次5組
-    
+
     return {
       category,
       totalSets: Math.floor(Math.random() * (maxSets - minSets + 1)) + minSets,
@@ -57,9 +56,9 @@ const PieChart = () => {
   const option: EChartsOption = {
     title: {
       text: `${currentYear}年訓練分佈`,
-      subtext: '按訓練組數統計',
+      subtext: '訓練組數統計',
       left: 'center',
-      top: '40%',
+      top: '0%',
       itemGap: 5,
       textStyle: {
         fontSize: 14
@@ -70,12 +69,12 @@ const PieChart = () => {
     },
     tooltip: {
       trigger: 'item',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter: (params: any) => {
         const { name, value, percent } = params;
-        return `${name}<br/>訓練數: ${value}組<br/>佔比: ${percent}%`;
+        return `${name}<br/>訓練數 ${value}組<br/>佔比 ${percent}%`;
       },
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
       textStyle: {
         fontSize: 11,
         color: 'gray',
@@ -125,7 +124,7 @@ const PieChart = () => {
   };
 
   return (
-    <div className='flex flex-col px-2 py-1 pb-3 rounded-lg bg-white/55 backdrop-blur-lg'>
+    <div className='flex flex-col px-1 py-1 pb-3 rounded-lg border'>
       <div className="h-[300px]">
         <ReactECharts
           option={option}

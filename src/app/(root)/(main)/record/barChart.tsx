@@ -20,7 +20,7 @@ const BarChart = () => {
 
   const option: EChartsOption = {
     title: {
-      text: "完成組數 ✅",
+      text: "完成組數 🥳",
       subtext: '與上週期對比',
       itemGap: 5,
       top: 5,
@@ -40,15 +40,40 @@ const BarChart = () => {
     // },
     tooltip: {
       trigger: 'axis',
+      // formatter: (params: any) => { 
+      //   const name = params[0].name;
+      //   const color = `<span style="
+      //     display: inline-block;
+      //     background-color: ${params[0].color};
+      //     border-radius: 50%;
+      //     width: 8px;
+      //     height: 8px;
+      //     margin-right: 5px;
+      //   "></span>`;
+
+      //   const lastColor = `<span style="
+      //   display: inline-block;
+      //   background-color: ${params[1].color};
+      //   border-radius: 50%;
+      //   width: 8px;
+      //   height: 8px;
+      //   margin-right: 5px;
+      // "></span>`;
+        
+      //   const data = params[0].data;
+      //   const lastData = params[1].data;
+      //   return `${name} <br/> ${color} 本次 ${data} <br/>${lastColor} 上次 ${lastData}`;
+      // },
       alwaysShowContent: true,
       position: ['70%', '3%'],
       backgroundColor: 'transparent',
       shadowColor: 'none',
-      padding: 0,
-      borderWidth: 0,
+      padding: 5,
+      borderWidth: 1,
+      borderColor: 'rgba(59, 130, 246, 0.1)',
       textStyle: {
         fontSize: 11,
-        color: 'gray',
+        color: 'black',
         fontWeight: 'bold',
       },
       axisPointer: {

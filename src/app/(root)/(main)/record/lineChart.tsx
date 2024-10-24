@@ -44,14 +44,14 @@ const LineChart = () => {
         return `${data[0]}<br/>總重量 ${data[1]}`;
       },
       alwaysShowContent: true,
-      position: ['80%', '10%'],
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      position: ['70%', '7%'],
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
       shadowColor: 'none',
       padding: 5,
       borderWidth: 0,
       textStyle: {
-        fontSize: 8,
-        color: 'white',
+        fontSize: 11,
+        color: 'black',
         fontWeight: 'bold',
       },
       // axisPointer: {
