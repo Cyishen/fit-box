@@ -17,6 +17,20 @@ const BarChart = () => {
   }, [timeFrame]);
 
   const option: EChartsOption = {
+    title: {
+      text: "完成組數",
+      subtext: '與上週期對比',
+      itemGap: 5,
+      top: 5,
+      left: "center",
+      textAlign: 'left',
+      textStyle: {
+        fontSize: 14
+      },
+      subtextStyle: {
+        fontSize: 10
+      }
+    },
     // legend: {
     //   type: 'plain',
     //   show: true,
@@ -25,7 +39,7 @@ const BarChart = () => {
     tooltip: {
       trigger: 'axis',
       alwaysShowContent: false,
-      position: ['50%', '5%'],
+      position: ['70%', '5%'],
       backgroundColor: 'transparent',
       shadowColor: 'none',
       padding: 0,

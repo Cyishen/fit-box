@@ -22,6 +22,20 @@ const LineChart = () => {
 
 
   const option: EChartsOption = {
+    title: {
+      text: "訓練量",
+      subtext: '重量x次數x組數',
+      itemGap: 5,
+      top: 5,
+      left: "center",
+      textAlign: 'left',
+      textStyle: {
+        fontSize: 14
+      },
+      subtextStyle: {
+        fontSize: 10
+      }
+    },
     tooltip: {
       trigger: 'axis',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
