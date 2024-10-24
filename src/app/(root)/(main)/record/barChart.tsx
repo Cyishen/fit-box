@@ -17,20 +17,54 @@ const BarChart = () => {
   }, [timeFrame]);
 
   const option: EChartsOption = {
+    // legend: {
+    //   type: 'plain',
+    //   show: true,
+    //   top: '5%',
+    // },
     tooltip: {
-      trigger: 'item',
+      trigger: 'axis',
+      alwaysShowContent: true,
+      position: ['80%', '5%'],
+      backgroundColor: 'transparent',
+      shadowColor: 'none',
+      padding: 0,
+      borderWidth: 0,
+      textStyle: {
+        fontSize: 12,
+        color: 'gray',
+        fontWeight: 'bold',
+      },
+      axisPointer: {
+        type: "shadow",
+      }
+    },
+    grid: {
+      left: '0%',
+      right: '1%',
+      bottom: '5%',
+      containLabel: true
     },
     xAxis: {
       type: 'category',
-      data: chartData.map(item => item.category),
+      data: chartData.map(item => item.category)
     },
     yAxis: {
       type: 'value',
-      name: '次數',
+      boundaryGap: ['0%', '10%'],
+      name: '組數',
+      nameLocation: 'end',
+      axisLabel: {
+        fontSize: 8,
+      },
+      nameTextStyle: {
+        align: "left",
+        fontSize: 12,
+      }
     },
     series: [
       {
-        name: '今年資料',
+        name: '本次',
         type: 'bar',
         data: chartData.map(item => item.count),
         itemStyle: {
@@ -51,23 +85,23 @@ const BarChart = () => {
               default:
                 return '#000000'; // 預設顏色
             }
-          },
-        },
+          }
+        }
       },
       {
-        name: '對比',
+        name: '上次',
         type: 'bar',
-        data: chartData.map(() => 50), // 假資料，您可以根據需求調整
+        data: chartData.map(() => 50),
         itemStyle: {
           color: 'rgba(0, 0, 0, 0.1)',
-        },
-      },
-    ],
+        }
+      }
+    ]
   };
 
   return (
-    <div className='flex flex-col'>
-      <AnimatedTabsHover onChange={setTimeFrame} activeTab={'週'} />
+    <div className='flex flex-col px-1 border py-1 rounded-lg'>
+      <AnimatedTabsHover onChange={setTimeFrame} activeTab={timeFrame} />
       <div className='h-[300px]'>
         <ReactECharts
           option={option}
@@ -116,7 +150,6 @@ export default BarChart;
 
 
 
-import { CalendarClock } from 'lucide-react';
 import AnimatedBackground from './AnimatedBackground';
 
 interface AnimatedTabsHoverProps {
@@ -126,9 +159,9 @@ interface AnimatedTabsHoverProps {
 
 function AnimatedTabsHover({ activeTab, onChange }: AnimatedTabsHoverProps) {
   const TABS = [
-    { label: '週', icon: <CalendarClock className='h-5 w-5' /> },
-    { label: '月', icon: <CalendarClock className='h-5 w-5' /> },
-    { label: '年', icon: <CalendarClock className='h-5 w-5' /> },
+    { label: '週', icon: null },
+    { label: '月', icon: null },
+    { label: '年', icon: null },
   ];
 
   return (
@@ -149,11 +182,11 @@ function AnimatedTabsHover({ activeTab, onChange }: AnimatedTabsHoverProps) {
             data-id={tab.label}
             type='button'
             onClick={() => onChange(tab.label as '週' | '月' | '年')}
-            className={`inline-flex h-9 w-full items-center justify-center transition-colors duration-100 ${activeTab === tab.label ? 'text-blue-500' : 'text-black'} px-2`}
+            className={`inline-flex h-8 w-full items-center justify-center transition-colors duration-100 ${activeTab === tab.label ? 'text-blue-500' : 'text-black'} px-2`}
           >
             <p className='flex items-center justify-center gap-1'>
-              <span>{tab.label}</span>
               <span className='hidden md:block'>{tab.icon}</span>
+              <span>{tab.label}</span>
             </p>
           </button>
         ))}

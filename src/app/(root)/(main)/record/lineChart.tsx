@@ -27,7 +27,7 @@ const LineChart = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter: function (params: any) {
         const data = params[0].data;
-        return `${data[0]}<br/>總重量 ${data[1]}`;
+        return `${data[0]}<br/>重量 ${data[1]}`;
       },
       alwaysShowContent: true,
       position: ['80%', '10%'],
@@ -65,7 +65,7 @@ const LineChart = () => {
       type: 'value',
       boundaryGap: ['10%', '10%'],
       scale: true,
-      name: '總重量(kg)',
+      name: '重量(kg)',
       nameLocation: 'end',
       nameGap: 30,
       axisLabel: {
@@ -189,14 +189,13 @@ const LineChart = () => {
 export default LineChart;
 
 
-// types.ts
 type WorkoutRecord = {
   date: string;
   totalWeight: number;
   category: string;
 };
 
-// mockData.ts
+// 亂數產生測試資料
 const generateMockData = (category: string, startDate: Date, days: number): WorkoutRecord[] => {
   const data: WorkoutRecord[] = [];
   const baseWeight = Math.floor(Math.random() * 100) + 150;
