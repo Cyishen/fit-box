@@ -44,7 +44,7 @@ const LineChart = () => {
         return `${data[0]}<br/>總重量 ${data[1]}`;
       },
       alwaysShowContent: true,
-      position: ['70%', '7%'],
+      position: ['70%', '3%'],
       backgroundColor: 'rgba(59, 130, 246, 0.1)',
       shadowColor: 'none',
       padding: 5,

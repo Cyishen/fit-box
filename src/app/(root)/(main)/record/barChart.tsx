@@ -154,7 +154,7 @@ const BarChart = () => {
   };
 
   return (
-    <div className='flex flex-col px-1 border py-1 rounded-lg'>
+    <div className='flex flex-col p-1 rounded-lg border'>
       <AnimatedTabsHover onChange={setTimeFrame} activeTab={timeFrame} />
       <div className='h-[300px]'>
         <ReactECharts

@@ -92,7 +92,7 @@ const PieChart = () => {
         name: '訓練分佈',
         type: 'pie',
         radius: ['30%', '60%'],
-        center: ['50%', '40%'],
+        center: ['50%', '45%'],
         top: '10%',
         avoidLabelOverlap: true,
         percentPrecision: 1,
@@ -103,7 +103,7 @@ const PieChart = () => {
         },
         label: {
           show: true,
-          formatter: '{b} \n ({d}%)',
+          formatter: '{b} \n {d}%',
         },
         emphasis: {
           label: {
@@ -124,8 +124,8 @@ const PieChart = () => {
   };
 
   return (
-    <div className='flex flex-col px-1 py-1 pb-3 rounded-lg border'>
-      <div className="h-[300px]">
+    <div className='flex flex-col sm:flex-row sm:justify-between py-1 sm:py-10 pb-3 rounded-lg border'>
+      <div className="h-[300px] sm:flex-1">
         <ReactECharts
           option={option}
           style={{ height: '100%', width: '100%' }}
@@ -134,7 +134,7 @@ const PieChart = () => {
       </div>
       
       {/* 訓練統計表格 */}
-      <div className="mt-4 overflow-x-auto">
+      <div className="mt-4 overflow-x-auto px-1 sm:flex-1">
         <table className="min-w-full text-sm">
           <thead>
             <tr className="bg-gray-100">
