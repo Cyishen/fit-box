@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 
-import { client } from "@/lib/rpc";
+import { client } from "@/lib/hono-actions/rpc";
 
 type LoginResponseType = InferResponseType<typeof client.api.hono['sign-in']['$post']>
 type LoginRequestType = InferRequestType<typeof client.api.hono['sign-in']['$post']>['json']
