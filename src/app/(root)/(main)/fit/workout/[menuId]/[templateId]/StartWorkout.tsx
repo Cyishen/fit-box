@@ -23,7 +23,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
 
     if (isEditMode) {
       // 編輯模式下，使用現有的 sessionId
-      const existingSession = workoutSessions.find(session => session.sessionId === existingSessionId);
+      const existingSession = workoutSessions.find(session => session.cardSessionId === existingSessionId);
 
       if (existingSession) {
         setCurrentSession(existingSession);
@@ -31,7 +31,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
     } else {
       if (!existingSessionId && template.menuId && template.templateId) {
         const newSession: WorkoutSessionType = {
-          sessionId: Date.now().toString(),
+          cardSessionId: Date.now().toString(),
           userId: user,
           menuId: template.menuId,
           templateId: template.templateId,
@@ -41,22 +41,22 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
         };
         addWorkoutSession(newSession);
         setCurrentSession(newSession);
-        localStorage.setItem('currentSessionId', newSession.sessionId);
+        localStorage.setItem('currentSessionId', newSession.cardSessionId);
       }
     }
   }, [template, user, workoutSessions, addWorkoutSession, isEditMode]);
 
 
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
-    editWorkoutSession(updatedSession.sessionId, updatedSession);
+    editWorkoutSession(updatedSession.cardSessionId, updatedSession);
     setCurrentSession(updatedSession);
   };
 
   // 修改動作組數
-  const handleUpdateSets = (exerciseId: string, updatedSets: SetType[]) => {
+  const handleUpdateSets = (movementId: string, updatedSets: SetType[]) => {
     if (currentSession) {
       const updatedExercises = currentSession.exercises.map(exercise =>
-        exercise.exerciseId === exerciseId ? { ...exercise, sets: updatedSets } : exercise
+        exercise.movementId === movementId ? { ...exercise, sets: updatedSets } : exercise
       );
       const updatedSession = { ...currentSession, exercises: updatedExercises };
       updateCurrentSession(updatedSession);
@@ -64,10 +64,10 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
   };
 
   // 左滑後, 點擊刪除
-  const handleRemoveExercise = (exerciseId: string) => {
+  const handleRemoveExercise = (movementId: string) => {
     if (currentSession) {
       const updatedExercises = currentSession.exercises.filter(
-        exercise => exercise.exerciseId !== exerciseId
+        exercise => exercise.movementId !== movementId
       );
       const updatedSession = { ...currentSession, exercises: updatedExercises };
       updateCurrentSession(updatedSession);
@@ -75,9 +75,9 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
   };
 
   // 動作下拉, 打開動作的組數設定
-  const [openExerciseId, setOpenExerciseId] = useState<string | null>(null);
-  const handleToggleExercise = (exerciseId: string) => {
-    setOpenExerciseId((prev) => (prev === exerciseId ? null : exerciseId));
+  const [openMovementId, setOpenMovementId] = useState<string | null>(null);
+  const handleToggleExercise = (movementId: string) => {
+    setOpenMovementId((prev) => (prev === movementId ? null : movementId));
   };
 
   const handleCompleteWorkout = () => {
@@ -144,12 +144,12 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
               <div className='flex flex-col gap-3 mb-32'>
                 {currentSession.exercises.map((exercise) => (
                   <ExerciseListCard
-                    key={exercise.exerciseId}
+                    key={exercise.movementId}
                     exercise={exercise}
                     handleRemoveExercise={handleRemoveExercise}
                     onUpdateSets={handleUpdateSets}
-                    isOpen={openExerciseId === exercise.exerciseId}
-                    onToggle={() => handleToggleExercise(exercise.exerciseId)}
+                    isOpen={openMovementId === exercise.movementId}
+                    onToggle={() => handleToggleExercise(exercise.movementId)}
                   />
                 ))}
               </div>

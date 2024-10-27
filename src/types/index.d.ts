@@ -13,7 +13,8 @@ declare type UserModelType = {
 
 // TODO: 用戶每天的訓練紀錄
 type WorkoutSessionType = {
-  sessionId: string;
+  id?: string;
+  cardSessionId: string;
   userId: string;
   menuId: string;
   templateId: string;
@@ -43,7 +44,7 @@ type MenuType = {
 };
 
 type ExerciseType = {
-  exerciseId: string; // 動作ID，例如 "1"
+  movementId: string; // 動作ID，例如 "1"
   exerciseCategory?: string; // 動作類別
   name: string; // 動作名稱，例如 "啞鈴胸推"
   sets: SetType[];

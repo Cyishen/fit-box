@@ -96,7 +96,7 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
         ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
         >
           <div className='flex w-[70%] flex-col px-2 rounded-xl group-hover:bg-white py-1'
-            onClick={() => handleEditWorkout(session.sessionId)}
+            onClick={() => handleEditWorkout(session.cardSessionId)}
           >
             <p className='font-bold line-clamp-1'>{session.templateTitle}</p>
 
@@ -135,7 +135,7 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
           ref={cardRef}
           className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
           ${isSwiped ? 'w-20' : 'w-0'}`}
-          onClick={() => handleRemoveWorkoutSession(session.sessionId)}
+          onClick={() => handleRemoveWorkoutSession(session.cardSessionId)}
         >
           <Trash2 className=' w-full text-white h-8' />
         </div>

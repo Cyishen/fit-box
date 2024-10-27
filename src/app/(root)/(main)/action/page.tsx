@@ -25,7 +25,7 @@ const ActionPage = () => {
     setExistingSessionId(sessionId);
 
     if (sessionId) {
-      const session = workoutSessions.find(session => session.sessionId === sessionId);
+      const session = workoutSessions.find(session => session.cardSessionId === sessionId);
       setCurrentSession(session ?? null);
       if (session) {
         setSelectedExercises(session.exercises);
@@ -34,10 +34,10 @@ const ActionPage = () => {
   }, [workoutSessions]);
 
   const handleToggleExercise = (exercise: ExerciseType) => {
-    const isSelected = selectedExercises.some(ex => ex.exerciseId === exercise.exerciseId);
+    const isSelected = selectedExercises.some(ex => ex.movementId === exercise.movementId);
 
     if (isSelected) {
-      setSelectedExercises(selectedExercises.filter(ex => ex.exerciseId !== exercise.exerciseId));
+      setSelectedExercises(selectedExercises.filter(ex => ex.movementId !== exercise.movementId));
     } else {
       setSelectedExercises([...selectedExercises, exercise]);
     }
@@ -54,7 +54,7 @@ const ActionPage = () => {
 
       const menuId = currentSession?.menuId;
       const templateId = currentSession?.templateId;
-      const sessionId = currentSession?.sessionId;
+      const sessionId = currentSession?.cardSessionId;
 
       router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);
     }
@@ -89,13 +89,13 @@ const ActionPage = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {exerciseTemplates.map((exercise) => (
                   <div
-                    key={exercise.exerciseId}
+                    key={exercise.movementId}
                     onClick={() => handleToggleExercise(exercise)}
                     className={`p-2 rounded-md cursor-pointer 
-                    ${selectedExercises.some(select => select.exerciseId === exercise.exerciseId) ? 'bg-[#66CCFF] ring-1 ring-offset-2 ring-blue-500' : 'bg-white'}`
+                    ${selectedExercises.some(select => select.movementId === exercise.movementId) ? 'bg-[#66CCFF] ring-1 ring-offset-2 ring-blue-500' : 'bg-white'}`
                     }
                   >
-                    <div key={exercise.exerciseId}>
+                    <div key={exercise.movementId}>
                       <div className="p-2">
                         <div className="flex flex-col items-center">
                           <Image
@@ -104,7 +104,7 @@ const ActionPage = () => {
                             width={36}
                             height={36}
                           />
-                          <p className={`text-sm mt-2 ${selectedExercises.some(select => select.exerciseId === exercise.exerciseId) ? 'text-black' : 'text-muted-foreground'}`}>
+                          <p className={`text-sm mt-2 ${selectedExercises.some(select => select.movementId === exercise.movementId) ? 'text-black' : 'text-muted-foreground'}`}>
                             {exercise.name}
                           </p>
                         </div>

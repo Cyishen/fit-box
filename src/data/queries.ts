@@ -3,9 +3,7 @@ import { prismaDb } from "@/lib/db";
 export const getUserByEmail = async (email: string) => {
   try {
     const user = await prismaDb.user.findUnique({
-      where: {
-        email
-      }
+      where: { email }
     })
 
     return user
@@ -14,12 +12,11 @@ export const getUserByEmail = async (email: string) => {
   }
 }
 
+
 export const getUserById = async (id: string) => {
   try {
     const user = await prismaDb.user.findUnique({
-      where: {
-        id
-      }
+      where: { id }
     })
 
     return user

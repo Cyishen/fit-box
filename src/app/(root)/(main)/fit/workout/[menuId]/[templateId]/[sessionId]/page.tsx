@@ -22,13 +22,13 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
     const template = templates.find(
       template => template.templateId === templateId && template.menuId === menuId
     );
-    const sessionToEdit = workoutSessions.find(session => session.sessionId === sessionId);
+    const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
 
     if (sessionToEdit) {
       setSession(sessionToEdit);
     } else if (template) {
       setSession({
-        sessionId: sessionId,
+        cardSessionId: sessionId,
         userId: user,
         menuId: menuId,
         templateId: templateId,

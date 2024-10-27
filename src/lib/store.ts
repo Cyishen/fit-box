@@ -97,6 +97,7 @@ interface WorkoutStore {
   addWorkoutSession: (session: WorkoutSessionType) => void;
   removeWorkoutSession: (id: string) => void;
   editWorkoutSession: (id: string, updatedSession: WorkoutSessionType) => void;
+  removerAllWorkoutSessions: () => void;
 }
 
 export const useWorkoutStore = create<WorkoutStore>()(
@@ -109,14 +110,18 @@ export const useWorkoutStore = create<WorkoutStore>()(
         })),
       removeWorkoutSession: (id) =>
         set((state) => ({
-          workoutSessions: state.workoutSessions.filter(session => session.sessionId !== id),
+          workoutSessions: state.workoutSessions.filter(session => session.cardSessionId !== id),
         })),
       editWorkoutSession: (id, updatedSession) =>
         set((state) => ({
-          workoutSessions: state.workoutSessions.map(session => session.sessionId === id
+          workoutSessions: state.workoutSessions.map(session => session.cardSessionId === id
             ? updatedSession
             : session
           ),
+        })),
+      removerAllWorkoutSessions: () =>
+        set(() => ({
+          workoutSessions: [],
         })),
     }),
     {

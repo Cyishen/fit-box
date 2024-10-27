@@ -8,30 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  ADMIN
-  USER
-}
-
-model User {
-  id             String    @id @default(cuid())
-  name           String? // 姓名
-  email          String?   @unique // 電子郵件
-  emailVerified  DateTime? @map("email_verified")
-  image          String? // 頭像 URL
-  password       String? // 密碼
-  role           UserRole  @default(USER)
-  dateOfBirth    DateTime? // 出生日期
-  createdAt      DateTime  @default(now()) // 用戶創建時間
-  updatedAt      DateTime  @updatedAt // 最近更新時間
-  lastActiveDate DateTime? // 最近活躍時間
-  
-  workoutSessions WorkoutSession[] // 用戶的訓練紀錄
-  accounts        Account[] // 與用戶相關的帳戶
-
-  @@map("users")
-}
-
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
@@ -52,43 +28,74 @@ model Account {
   @@map("accounts")
 }
 
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String? // 姓名
+  email          String?   @unique // 電子郵件
+  emailVerified  DateTime? @map("email_verified")
+  image          String? // 頭像 URL
+  password       String? // 密碼
+  role           UserRole  @default(USER)
+  dateOfBirth    DateTime? // 出生日期
+  createdAt      DateTime  @default(now()) // 用戶創建時間
+  updatedAt      DateTime  @updatedAt // 最近更新時間
+  lastActiveDate DateTime? // 最近活躍時間
+
+  workoutSessions WorkoutSession[] // 用戶的訓練紀錄
+  accounts        Account[] // 與用戶相關的帳戶
+
+  @@map("users")
+}
+
 // 訓練紀錄模型
 model WorkoutSession {
-  sessionId     String     @id @default(cuid())
-  userId        String     @map("user_id")
-  menuId        String     @map("menu_id")
-  templateId    String     @map("template_id")
-  templateTitle String     @map("template_title")
+  id            String    @id @default(cuid())
+  cardSessionId String    @unique
+  userId        String    @map("user_id")
+  menuId        String    @map("menu_id")
+  templateId    String    @map("template_id")
+  templateTitle String    @map("template_title")
   date          DateTime // 訓練日期
   startTime     DateTime? // 開始時間
   endTime       DateTime? // 結束時間
-  notes         String? // 註解
-  exercises     Exercise[] // 包含的動作
+  notes         String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercises Exercise[] // 包含的動作
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("workout_sessions")
 }
 
 // 動作模型
 model Exercise {
-  exerciseId       String  @id @default(cuid())
-  exerciseCategory String? 
+  id               String  @id @default(cuid())
+  movementId       String // 固定的動作ID，例如啞鈴胸推 1, 划船 2)
   name             String
-  sets             Set[]
+  exerciseCategory String?
 
-  workoutSessionId String?
-  workoutSession   WorkoutSession? @relation(fields: [workoutSessionId], references: [sessionId])
+  sets                Set[]
+  refWorkoutSessionId String
+  workoutSession      WorkoutSession @relation(fields: [refWorkoutSessionId], references: [id], onDelete: Cascade)
+
+  @@index([movementId]) // 可根據固定的動作ID進行查詢
 }
 
 // 組數模型
 model Set {
   id          String @id @default(cuid()) // 組數唯一ID
-  leftWeight  Int // 左側重量
-  rightWeight Int // 右側重量
+  movementId  String // 這裡直接儲存 Exercise 的固定動作ID（如啞鈴胸推的 ID 為 1）
+  leftWeight  Float // 左側重量
+  rightWeight Float // 右側重量
   repetitions Int // 重複次數
-  totalWeight Int // 總重量
+  totalWeight Float // 總重量
 
-  exerciseId String   @map("exercise_id")
-  exercise   Exercise @relation(fields: [exerciseId], references: [exerciseId], onDelete: Cascade)
+  refExerciseId String
+  exercise      Exercise @relation(fields: [refExerciseId], references: [id], onDelete: Cascade)
+
+  @@index([movementId]) // 可根據動作ID進行查詢
 }

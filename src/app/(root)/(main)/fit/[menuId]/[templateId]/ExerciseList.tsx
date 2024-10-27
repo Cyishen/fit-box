@@ -17,14 +17,14 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
   const updateTemplate = useTemplateStore(state => state.editTemplate);
 
   // 點擊下拉, 打開動作的組數設定
-  const [openExerciseId, setOpenExerciseId] = useState<string | null>(null);
-  const handleToggleExercise = (exerciseId: string) => {
-    setOpenExerciseId((prev) => (prev === exerciseId ? null : exerciseId));
+  const [openMovementId, setOpenMovementId] = useState<string | null>(null);
+  const handleToggleExercise = (movementId: string) => {
+    setOpenMovementId((prev) => (prev === movementId ? null : movementId));
   };
 
   // 左滑後, 點擊刪除
-  const handleRemoveExercise = (exerciseId: string) => {
-    const updatedExercises = exercises.filter((exercise) => exercise.exerciseId !== exerciseId);
+  const handleRemoveExercise = (movementId: string) => {
+    const updatedExercises = exercises.filter((exercise) => exercise.movementId !== movementId);
 
     const updatedTemplate: TemplateType = {
       ...template,
@@ -36,9 +36,9 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
   };
 
   // 修改動作組數
-  const handleUpdateSets = (exerciseId: string, updatedSets: SetType[]) => {
+  const handleUpdateSets = (movementId: string, updatedSets: SetType[]) => {
     const updatedExercises = exercises.map((exercise) =>
-      exercise.exerciseId === exerciseId
+      exercise.movementId === movementId
         ? { ...exercise, sets: updatedSets }
         : exercise
     );
@@ -75,12 +75,12 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
             <div className='flex flex-col gap-3 mb-32'>
               {exercises.map((exercise) => (
                 <ExerciseListCard
-                  key={exercise.exerciseId}
+                  key={exercise.movementId}
                   exercise={exercise}
                   handleRemoveExercise={handleRemoveExercise}
                   onUpdateSets={handleUpdateSets}
-                  isOpen={openExerciseId === exercise.exerciseId}
-                  onToggle={() => handleToggleExercise(exercise.exerciseId)}
+                  isOpen={openMovementId === exercise.movementId}
+                  onToggle={() => handleToggleExercise(exercise.movementId)}
                 />
               ))}
             </div>

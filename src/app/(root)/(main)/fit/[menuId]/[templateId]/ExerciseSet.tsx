@@ -6,11 +6,11 @@ import { EllipsisVertical, Trash2, Check } from 'lucide-react'
 
 interface SetProps {
   sets: SetType[],
-  exerciseId: string,
-  onUpdateSets: (exerciseId: string, updatedSets: SetType[]) => void
+  movementId: string,
+  onUpdateSets: (movementId: string, updatedSets: SetType[]) => void
 }
 
-const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
+const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<SetType[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [hasSave, setHasSave] = useState(false);
@@ -75,7 +75,7 @@ const ExerciseSet = ({ sets, exerciseId, onUpdateSets }: SetProps) => {
 
   // 保存組數據
   const handleSaveSets = () => {
-    onUpdateSets(exerciseId, dynamicSets);
+    onUpdateSets(movementId, dynamicSets);
 
     setHasSave(true);
 

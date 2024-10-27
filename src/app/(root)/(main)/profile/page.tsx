@@ -1,14 +1,71 @@
-import React from 'react'
-import { auth } from '@/auth'
+"use client"
+
+import React, { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Wrapper from '@/components/Wrapper'
 import { ChevronRight } from 'lucide-react';
 
 import BannerUnit from './banner';
 
+import { useSession } from 'next-auth/react'
+import { useWorkoutStore } from '@/lib/store';
 
-const ProfilePage = async () => {
-  const session = await auth()
+
+const ProfilePage = () => {
+  const { data: session } = useSession()
+  const { workoutSessions } = useWorkoutStore();
+  const syncInProgress = useRef(false);
+
+  const syncWorkoutSessions = async (userId: string, localSessions: WorkoutSessionType[]) => {
+    if (syncInProgress.current) return;
+
+    try {
+      syncInProgress.current = true;
+      const response = await fetch(`/api/users/${userId}/sync`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          workoutSessions: localSessions,
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Sync failed 資料同步失敗');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // 同步成功後清除本地數據
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Sync error:', error);
+      throw error;
+    } finally {
+      syncInProgress.current = false;
+    }
+  };
+
+  useEffect(() => {
+    const syncData = async () => {
+      if (!session?.user?.id || workoutSessions.length === 0) return;
+      
+      try {
+        await syncWorkoutSessions(session.user.id, workoutSessions);
+      } catch (error) {
+        console.error('Sync failed:', error);
+      }
+    };
+
+    syncData();
+  }, [session?.user?.id, workoutSessions]);
+
 
   return (
     <section className='flex flex-col bg-[#f3f2f8] h-screen'>

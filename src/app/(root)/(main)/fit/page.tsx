@@ -27,7 +27,7 @@ const FitPage = () => {
 
   //card method
   const handleEditWorkout = (sessionId: string) => {
-    const sessionToEdit = workoutSessions.find(session => session.sessionId === sessionId);
+    const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
 
     if (sessionToEdit) {
       router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${sessionId}`);
@@ -68,7 +68,7 @@ const FitPage = () => {
 
               {workoutSessions.map((session: WorkoutSessionType) => (
                 <ShowTrainingCard
-                  key={session.sessionId}
+                  key={session.cardSessionId}
                   session={session}
                   handleEditWorkout={handleEditWorkout}
                   handleRemoveWorkoutSession={handleRemoveWorkoutSession}

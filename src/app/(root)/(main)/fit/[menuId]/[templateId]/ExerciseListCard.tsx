@@ -7,8 +7,8 @@ import RippleAni from '@/components/RippleAni';
 
 interface ExerciseListCardProps {
   exercise: ExerciseType;
-  handleRemoveExercise: (exerciseId: string) => void;
-  onUpdateSets: (exerciseId: string, updatedSets: SetType[]) => void;
+  handleRemoveExercise: (movementId: string) => void;
+  onUpdateSets: (movementId: string, updatedSets: SetType[]) => void;
   isOpen: boolean;
   onToggle: () => void;
 }
@@ -117,7 +117,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
         ref={cardRef}
         className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
           ${isSwiped ? 'w-20' : 'w-0'}`}
-        onClick={() => handleRemoveExercise(exercise.exerciseId)}
+        onClick={() => handleRemoveExercise(exercise.movementId)}
       >
         <Trash2 className=' w-full text-white h-8' />
       </div>
@@ -126,7 +126,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
       {isOpen && (
         <ExerciseSet
           sets={exercise.sets}
-          exerciseId={exercise.exerciseId}
+          movementId={exercise.movementId}
           onUpdateSets={onUpdateSets}
         />
       )}

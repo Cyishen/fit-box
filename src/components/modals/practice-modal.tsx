@@ -52,7 +52,7 @@ export const PracticeModal = () => {
         <div className="bg-gray-100 px-3 py-5">
           <div className="grid grid-cols-2 gap-3 overflow-y-scroll min-h-20 max-h-48">
             {openTemplate?.exercises.map((exercise) => (
-              <div key={exercise.exerciseId}>
+              <div key={exercise.movementId}>
                 <div className="p-2 bg-white rounded-md">
                   <div className="flex flex-col items-center">
                     <Image
