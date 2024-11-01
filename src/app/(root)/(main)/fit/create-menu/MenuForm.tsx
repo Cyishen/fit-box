@@ -46,7 +46,7 @@ const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
             <div className="flex items-center gap-3">
               <h3 className="font-bold">內容物</h3>
               <p className="text-xs text-gray-500">
-                {count}/10 字
+                {count}/20 字
               </p>
             </div>
 
@@ -58,7 +58,7 @@ const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
                 name="title"
                 value={menu.title}
                 required
-                maxLength={10}
+                maxLength={20}
                 className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-sm"
               />
             </div>

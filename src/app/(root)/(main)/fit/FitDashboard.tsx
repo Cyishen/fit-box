@@ -59,6 +59,8 @@ const FitDashboard = () => {
               .catch((error) => {
                 console.error('Error fetching menus:', error);
               });
+              setSelectedMenuId(lastSelectedMenuId)
+              setIsMenuOpen({ [lastSelectedMenuId as string]: true })
           });
         } catch (error) {
           console.error('Error fetching menus:', error);

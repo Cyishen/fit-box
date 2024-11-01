@@ -29,19 +29,19 @@ const MenuList: React.FC<MenuListProps> = ({
   };
 
   return (
-    <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap pb-2'>
+    <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap'>
       {menus.length > 0 ? (
         menus.map((menu) => (
           <div
             key={menu.id}
-            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.id ? "bg-black text-white" : "bg-slate-200"}`}
+            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 w-40 ${selectedMenuId === menu.id ? "bg-black text-white" : "bg-slate-200"}`}
           >
             <div
-              className='flex items-center gap-2'
+              className='flex items-center gap-1'
               onClick={() => onMenuSelect(menu.id)}
             >
               <div className='flex flex-col'>
-                <p className='font-bold'>{menu.title}</p>
+                <p className='font-bold line-clamp-2 min-w-20 max-w-20 min-h-10 max-h-10 whitespace-pre-wrap capitalize text-sm'>{menu.title}</p>
                 <p className='text-gray-400 text-[10px]'>
                   模板數量 {templates.filter(template => template.menuId === menu.id).length}
                 </p>
