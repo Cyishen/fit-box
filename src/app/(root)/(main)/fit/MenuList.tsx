@@ -8,11 +8,11 @@ import React from 'react';
 
 
 interface MenuListProps {
-  menus: Array<{ menuId: string; title: string }>;
+  menus: MenuType[];
   selectedMenuId: string | null;
-  onMenuSelect: (menuId: string) => void;
+  onMenuSelect: (id: string) => void;
   isMenuOpen: { [key: string]: boolean };
-  onMenuRemove?: (menuId: string) => void;
+  onMenuRemove?: (id: string) => void;
 }
 
 const MenuList: React.FC<MenuListProps> = ({
@@ -23,6 +23,11 @@ const MenuList: React.FC<MenuListProps> = ({
 }) => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const templates = useTemplateStore((state) => state.templates);
+
+  const { open } = useMenuModal();
+  const handleOpen = (id: string) => {
+    open(id);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -38,32 +43,28 @@ const MenuList: React.FC<MenuListProps> = ({
     };
   }, [openMenuId]);
 
-  const { open } = useMenuModal();
-  const handleOpen = (menuId: string) => {
-    open(menuId);
-  };
 
   return (
     <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap pb-2'>
       {menus.length > 0 ? (
         menus.map((menu) => (
           <div
-            key={menu.menuId}
-            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.menuId ? "bg-black text-white" : "bg-slate-200"}`}
+            key={menu.id}
+            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 ${selectedMenuId === menu.id ? "bg-black text-white" : "bg-slate-200"}`}
           >
             <div
               className='flex items-center gap-2'
-              onClick={() => onMenuSelect(menu.menuId)}
+              onClick={() => onMenuSelect(menu.id)}
             >
               <div className='flex flex-col'>
                 <p className='font-bold'>{menu.title}</p>
                 <p className='text-gray-400 text-[10px]'>
-                  模板數量 {templates.filter(template => template.menuId === menu.menuId).length}
+                  模板數量 {templates.filter(template => template.menuId === menu.id).length}
                 </p>
               </div>
 
               <div>
-                {isMenuOpen[menu.menuId]
+                {isMenuOpen[menu.id]
                   ? <ChevronDown width={20} height={20} />
                   : <ChevronRight width={20} height={20} />
                 }
@@ -72,7 +73,7 @@ const MenuList: React.FC<MenuListProps> = ({
 
             {/* TODO: 測試 modal */}
             <div 
-              onClick={() => handleOpen(menu.menuId)} 
+              onClick={() => handleOpen(menu.id)} 
               className='bg-white text-black w-8 h-8 rounded-full flex justify-center items-center'
             >
               <EllipsisVertical width={14}/>

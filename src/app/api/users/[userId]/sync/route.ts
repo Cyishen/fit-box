@@ -1,35 +1,11 @@
 import { prismaDb } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-// 類型定義
-type SetType = {
-  leftWeight: string | number;
-  rightWeight: string | number;
-  repetitions: string | number;
-  totalWeight: number;
-  movementId?: string;
-};
 
-type ExerciseType = {
-  movementId: string;
-  name: string;
-  sets: SetType[];
-  exerciseCategory?: string
-};
-
-type WorkoutSessionType = {
-  cardSessionId: string;
-  userId: string;
-  menuId: string;
-  templateId: string;
-  templateTitle: string;
-  date: string;
-  exercises: ExerciseType[];
-};
 
 export const POST = async (req: Request) => {
   try {
-    const { userId, workoutSessions } = await req.json();
+    const { userId, workoutSessions, menus, templates } = await req.json();
 
     const user = await prismaDb.user.findUnique({
       where: { id: userId },
@@ -39,7 +15,51 @@ export const POST = async (req: Request) => {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const results = await Promise.all(
+    const menuSave = await Promise.all(
+      menus.map(async (menu: MenuType) => {
+        return await prismaDb.menu.upsert({
+          where: {
+            id: menu.id
+          },
+          create: {
+            id: menu.id,
+            userId: userId,
+            title: menu.title || "未命名的訓練盒🗒︎"
+          },
+          update: {
+            id: menu.id,
+            userId: userId,
+            title: menu.title || "未命名的訓練盒🗒︎"
+          }
+        })
+      })
+    );
+
+    const templateSave = await Promise.all(
+      templates.map(async (template: TemplateType) => {
+        return await prismaDb.$transaction(async (tx) => {
+          await tx.template.upsert({
+            where: {
+              id: template.templateId,
+            },
+            create: {
+              id: template.templateId,
+              templateTittle: template.templateTitle || "未命名的模板",
+              templateCategory: template.templateCategory,
+              menuId: template.menuId
+            },
+            update: {
+              id: template.templateId,
+              templateTittle: template.templateTitle || "未命名的模板",
+              templateCategory: template.templateCategory,
+              menuId: template.menuId
+            }
+          })
+        });
+      }),
+    );
+
+    const workSessionSave = await Promise.all(
       workoutSessions.map(async (session: WorkoutSessionType) => {
         return await prismaDb.$transaction(async (tx) => {
           // 1. 創建或更新 WorkoutSession，確保包含所有欄位
@@ -53,9 +73,11 @@ export const POST = async (req: Request) => {
               menuId: session.menuId,
               templateId: session.templateId,
               templateTitle: session.templateTitle,
-              date: new Date(session.date),
+              date: new Date(session.date)
             },
             update: {
+              userId: userId,
+              cardSessionId: session.cardSessionId,
               menuId: session.menuId,
               templateId: session.templateId,
               templateTitle: session.templateTitle,
@@ -73,10 +95,61 @@ export const POST = async (req: Request) => {
               startTime: true,
               endTime: true,
               notes: true,
+              exercises: {
+                include: {
+                  sets: true,
+                },
+              },
             },
           });
 
-          // 2. 刪除 workoutSession模型的 exercises欄位內的所有資料
+          //TODO 統計
+          const totalSessionSets = session.exercises.reduce((sum, exercise) => sum + exercise.sets.length, 0);
+          const totalSessionWeight = session.exercises.reduce(
+            (sum, exercise) =>
+              sum + exercise.sets.reduce((setSum, set) => setSum + set.totalWeight, 0), 0 );
+
+          const workoutSummary = await tx.workoutSummary.upsert({
+            where: { workoutSessionId: workoutSession.id },
+            create: {
+              workoutSessionId: workoutSession.id,
+              userId: workoutSession.userId,
+              totalSessionSets,
+              totalSessionWeight,
+              date: workoutSession.date
+            },
+            update: {
+              totalSessionSets,
+              totalSessionWeight
+            },
+          });
+
+          const exercisesSummary = await Promise.all(session.exercises.map(async (exercise) => {
+            const movementSets = exercise.sets.length;
+            const movementWeight = exercise.sets.reduce((sum, set) => sum + set.totalWeight, 0);
+
+            return await tx.exerciseSummary.upsert({
+              where: {
+                movementId_workoutSummaryId: {
+                  movementId: exercise.movementId,
+                  workoutSummaryId: workoutSummary.id
+                },
+              },
+              create: {
+                movementId: exercise.movementId,
+                movementName: exercise.name,
+                movementSets: movementSets,
+                movementWeight: movementWeight,
+                workoutSummaryId: workoutSummary.id,
+              },
+              update: {
+                movementSets: movementSets,
+                movementWeight: movementWeight
+              },
+            });
+          }));
+
+          // 2. 用戶更新訓練卡, 先刪除 workoutSession模型的 exercises欄位內的所有資料
           await tx.exercise.deleteMany({
             where: {
               refWorkoutSessionId: workoutSession.id
@@ -90,11 +163,8 @@ export const POST = async (req: Request) => {
                 data: {
                   movementId: exercise.movementId,
                   name: exercise.name,
-                  workoutSession: {
-                    connect: {
-                      cardSessionId: session.cardSessionId,
-                    },
-                  },
+                  templateId: session.templateId,
+                  refWorkoutSessionId: workoutSession.id,
                   sets: {
                     create: exercise.sets.map((set) => ({
                       leftWeight: parseFloat(set.leftWeight.toString()),
@@ -112,19 +182,20 @@ export const POST = async (req: Request) => {
             })
           );
 
-          // 4. 返回完整的訓練記錄數據
           return {
             ...workoutSession,
+            workoutSummary,
+            exercisesSummary,
             exercises,
           };
         });
-      })
+      }),
     );
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: "Workout sessions synced successfully",
-      data: results 
+      data: workSessionSave, menuSave, templateSave
     });
 
   } catch (error) {

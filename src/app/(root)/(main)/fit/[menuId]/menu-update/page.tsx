@@ -2,42 +2,75 @@
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useMenuStore } from '@/lib/store'
 import MenuForm from '../../create-menu/MenuForm'
+import { useMenuStore } from '@/lib/store'
+
+import { useSession } from 'next-auth/react'
+import { getMenuById, upsertMenu } from '@/actions/user-create'
 
 
-const CreateMenu = ({ params }: { params: { menuId: string } }) => {
+const UpdateMenu = ({ params }: { params: { menuId: string } }) => {
   const { menuId } = params;
   const router = useRouter()
 
+  const { data: session } = useSession()
+  const userId = session?.user?.id;
+
+  //本地資料
   const menus = useMenuStore((state) => state.menus);
-  const existingMenu = menus.find(menu => menu.menuId === menuId);
+  const editMenu = useMenuStore((state) => state.editMenu);
 
   const [menu, setMenu] = useState<MenuType>({
-    userId: "Guest",
-    menuId:"",
+    userId: userId || "Guest",
+    id: menuId,
     title: "",
   })
 
   useEffect(() => {
-    if (existingMenu) {
-      setMenu(existingMenu);
-    }
-  }, [existingMenu]);
+    const initializeMenu = async () => {
+      try {
+        if (userId) {
+          // 登入用戶：從資料庫獲取數據
+          const dbMenu = await getMenuById(menuId);
+          if (dbMenu) {
+            setMenu(dbMenu as MenuType);
+          } else {
+            console.error("Menu not found");
+            router.push("/fit");
+          }
+        } else {
+          // 未登入用戶：從本地 store 獲取數據
+          const localMenu = menus.find(m => m.id === menuId);
+          if (localMenu) {
+            setMenu(localMenu);
+          } else {
+            console.error("Menu not found in local storage");
+            router.push("/fit");
+          }
+        }
+      } catch (error) {
+        console.error("Error loading menu:", error);
+        router.push("/fit");
+      }
+    };
 
-  const editMenu = useMenuStore((state) => state.editMenu);
+    initializeMenu();
+  }, [userId, menuId, menus, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
-    const newMenu = {
-      ...menu,
-      menuId,
-      title: menu.title,
-    };
 
-    editMenu(menuId, newMenu);
-  
+    if (userId) {
+        await upsertMenu(menu)
+    } else {
+      const updatedMenu = {
+        ...menu,
+        title: menu.title,
+      };
+
+      editMenu(menuId, updatedMenu);
+    }
+
     router.push("/fit");
   };
 
@@ -51,4 +84,4 @@ const CreateMenu = ({ params }: { params: { menuId: string } }) => {
   )
 }
 
-export default CreateMenu
+export default UpdateMenu

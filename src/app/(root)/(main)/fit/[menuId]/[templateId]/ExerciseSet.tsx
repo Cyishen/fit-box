@@ -35,7 +35,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
 
     updatedSets[index] = {
       ...updatedSets[index],
-      [name]: value === '' ? '' : value,
+      [name]: value === '' ? 0 : Number(value),
     };
 
     const leftWeight = Number(updatedSets[index].leftWeight) || 0; 
@@ -81,7 +81,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
 
     setTimeout(() => {
       setHasSave(false);
-    }, 500);
+    }, 1000);
   };
 
   return (
@@ -171,18 +171,11 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                       }}
                       className='flex p-2 rounded-md duration-300'
                     >
-                      <div className='w-full h-full flex justify-center items-center'>
-                        <Trash2 className='w-5' />
-                      </div>
+                      <Trash2 className='w-5' />
                     </button>
                   </div>
                 )}
               </div>
-              {/* <div>
-                <Button variant='destructive' size='sm' type='button' onClick={() => handleRemoveSet(index)}>
-                  X
-                </Button>
-              </div> */}
             </div>
           ))}
 

@@ -8,15 +8,18 @@ import { ChevronRight } from 'lucide-react';
 import BannerUnit from './banner';
 
 import { useSession } from 'next-auth/react'
-import { useWorkoutStore } from '@/lib/store';
+import { useMenuStore, useTemplateStore, useWorkoutStore } from '@/lib/store';
 
 
 const ProfilePage = () => {
   const { data: session } = useSession()
   const { workoutSessions } = useWorkoutStore();
+  const { menus } = useMenuStore();
+  const { templates } = useTemplateStore();
+
   const syncInProgress = useRef(false);
 
-  const syncWorkoutSessions = async (userId: string, localSessions: WorkoutSessionType[]) => {
+  const syncWorkoutSessions = async (userId: string, menus: MenuType[], templates: TemplateType[], workoutSessions: WorkoutSessionType[]) => {
     if (syncInProgress.current) return;
 
     try {
@@ -28,7 +31,9 @@ const ProfilePage = () => {
         },
         body: JSON.stringify({
           userId,
-          workoutSessions: localSessions,
+          workoutSessions: workoutSessions,
+          menus: menus,
+          templates: templates,
         })
       });
       
@@ -57,14 +62,14 @@ const ProfilePage = () => {
       if (!session?.user?.id || workoutSessions.length === 0) return;
       
       try {
-        await syncWorkoutSessions(session.user.id, workoutSessions);
+        await syncWorkoutSessions(session.user.id, menus, templates,  workoutSessions);
       } catch (error) {
         console.error('Sync failed:', error);
       }
     };
 
     syncData();
-  }, [session?.user?.id, workoutSessions]);
+  }, [session?.user?.id, workoutSessions, menus, templates]);
 
 
   return (

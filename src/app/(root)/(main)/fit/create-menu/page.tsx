@@ -5,36 +5,40 @@ import { useRouter } from 'next/navigation'
 import MenuForm from './MenuForm'
 import { useMenuStore } from '@/lib/store'
 
+import { useSession } from 'next-auth/react'
+import { upsertMenu } from '@/actions/user-create'
+
 
 const CreateMenu = () => {
   const router = useRouter()
-
-  const [menu, setMenu] = useState<MenuType>({
-    userId: "Guest",
-    menuId:"",
-    title: "未命名的訓練盒🗒︎",
-  })
-
-  const addMenu = useMenuStore((state) => state.addMenu);
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
   const generateShortId = () => {
     return Math.floor(Math.random() * 10000);
   };
 
+  const [menu, setMenu] = useState({
+    userId: userId || "Guest",
+    title: "未命名訓練盒🗒︎",
+    id: '',
+  })
+
+  const addMenu = useMenuStore((state) => state.addMenu);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
-    const newMenu = {
-      ...menu,
-      menuId: generateShortId().toString(),
-      title: menu.title,
-    };
 
-    addMenu(newMenu);
-
-    // 測試本地儲存
-    // const storedBoxes = JSON.parse(localStorage.getItem('boxes') || '[]');
-    // localStorage.setItem('boxes', JSON.stringify([...storedBoxes, newBox]));
+    if(userId) {
+      await upsertMenu(menu)
+    } else {
+      const newMenu = {
+        ...menu,
+        id: generateShortId().toString(),
+        title: menu.title,
+      };
+      addMenu(newMenu);
+    }
   
     router.push("/fit");
   };

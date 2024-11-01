@@ -2,14 +2,14 @@ import { create } from "zustand";
 
 type MenuModalState = {
   isOpen: boolean;
-  menuId: string | null;
-  open: (menuId: string) => void;
+  id: string | null;
+  open: (id: string) => void;
   close: () => void;
 };
 
 export const useMenuModal = create<MenuModalState>((set) => ({
   isOpen: false,
-  menuId: null,
-  open: (menuId: string) => set({ isOpen: true, menuId }),
-  close: () => set({ isOpen: false, menuId: null }),
+  id: null,
+  open: (id: string) => set({ isOpen: true, id: id }),
+  close: () => set({ isOpen: false, id: null }),
 }));

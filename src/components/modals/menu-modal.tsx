@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import { Plus, Trash2, SquarePen } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -12,35 +14,97 @@ import {
 
 import { useMenuModal } from "@/lib/use-menu-modal";
 import { useMenuStore, useTemplateStore } from "@/lib/store";
-import { useRouter } from 'next/navigation';
 
-import { Plus, Trash2, SquarePen } from 'lucide-react';
+import { useSession } from 'next-auth/react'
+
+
+
+const fetchMenuById = async (id: string) => {
+  const response = await fetch(`/api/menus/${id}`, {
+    method: 'GET',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch menu');
+  }
+  return response.json();
+};
+
+const deleteFetchMenuById = async (id: string) => {
+  const response = await fetch(`/api/menus/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete menu');
+  }
+  if (response.ok) {
+    window.location.reload()
+  }
+  return response.json();
+};
 
 
 export const MenuModal = () => {
   const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, menuId } = useMenuModal();
+  const { isOpen, close, id } = useMenuModal();
   const router = useRouter();
 
+
+  // 本地 menus 資料
   const removeMenu = useMenuStore((state) => state.removeMenu);
   const menus = useMenuStore((state) => state.menus);
-  const openMenu = menus.find((menu) => menu.menuId === menuId);
-
+  // 本地 templates 資料
   const addTemplate = useTemplateStore((state) => state.addTemplate);
   const templates = useTemplateStore((state) => state.templates);
-  const countTemplate = templates.filter(template => template.menuId === menuId);
+  const countTemplate = templates.filter(template => template.menuId === id);
 
-  const generateShortId = () => {
+  // 資料庫 menus 資料
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+  const [dateMenuId, setDateMenuId] = useState<MenuType | null>(null);
+
+  useEffect(() => {
+    if (userId && id) {
+      fetchMenuById(id)
+        .then((data: MenuType) => setDateMenuId(data))
+        .catch((error) => console.error(error));
+    }
+  }, [userId, id]);
+
+  // 判斷打開小視窗id, 是資料庫的還是本地
+  const openMenu = userId 
+  ? dateMenuId
+  : menus.find((menu) => menu.id === id); 
+
+  // 刪除 menu
+  const handleRemoveMenu = async (menuId: string) => {
+    const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
+    if (userConfirmed) {
+      try {
+        if (userId) {
+          await deleteFetchMenuById(menuId);
+        } else {
+          removeMenu(menuId);
+        }
+        close();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  // 建立模板
+  const generateTemplateId = () => {
     return Math.random().toString(36).substring(2, 6);
   };
 
   const handleAddTemplate = (menuId: string) => {
-    const newCardId = generateShortId();
+    const newCardId = generateTemplateId();
     const newTemplate: TemplateType = {
-      userId: "Guest",
+      userId: userId || "Guest",
       templateId: newCardId,
       templateCategory: "胸",
-      templateTitle: "未命名的訓練卡🗒︎",
+      templateTitle: "未命名訓練卡🗒︎",
       menuId: menuId,
       exercises: []
     };
@@ -50,13 +114,6 @@ export const MenuModal = () => {
     router.push(`/fit/${menuId}/${newCardId}/create-template`);
 
     close();
-  };
-
-  const handleRemoveMenu = (menuId: string) => {
-    const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
-    if (userConfirmed) {
-      removeMenu(menuId);
-    }
   };
 
   useEffect(() => setIsClient(true), []);
@@ -86,7 +143,7 @@ export const MenuModal = () => {
             <div className='flex w-full'>
               <button
                 className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 hover:text-white duration-300 bg-gray-100'
-                onClick={() => handleRemoveMenu(openMenu.menuId)}
+                onClick={() => handleRemoveMenu(openMenu.id)}
               >
                 <Trash2 width={14} /> 刪除
               </button>
@@ -97,7 +154,7 @@ export const MenuModal = () => {
                 className='w-full flex items-center justify-center gap-3 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300 bg-gray-100'
                 onClick={() => {
                   close();
-                  router.push(`/fit/${menuId}/menu-update`);
+                  router.push(`/fit/${id}/menu-update`);
                 }}
               >
                 <SquarePen width={14} /> 編輯盒子
@@ -107,7 +164,7 @@ export const MenuModal = () => {
             <div className='flex w-full'>
               <button
                 className='w-full flex items-center justify-center gap-3 text-sm p-1 font-bold rounded-sm hover:bg-black hover:text-white duration-300 bg-gray-100'
-                onClick={() => handleAddTemplate(openMenu.menuId)}
+                onClick={() => handleAddTemplate(openMenu.id)}
               >
                 <Plus width={14} /> 新增模板
               </button>

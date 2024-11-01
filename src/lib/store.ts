@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+
 type UserModelStore = {
   user: UserModelType;
   setUser: (newUser: UserModelType) => void;
@@ -15,13 +16,14 @@ export const useUserStore = create<UserModelStore>()(
       } as UserModelType,
       setUser: (newUser: UserModelType) => set({ user: newUser }),
     }),
-    { 
-      name: 'user-storage', 
-      storage: createJSONStorage(() => localStorage) 
+    {
+      name: 'user-storage',
+      storage: createJSONStorage(() => localStorage)
     }
   )
 );
 
+// 模板
 interface TemplateStore {
   templates: TemplateType[];
   addTemplate: (work: TemplateType) => void;
@@ -58,6 +60,7 @@ export const useTemplateStore = create<TemplateStore>()(
   )
 );
 
+// 菜單
 interface BoxStore {
   menus: MenuType[];
   addMenu: (box: MenuType) => void;
@@ -69,17 +72,41 @@ export const useMenuStore = create<BoxStore>()(
   persist(
     (set) => ({
       menus: [],
+      // addMenu: async (menu) => {
+      //   try {
+      //     const { data: session } = useSession()
+      //     const userId = session?.user?.id
+
+      //     if (!userId) {
+      //       set((state) => ({
+      //         menus: [menu, ...state.menus],
+      //       }));
+      //       return;
+      //     }
+
+      //     const menuData = {
+      //       ...menu,
+      //       title: menu.title,
+      //     };
+
+      //     await upsertMenu(menuData);
+      //   } catch (error) {
+      //     console.error('Failed to add menu:', error);
+      //     throw error;
+      //   }
+      // },
+
       addMenu: (box) =>
         set((state) => ({
           menus: [box, ...state.menus],
         })),
       removeMenu: (id) =>
         set((state) => ({
-          menus: state.menus.filter(box => box.menuId !== id),
+          menus: state.menus.filter(box => box.id !== id),
         })),
       editMenu: (id, updatedMenu) =>
         set((state) => ({
-          menus: state.menus.map(menu => menu.menuId === id
+          menus: state.menus.map(menu => menu.id === id
             ? updatedMenu
             : menu
           ),
@@ -92,6 +119,7 @@ export const useMenuStore = create<BoxStore>()(
   )
 );
 
+// 訓練卡
 interface WorkoutStore {
   workoutSessions: WorkoutSessionType[];
   addWorkoutSession: (session: WorkoutSessionType) => void;
