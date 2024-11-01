@@ -2,7 +2,6 @@
 
 import { prismaDb } from "@/lib/db"
 import { auth } from "@/auth";
-import { revalidatePath } from "next/cache";
 
 export const upsertMenu = async (data: MenuType) => {
   const session = await auth()
@@ -73,7 +72,6 @@ export const getAllMenusByUserId = async (id?: string) => {
     where: { userId: id }
   })
 
-  revalidatePath("/fit");
   return menus
 }
 

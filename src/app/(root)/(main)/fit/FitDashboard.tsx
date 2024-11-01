@@ -8,22 +8,15 @@ import MenuList from './MenuList';
 
 import { useSession } from 'next-auth/react'
 import { getAllMenusByUserId } from '@/actions/user-create';
+import { useMenuModal } from '@/lib/use-menu-modal';
 
+import { Loader } from 'lucide-react';
 
-
-// const fetchAllMenus = async () => {
-//   const response = await fetch(`/api/menus`);
-//   if (!response.ok) {
-//     throw new Error('Failed to fetch menu');
-//   }
-//   return response.json();
-// };
 
 const FitDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<{ [key: string]: boolean }>({});
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [pending, startTransition] = useTransition();
+
   // 本地端
   const menus = useMenuStore((state) => state.menus);
   const templates = useTemplateStore((state) => state.templates);
@@ -32,7 +25,12 @@ const FitDashboard = () => {
   // 資料庫
   const { data: session } = useSession()
   const userId = session?.user?.id
-  const [dateAllMenu, setDateAllMenu] = useState<MenuType[]>([])
+
+  // menu 管理
+  // const [dateAllMenu, setDateAllMenu] = useState<MenuType[]>([])
+  const { dateAllMenu, setDateAllMenu } = useMenuModal(); 
+  const [pending, startTransition] = useTransition();
+  
 
   useEffect(() => {
     const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
@@ -53,12 +51,10 @@ const FitDashboard = () => {
     const fetchMenus = async () => {
       if (userId) {
         try {
-          // const data = await fetchAllMenus();
-          // setDateAllMenu(data);
           startTransition(() => {
             getAllMenusByUserId(userId)
               .then((data) => {
-                setDateAllMenu(data as MenuType[]);
+                setDateAllMenu(data as MenuType[])
               })
               .catch((error) => {
                 console.error('Error fetching menus:', error);
@@ -73,7 +69,7 @@ const FitDashboard = () => {
     };
   
     fetchMenus();
-  }, [menus, userId]);
+  }, [menus, setDateAllMenu, userId]);
 
 
   const handleMenuClick = (id: string) => {
@@ -105,7 +101,8 @@ const FitDashboard = () => {
   };
 
   return (
-    <div className='flex flex-col gap-5'>
+    <div className='flex flex-col gap-5 relative'>
+      {pending && <Loader size={20} className="animate-spin absolute top-0 left-1/2" />}
       <MenuList
         menus={dateAllMenu.length > 0 ? dateAllMenu : menus}
         selectedMenuId={selectedMenuId}

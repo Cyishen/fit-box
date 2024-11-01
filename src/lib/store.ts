@@ -72,30 +72,6 @@ export const useMenuStore = create<BoxStore>()(
   persist(
     (set) => ({
       menus: [],
-      // addMenu: async (menu) => {
-      //   try {
-      //     const { data: session } = useSession()
-      //     const userId = session?.user?.id
-
-      //     if (!userId) {
-      //       set((state) => ({
-      //         menus: [menu, ...state.menus],
-      //       }));
-      //       return;
-      //     }
-
-      //     const menuData = {
-      //       ...menu,
-      //       title: menu.title,
-      //     };
-
-      //     await upsertMenu(menuData);
-      //   } catch (error) {
-      //     console.error('Failed to add menu:', error);
-      //     throw error;
-      //   }
-      // },
-
       addMenu: (box) =>
         set((state) => ({
           menus: [box, ...state.menus],

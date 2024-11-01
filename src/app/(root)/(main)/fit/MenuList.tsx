@@ -1,9 +1,9 @@
 "use client";
 
+
 import { useTemplateStore } from '@/lib/store';
 import { useMenuModal } from '@/lib/use-menu-modal';
 import { ChevronDown, ChevronRight, EllipsisVertical } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import React from 'react';
 
 
@@ -12,7 +12,6 @@ interface MenuListProps {
   selectedMenuId: string | null;
   onMenuSelect: (id: string) => void;
   isMenuOpen: { [key: string]: boolean };
-  onMenuRemove?: (id: string) => void;
 }
 
 const MenuList: React.FC<MenuListProps> = ({
@@ -21,28 +20,13 @@ const MenuList: React.FC<MenuListProps> = ({
   onMenuSelect,
   isMenuOpen,
 }) => {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
   const templates = useTemplateStore((state) => state.templates);
 
   const { open } = useMenuModal();
   const handleOpen = (id: string) => {
     open(id);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (openMenuId && !((event.target as HTMLElement).closest('#outside-close'))) {
-        setOpenMenuId(null);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [openMenuId]);
-
 
   return (
     <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap pb-2'>
@@ -71,7 +55,7 @@ const MenuList: React.FC<MenuListProps> = ({
               </div>
             </div>
 
-            {/* TODO: 測試 modal */}
+            {/* open modal */}
             <div 
               onClick={() => handleOpen(menu.id)} 
               className='bg-white text-black w-8 h-8 rounded-full flex justify-center items-center'

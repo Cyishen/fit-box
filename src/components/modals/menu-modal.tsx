@@ -18,7 +18,6 @@ import { useMenuStore, useTemplateStore } from "@/lib/store";
 import { useSession } from 'next-auth/react'
 
 
-
 const fetchMenuById = async (id: string) => {
   const response = await fetch(`/api/menus/${id}`, {
     method: 'GET',
@@ -36,18 +35,14 @@ const deleteFetchMenuById = async (id: string) => {
   if (!response.ok) {
     throw new Error('Failed to delete menu');
   }
-  if (response.ok) {
-    window.location.reload()
-  }
   return response.json();
 };
 
-
 export const MenuModal = () => {
   const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, id } = useMenuModal();
   const router = useRouter();
 
+  const { isOpen, close, id, dateAllMenu, setDateAllMenu } = useMenuModal();
 
   // 本地 menus 資料
   const removeMenu = useMenuStore((state) => state.removeMenu);
@@ -76,14 +71,18 @@ export const MenuModal = () => {
   ? dateMenuId
   : menus.find((menu) => menu.id === id); 
 
-  // 刪除 menu
+
   const handleRemoveMenu = async (menuId: string) => {
     const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
     if (userConfirmed) {
       try {
         if (userId) {
+          // 刪除資料 menu模型點擊的id
           await deleteFetchMenuById(menuId);
+          // 更新 dateAllMenu，移除被刪除的菜單項目
+          setDateAllMenu(dateAllMenu.filter(menu => menu.id !== menuId));
         } else {
+          // 未登入用戶，從本地端刪除
           removeMenu(menuId);
         }
         close();
