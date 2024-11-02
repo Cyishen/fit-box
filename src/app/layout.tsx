@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { PracticeModal } from "@/components/modals/practice-modal";
 import { MenuModal } from "@/components/modals/menu-modal";
+import { DeleteMenuModal } from "@/components/modals/delete-menu-modal";
 
 import { QueryProvider } from "@/components/query-provider";
 import AuthProvider from "@/components/form/AuthProvider";
@@ -40,6 +41,7 @@ export default function RootLayout({
 
             <PracticeModal />
             <MenuModal />
+            <DeleteMenuModal />
           </QueryProvider>
         </AuthProvider>
       </body>

@@ -26,11 +26,11 @@ const FitDashboard = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // menu 管理
-  // const [dateAllMenu, setDateAllMenu] = useState<MenuType[]>([])
-  const { dateAllMenu, setDateAllMenu } = useMenuModal(); 
+  // const [dateAllMenu, setDateAllMenu] = useState<MenuType[]>([]) //新資料無法即時更新
+  // 用zustand管理 menu變動, 取得新資料渲染畫面 UI
+  const { dateAllMenu, setDateAllMenu } = useMenuModal();
   const [pending, startTransition] = useTransition();
-  
+
 
   useEffect(() => {
     const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
@@ -47,10 +47,10 @@ const FitDashboard = () => {
       }
     };
 
-
     const fetchMenus = async () => {
       if (userId) {
         try {
+          // 方式一: 用startTransition 保持畫面流暢
           startTransition(() => {
             getAllMenusByUserId(userId)
               .then((data) => {
@@ -62,6 +62,10 @@ const FitDashboard = () => {
               setSelectedMenuId(lastSelectedMenuId)
               setIsMenuOpen({ [lastSelectedMenuId as string]: true })
           });
+
+          // 方式二: 直接使用
+          // const updatedMenus = await getAllMenusByUserId(userId);
+          // setDateAllMenu(updatedMenus as MenuType[]);
         } catch (error) {
           console.error('Error fetching menus:', error);
         }
@@ -69,7 +73,7 @@ const FitDashboard = () => {
         handleLocalMenuSelection(lastSelectedMenuId as string);
       }
     };
-  
+
     fetchMenus();
   }, [menus, setDateAllMenu, userId]);
 

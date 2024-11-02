@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dialog";
 
 import { useMenuModal } from "@/lib/use-menu-modal";
+import { useDeleteMenuModal } from "@/lib/use-delete-modal";
+
 import { useMenuStore, useTemplateStore } from "@/lib/store";
 
 import { useSession } from 'next-auth/react'
@@ -28,34 +30,25 @@ const fetchMenuById = async (id: string) => {
   return response.json();
 };
 
-const deleteFetchMenuById = async (id: string) => {
-  const response = await fetch(`/api/menus/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) {
-    throw new Error('Failed to delete menu');
-  }
-  return response.json();
-};
 
 export const MenuModal = () => {
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
-  const { isOpen, close, id, dateAllMenu, setDateAllMenu } = useMenuModal();
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+  const { isOpen, close, id } = useMenuModal();
+  const { openDelete } = useDeleteMenuModal();
 
   // 本地 menus 資料
-  const removeMenu = useMenuStore((state) => state.removeMenu);
   const menus = useMenuStore((state) => state.menus);
   // 本地 templates 資料
   const addTemplate = useTemplateStore((state) => state.addTemplate);
   const templates = useTemplateStore((state) => state.templates);
   const countTemplate = templates.filter(template => template.menuId === id);
 
-  // 資料庫 menus 資料
-  const { data: session } = useSession()
-  const userId = session?.user?.id
-
+  // 用戶登入, 抓取資料庫用戶所有menu
   const [dateMenuId, setDateMenuId] = useState<MenuType | null>(null);
 
   useEffect(() => {
@@ -71,28 +64,13 @@ export const MenuModal = () => {
   ? dateMenuId
   : menus.find((menu) => menu.id === id); 
 
-
-  const handleRemoveMenu = async (menuId: string) => {
-    const userConfirmed = confirm("將會刪除此盒子內的所有模板,確定嗎");
-    if (userConfirmed) {
-      try {
-        if (userId) {
-          // 刪除資料 menu模型點擊的id
-          await deleteFetchMenuById(menuId);
-          // 更新 dateAllMenu，移除被刪除的菜單項目
-          setDateAllMenu(dateAllMenu.filter(menu => menu.id !== menuId));
-        } else {
-          // 未登入用戶，從本地端刪除
-          removeMenu(menuId);
-        }
-        close();
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  // 刪除時, 打開另一個小視窗
+  const handleDeleteOpen = (id: string) => {
+    openDelete(id);
   };
 
-  // 建立模板
+
+  // Todo: 建立模板
   const generateTemplateId = () => {
     return Math.random().toString(36).substring(2, 6);
   };
@@ -142,7 +120,7 @@ export const MenuModal = () => {
             <div className='flex w-full'>
               <button
                 className='flex items-center gap-1 text-sm p-1 font-bold rounded-sm hover:bg-red-400 hover:text-white duration-300 bg-gray-100'
-                onClick={() => handleRemoveMenu(openMenu.id)}
+                onClick={() => handleDeleteOpen(openMenu.id)}
               >
                 <Trash2 width={14} /> 刪除
               </button>
