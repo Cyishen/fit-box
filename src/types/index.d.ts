@@ -27,7 +27,6 @@ type WorkoutSessionType = {
 // 分割線 =========================== 分割線
 
 type TemplateType = {
-  id?: string;
   userId?: string;
   menuId: string;
   templateId: string;
@@ -43,10 +42,9 @@ type MenuType = {
 };
 
 type ExerciseType = {
-  id: string;
   movementId: string; // 動作ID，例如啞鈴胸推 "1"
-  exerciseCategory?: string; // 動作類別
   name: string; // 動作名稱，例如 "啞鈴胸推"
+  exerciseCategory?: string; // 動作類別
   sets: SetType[];
 };
 
