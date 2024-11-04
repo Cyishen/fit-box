@@ -39,7 +39,7 @@ type TemplateType = {
 type MenuType = {
   id: string;
   userId: string;
-  title: string | null;
+  title: string;
 };
 
 type ExerciseType = {

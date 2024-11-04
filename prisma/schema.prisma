@@ -57,7 +57,7 @@ model User {
 model Menu {
   id     String @id @default(cuid())
   userId String @map("user_id")
-  title  String?
+  title  String
 
   user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   templates      Template[]
