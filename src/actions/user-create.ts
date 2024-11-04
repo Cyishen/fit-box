@@ -2,6 +2,8 @@
 
 import { prismaDb } from "@/lib/db"
 import { auth } from "@/auth";
+import { revalidatePath } from "next/cache";
+
 
 export const upsertMenu = async (data: MenuType) => {
   const session = await auth()
@@ -65,13 +67,14 @@ export const getAllMenusByUserId = async (id?: string) => {
   const userId = session?.user?.id
 
   if (!userId) {
-    throw new Error("Unauthorized");
+    return [];
   }
 
   const menus = await prismaDb.menu.findMany({
     where: { userId: id }
   })
 
+  revalidatePath('/fit')
   return menus
 }
 
@@ -107,3 +110,48 @@ export const deleteMenuById = async (id: string) => {
 
   return menus
 }
+
+type upsertTemplateType = {
+  id: string,
+  menuId: string,
+  templateTitle: string,
+  templateCategory: string
+}
+export const upsertTemplate = async (data: upsertTemplateType) => {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // 更新操作
+  if (data.id) {
+    const updatedTemplate = await prismaDb.template.update({
+      where: { id: data.id },
+      data: {
+        menuId: data.menuId,
+        templateTitle: data.templateTitle,
+        templateCategory: data.templateCategory,
+      }
+    });
+
+    return {
+      id: updatedTemplate.id,
+      menuId: updatedTemplate.menuId,
+      templateTitle: updatedTemplate.templateTitle,
+      templateCategory: updatedTemplate.templateCategory,
+    }
+  }
+
+  // 新建操作
+  const newTemplate = await prismaDb.template.create({
+    data: {
+      menuId: data.menuId,
+      templateTitle: data.templateTitle,
+      templateCategory: data.templateCategory,
+    }
+  });
+
+  return newTemplate;
+};

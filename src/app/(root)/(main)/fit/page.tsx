@@ -1,60 +1,34 @@
-"use client"
-
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import Wrapper from '@/components/Wrapper'
-import { Button } from '@/components/ui/button'
 
-import FitDashboard from './FitDashboard'
 import FitProfile from './FitProfile'
+import FitDashboard from './FitDashboard'
 
-import { useMenuStore, useWorkoutStore } from '@/lib/store'
-import { useRouter } from 'next/navigation'
-import ShowTrainingCard from './ShowTrainingCard'
+import ShowTraining from './ShowTraining'
+import ShowMenu from './ShowMenu'
+
+import { getAllMenusByUserId } from '@/actions/user-create'
+import { auth } from '@/auth'
+
 
 // import { format } from "date-fns"
 
 
-const FitPage = () => {
-  const router = useRouter();
-  const [randomBoxImage, setRandomBoxImage] = useState('');
+const FitPage = async() => {
+  const session = await auth();
+  const userId = session?.user?.id
 
-  const NOT_USER_MAX_MENU = 3
-  const menus = useMenuStore((state) => state.menus);
-  const canCreateNewMenu = menus.length < NOT_USER_MAX_MENU;
+  const userData = getAllMenusByUserId(userId);
+  const [ 
+    userMenu 
+  ] = await Promise.all([ 
+    userData 
+  ]);
 
-  const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
-
-  //card method
-  const handleEditWorkout = (sessionId: string) => {
-    const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
-
-    if (sessionToEdit) {
-      router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${sessionId}`);
-    }
-    localStorage.setItem('currentSessionId', sessionId);
-  };
-
-  const handleRemoveWorkoutSession = (sessionId: string) => {
-    removeWorkoutSession(sessionId);
-  };
 
   // TODO: 篩選用戶當天紀錄
   // const todayDate = format(new Date(), 'yyyy-MM-dd');
   // const todayTrainingCard = workoutSessions.filter(session => session.date === todayDate);
 
-  useEffect(() => {
-    const images = [
-      '/imgs/cap.png',
-      '/imgs/hulk.png',
-      '/imgs/iron.png',
-      '/imgs/thor.png',
-      '/imgs/girl.png',
-    ];
-    const randomIndex = Math.floor(Math.random() * images.length);
-    const randomImage = images[randomIndex];
-    setRandomBoxImage(randomImage);
-  }, []);
 
   return (
     <section>
@@ -65,44 +39,17 @@ const FitPage = () => {
           <div className="flex flex-col w-full gap-3">
             <div className='flex flex-col w-full gap-3 overflow-hidden mt-1'>
               <h1 className='font-bold'>最近的訓練</h1>
-
-              {workoutSessions.map((session: WorkoutSessionType) => (
-                <ShowTrainingCard
-                  key={session.cardSessionId}
-                  session={session}
-                  handleEditWorkout={handleEditWorkout}
-                  handleRemoveWorkoutSession={handleRemoveWorkoutSession}
-                />
-              ))}
+              <ShowTraining />
             </div>
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 mt-2'>
-              <div 
-                className='flex items-center justify-between w-full py-3'
-                style={{
-                  backgroundImage: `url(${randomBoxImage})`,
-                  backgroundSize: 'contain',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'repeat',
-                  backgroundBlendMode: 'overlay',
-                  backgroundColor: '#f3f4f6',
-                }}
-              >
-                <h1 className='font-bold'>你的訓練</h1>
-
-                {canCreateNewMenu ? (
-                  <Link href='/fit/create-menu'>
-                    <Button className='w-fit self-end'>+ 新盒子</Button>
-                  </Link>
-                ) : (
-                  <Button variant='outline' className='w-fit self-end' disabled>
-                    註冊獲得更多盒子🤗
-                  </Button>
-                )}
-              </div>
+              <ShowMenu />
 
               <div className='overflow-hidden mb-20'>
-                <FitDashboard />
+                <FitDashboard 
+                  menusData={userMenu} 
+                  userId={userId || null} 
+                />
               </div>
             </div>
           </div>

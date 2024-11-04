@@ -1,16 +1,19 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { ListOrdered } from 'lucide-react';
-import { Trash2 } from 'lucide-react';
+import { ListOrdered, Trash2 } from 'lucide-react';
+
 import RippleAni from '@/components/RippleAni';
+
+import { useWorkoutStore } from '@/lib/store';
 
 
 type Props = {
   session: WorkoutSessionType
-  handleEditWorkout: (sessionId: string) => void
-  handleRemoveWorkoutSession: (sessionId: string) => void
+  // handleEditWorkout: (sessionId: string) => void
+  // handleRemoveWorkoutSession: (sessionId: string) => void
 }
 
 const heroImage = [
@@ -21,7 +24,7 @@ const heroImage = [
   '/imgs/girl.png',
 ];
 
-const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSession }: Props) => {
+const ShowTrainingCard = ({ session }: Props) => {
   const randomImage = heroImage[Math.floor(Math.random() * heroImage.length)];
 
   const [isSwiped, setIsSwiped] = useState(false);
@@ -61,6 +64,24 @@ const ShowTrainingCard = ({ session, handleEditWorkout, handleRemoveWorkoutSessi
     } else if (distance < 0) {
       setIsSwiped(false);
     }
+  };
+
+  const router = useRouter();
+
+  //TODO: menu編輯和刪除
+  const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
+
+  const handleEditWorkout = (sessionId: string) => {
+    const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
+
+    if (sessionToEdit) {
+      router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${sessionId}`);
+    }
+    localStorage.setItem('currentSessionId', sessionId);
+  };
+
+  const handleRemoveWorkoutSession = (sessionId: string) => {
+    removeWorkoutSession(sessionId);
   };
 
   useEffect(() => {

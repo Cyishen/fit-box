@@ -2,18 +2,22 @@
 
 
 import { useMenuStore, useTemplateStore } from '@/lib/store';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import TemplateCardList from './TemplateCardList';
 import MenuList from './MenuList';
 
-import { useSession } from 'next-auth/react'
-import { getAllMenusByUserId } from '@/actions/user-create';
-import { useMenuModal } from '@/lib/use-menu-modal';
+// import { getAllMenusByUserId } from '@/actions/user-create';
+// import { useMenuModal } from '@/lib/use-menu-modal';
 
-import { Loader } from 'lucide-react';
+// import { Loader } from 'lucide-react';
 
 
-const FitDashboard = () => {
+interface Props {
+  menusData: MenuType[];
+  userId?: string | null;
+}
+
+const FitDashboard = ({ menusData, userId }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState<{ [key: string]: boolean }>({});
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
 
@@ -22,60 +26,77 @@ const FitDashboard = () => {
   const templates = useTemplateStore((state) => state.templates);
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
-  // 資料庫
-  const { data: session } = useSession()
-  const userId = session?.user?.id
-
-  // const [dateAllMenu, setDateAllMenu] = useState<MenuType[]>([]) //新資料無法即時更新
-  // 用zustand管理 menu變動, 取得新資料渲染畫面 UI
-  const { dateAllMenu, setDateAllMenu } = useMenuModal();
-  const [pending, startTransition] = useTransition();
-
+  const selectMenu = (menuId: string | null, menusList: MenuType[]) => {
+    if (menuId && menusList.some(menu => menu.id === menuId)) {
+      setSelectedMenuId(menuId);
+      setIsMenuOpen({ [menuId]: true });
+    } else if (menusList.length > 0) {
+      const firstMenuId = menusList[0].id;
+      setSelectedMenuId(firstMenuId);
+      setIsMenuOpen({ [firstMenuId]: true });
+    } else {
+      setSelectedMenuId(null);
+    }
+  };
 
   useEffect(() => {
     const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
-    const handleLocalMenuSelection = (lastSelectedMenuId: string) => {
-      if (lastSelectedMenuId && menus.some(menu => menu.id === lastSelectedMenuId)) {
-        setSelectedMenuId(lastSelectedMenuId);
-        setIsMenuOpen({ [lastSelectedMenuId]: true });
-      } else if (menus.length > 0) {
-        const firstMenuId = menus[0].id;
-        setSelectedMenuId(firstMenuId);
-        setIsMenuOpen({ [firstMenuId]: true });
-      } else {
-        setSelectedMenuId(null);
-      }
-    };
 
-    const fetchMenus = async () => {
-      if (userId) {
-        try {
-          // 方式一: 用startTransition 保持畫面流暢
-          startTransition(() => {
-            getAllMenusByUserId(userId)
-              .then((data) => {
-                setDateAllMenu(data as MenuType[])
-              })
-              .catch((error) => {
-                console.error('Error fetching menus:', error);
-              });
-              setSelectedMenuId(lastSelectedMenuId)
-              setIsMenuOpen({ [lastSelectedMenuId as string]: true })
-          });
+    if (!userId) {
+      selectMenu(lastSelectedMenuId, menus);
+    } else {
+      selectMenu(lastSelectedMenuId, menusData);
+    }
+  }, [menus, menusData, userId]);
 
-          // 方式二: 直接使用
-          // const updatedMenus = await getAllMenusByUserId(userId);
-          // setDateAllMenu(updatedMenus as MenuType[]);
-        } catch (error) {
-          console.error('Error fetching menus:', error);
-        }
-      } else {
-        handleLocalMenuSelection(lastSelectedMenuId as string);
-      }
-    };
+  // 方式二: 用zustand管理 menu變動, 取得新資料渲染畫面 UI
+  // const { setDateAllMenu } = useMenuModal();
+  // const [pending, startTransition] = useTransition();
 
-    fetchMenus();
-  }, [menus, setDateAllMenu, userId]);
+  // useEffect(() => {
+  //   const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
+  //   const handleLocalMenuSelection = (lastSelectedMenuId: string) => {
+  //     if (lastSelectedMenuId && menus.some(menu => menu.id === lastSelectedMenuId)) {
+  //       setSelectedMenuId(lastSelectedMenuId);
+  //       setIsMenuOpen({ [lastSelectedMenuId]: true });
+  //     } else if (menus.length > 0) {
+  //       const firstMenuId = menus[0].id;
+  //       setSelectedMenuId(firstMenuId);
+  //       setIsMenuOpen({ [firstMenuId]: true });
+  //     } else {
+  //       setSelectedMenuId(null);
+  //     }
+  //   };
+
+  //   const fetchMenus = async () => {
+  //     if (userId) {
+  //       try {
+  //         // 方式一: 用startTransition 保持畫面流暢
+  //         startTransition(() => {
+  //           getAllMenusByUserId(userId)
+  //             .then((data) => {
+  //               setDateAllMenu(data as MenuType[])
+  //             })
+  //             .catch((error) => {
+  //               console.error('Error fetching menus:', error);
+  //             });
+  //             setSelectedMenuId(lastSelectedMenuId)
+  //             setIsMenuOpen({ [lastSelectedMenuId as string]: true })
+  //         });
+
+  //         // 方式二: 直接使用
+  //         // const updatedMenus = await getAllMenusByUserId(userId);
+  //         // setDateAllMenu(updatedMenus as MenuType[]);
+  //       } catch (error) {
+  //         console.error('Error fetching menus:', error);
+  //       }
+  //     } else {
+  //       handleLocalMenuSelection(lastSelectedMenuId as string);
+  //     }
+  //   };
+
+  //   fetchMenus();
+  // }, [menus, setDateAllMenu, userId]);
 
 
   const handleMenuClick = (id: string) => {
@@ -108,9 +129,9 @@ const FitDashboard = () => {
 
   return (
     <div className='flex flex-col gap-5 relative'>
-      {pending && <Loader size={20} className="animate-spin absolute top-0 left-1/2" />}
+      {/* {pending && <Loader size={20} className="animate-spin absolute top-0 left-1/2" />} */}
       <MenuList
-        menus={dateAllMenu.length > 0 ? dateAllMenu : menus}
+        menus={menusData?.length > 0 ? menusData : menus}
         selectedMenuId={selectedMenuId}
         onMenuSelect={handleMenuClick}
         isMenuOpen={isMenuOpen}

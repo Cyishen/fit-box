@@ -68,7 +68,7 @@ model Menu {
 model Template {
   id               String  @id @default(cuid())
   menuId           String  @map("menu_id")
-  templateTittle   String
+  templateTitle   String @map("templateTittle")
   templateCategory String
 
   exercises      Exercise[]
