@@ -42,7 +42,7 @@ type MenuType = {
 };
 
 type ExerciseType = {
-  id: string;
+  id?: string;
   movementId: string; // 動作ID，例如啞鈴胸推 "1"
   name: string; // 動作名稱，例如 "啞鈴胸推"
   exerciseCategory: string; // 動作類別
