@@ -12,6 +12,7 @@ import { getMenuById, upsertMenu } from '@/actions/user-create'
 const UpdateMenu = ({ params }: { params: { menuId: string } }) => {
   const { menuId } = params;
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false); 
 
   const { data: session } = useSession()
   const userId = session?.user?.id;
@@ -60,6 +61,8 @@ const UpdateMenu = ({ params }: { params: { menuId: string } }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading(true);
+
     if (userId) {
         await upsertMenu(menu)
     } else {
@@ -71,6 +74,7 @@ const UpdateMenu = ({ params }: { params: { menuId: string } }) => {
       editMenu(menuId, updatedMenu);
     }
 
+    setIsLoading(false);
     router.push("/fit");
   };
 
@@ -80,6 +84,7 @@ const UpdateMenu = ({ params }: { params: { menuId: string } }) => {
       menu={menu}
       setMenu={setMenu}
       handleSubmit={handleSubmit}
+      isLoading={isLoading}
     />
   )
 }

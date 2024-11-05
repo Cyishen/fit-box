@@ -19,7 +19,11 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     if (sets.length > 0) {
       setDynamicSets(sets);
     } else {
-      setDynamicSets([{ leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0 }]);
+      setDynamicSets([{
+        leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
+        id: '',
+        movementId: ''
+      }]);
     }
   }, [sets]);
 
@@ -47,7 +51,11 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
 
   // 新增一組，確保新組的類型正確
   const handleAddSet = () => {
-    setDynamicSets([...dynamicSets, { leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0 }]);
+    setDynamicSets([...dynamicSets, {
+      leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
+      id: '',
+      movementId: ''
+    }]);
   };
 
   // 刪除指定的組

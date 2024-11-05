@@ -31,7 +31,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
       exercises: updatedExercises,
     };
     // 更新刪除後的儲存
-    updateTemplate(template.templateId, updatedTemplate);
+    updateTemplate(template.templateId ?? '', updatedTemplate);
     setTemplateState(updatedTemplate);
   };
 
@@ -48,7 +48,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
       exercises: updatedExercises,
     };
     // 更新組數設定
-    updateTemplate(template.templateId, updatedTemplate);
+    updateTemplate(template.templateId ?? '', updatedTemplate);
     setTemplateState(updatedTemplate);
   };
 

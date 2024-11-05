@@ -11,9 +11,10 @@ type Props = {
   menu: MenuType,
   setMenu: React.Dispatch<React.SetStateAction<MenuType>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  isLoading?: boolean;
 };
 
-const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
+const MenuForm = ({ type, menu, setMenu, handleSubmit, isLoading }: Props) => {
   const [count, setCount] = useState(0);
   const router = useRouter();
 
@@ -65,7 +66,7 @@ const MenuForm = ({ type, menu, setMenu, handleSubmit }: Props) => {
           </div>
 
           <div className="flex justify-end mt-10">
-            <Button className='flex w-full md:w-fit'>建立</Button>
+            <Button disabled={isLoading} className='flex w-full md:w-fit'>建立</Button>
           </div>
         </form>
       </Wrapper>

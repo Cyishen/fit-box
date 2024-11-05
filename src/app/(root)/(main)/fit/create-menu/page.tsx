@@ -11,6 +11,8 @@ import { upsertMenu } from '@/actions/user-create'
 
 const CreateMenu = () => {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false); 
+
   const { data: session } = useSession()
   const userId = session?.user?.id
 
@@ -28,6 +30,7 @@ const CreateMenu = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if(userId) {
       await upsertMenu(menu)
@@ -39,6 +42,8 @@ const CreateMenu = () => {
       };
       addMenu(newMenu);
     }
+
+    setIsLoading(false);
   
     router.push("/fit");
   };
@@ -49,6 +54,7 @@ const CreateMenu = () => {
       menu={menu}
       setMenu={setMenu}
       handleSubmit={handleSubmit}
+      isLoading={isLoading}
     />
   )
 }

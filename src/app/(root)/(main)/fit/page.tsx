@@ -6,7 +6,7 @@ import FitDashboard from './FitDashboard'
 import ShowTraining from './ShowTraining'
 import ShowMenu from './ShowMenu'
 
-import { getAllMenusByUserId } from '@/actions/user-create'
+import { getAllMenusByUserId, getAllTemplatesWithUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
 
 
@@ -17,12 +17,27 @@ const FitPage = async() => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userData = getAllMenusByUserId(userId);
+  const userData = await getAllMenusByUserId(userId);
+
+  const userTemplateData = await getAllTemplatesWithUserId();
+  const userAllTemplate: TemplateType[] = userTemplateData.map(template => ({
+    userId: template.userId,
+    menuId: template.menuId,
+    templateId: template.id,
+    templateCategory: template.templateCategory,
+    templateTitle: template.templateTitle,
+    exercises: template.exercises,
+  }));
+
   const [ 
-    userMenu 
+    userMenu,
+    userTemplates 
   ] = await Promise.all([ 
-    userData 
+    userData,
+    userAllTemplate 
   ]);
+
+  // console.log('所有模板', JSON.stringify(userTemplates, null, 2));
 
 
   // TODO: 篩選用戶當天紀錄
@@ -48,6 +63,7 @@ const FitPage = async() => {
               <div className='overflow-hidden mb-20'>
                 <FitDashboard 
                   menusData={userMenu} 
+                  templatesData={userTemplates} 
                   userId={userId || null} 
                 />
               </div>

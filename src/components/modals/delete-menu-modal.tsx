@@ -14,12 +14,13 @@ import { Button } from "@/components/ui/button";
 
 import { useSession } from 'next-auth/react'
 
-import { deleteMenuById, getAllMenusByUserId } from "@/actions/user-create";
+import { deleteMenuById } from "@/actions/user-create";
 
 import { useMenuStore } from "@/lib/store";
 
 import { useMenuModal } from "@/lib/use-menu-modal";
 import { useDeleteMenuModal } from "@/lib/use-delete-modal";
+import { useRouter } from "next/navigation";
 
 // const deleteFetchMenuById = async (id: string) => {
 //   const response = await fetch(`/api/menus/${id}`, {
@@ -33,12 +34,12 @@ import { useDeleteMenuModal } from "@/lib/use-delete-modal";
 
 export const DeleteMenuModal = () => {
   const [isClient, setIsClient] = useState(false);
-
+  const router = useRouter()
   const { data: session } = useSession()
   const userId = session?.user?.id
 
   const { isOpen, id, closeDelete } = useDeleteMenuModal();
-  const { setDateAllMenu, close } = useMenuModal();
+  const { close } = useMenuModal();
 
   // 本地 menus 資料
   const removeMenu = useMenuStore((state) => state.removeMenu);
@@ -46,17 +47,18 @@ export const DeleteMenuModal = () => {
   const handleRemoveMenu = async (menuId: string) => {
     try {
       if (userId) {
-        // todo*刪除資料 (兩個方式都能立即更新畫面)
-
-        // 方式一, 調用api刪除, 前端直接更新 dateAllMenu, 移除被刪除的菜單項目
+        // todo*刪除資料 (兩個方式, 都不用手動刷新頁面, 能立即看到更新的畫面)
+        // 方式一, 調用一般api寫法, 更新 useMenuModal的setDateAllMenu, 移除被刪除的菜單id
         // await deleteFetchMenuById(menuId);
         // setDateAllMenu(dateAllMenu.filter(menu => menu.id !== menuId));
+        // 或改伺服器寫法
+        // await deleteMenuById(menuId);
+        // const updatedMenus = await getAllMenusByUserId(userId);
+        // setDateAllMenu(updatedMenus as MenuType[]);
 
-        // 方式二, 用伺服端, 刪除、取得更新
+        // 方式二, fit首頁取消"use client", getAllMenusByUserId更新頁面
         await deleteMenuById(menuId);
-        const updatedMenus = await getAllMenusByUserId(userId);
-        setDateAllMenu(updatedMenus as MenuType[]);
-
+        router.refresh()
       } else {
         // 未登入用戶，從本地端刪除
         removeMenu(menuId);
@@ -68,7 +70,7 @@ export const DeleteMenuModal = () => {
     }
   };
 
-  const handleBack = () => {
+  const handleCancelMenuBack = () => {
     closeDelete()
     localStorage.removeItem('currentSessionId');
   };
@@ -109,7 +111,7 @@ export const DeleteMenuModal = () => {
 
             <div className="flex w-full">
               <Button
-                onClick={handleBack}
+                onClick={handleCancelMenuBack}
                 className="w-full"
                 variant='outline'
               >

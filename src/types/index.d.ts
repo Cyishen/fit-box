@@ -29,7 +29,7 @@ type WorkoutSessionType = {
 type TemplateType = {
   userId?: string;
   menuId: string;
-  templateId: string;
+  templateId: string | null;
   templateCategory: string;
   templateTitle: string;
   exercises: ExerciseType[];
@@ -42,14 +42,16 @@ type MenuType = {
 };
 
 type ExerciseType = {
+  id: string;
   movementId: string; // 動作ID，例如啞鈴胸推 "1"
   name: string; // 動作名稱，例如 "啞鈴胸推"
-  exerciseCategory?: string; // 動作類別
+  exerciseCategory: string; // 動作類別
   sets: SetType[];
 };
 
 type SetType = {
-  movementId?: string;
+  id: string;
+  movementId: string;
   leftWeight: number; 
   rightWeight: number; 
   repetitions: number; 

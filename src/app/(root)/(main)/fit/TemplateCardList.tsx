@@ -1,5 +1,6 @@
 import React from 'react';
 import TemplateCard from './TemplateCard';
+import { Loader } from 'lucide-react';
 
 
 const CategoryIcons: { [key: string]: string } = {
@@ -14,23 +15,26 @@ const CategoryIcons: { [key: string]: string } = {
 type TemplateCardListProps = {
   selectedTemplates: TemplateType[];
   handleRemoveTemplate: (menuId: string) => void;
+  isPending: boolean;
 };
 
-const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate }: TemplateCardListProps) => {
+const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate, isPending }: TemplateCardListProps) => {
 
   return (
     <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full gap-3 relative'>
+      {isPending && <Loader size={30} className="animate-spin absolute top-1/2 left-1/2 z-50" />}
+
       {selectedTemplates.length > 0 ? (
-        selectedTemplates.map((work) => (
+        selectedTemplates.map((temp) => (
           <TemplateCard
-            key={work.templateId}
-            iconSrc={CategoryIcons[work.templateCategory] || "/icons/dumbbell.svg"}
-            templateCategory={work.templateCategory}
-            templateTitle={work.templateTitle}
-            onRemove={() => handleRemoveTemplate(work.templateId)}
-            menuId={work.menuId}
-            templateId={work.templateId}
-            exercises={work.exercises}
+            key={temp.templateId}
+            iconSrc={CategoryIcons[temp.templateCategory] || "/icons/dumbbell.svg"}
+            templateCategory={temp.templateCategory}
+            templateTitle={temp.templateTitle}
+            onRemove={() => handleRemoveTemplate(temp.templateId ?? '')}
+            menuId={temp.menuId}
+            templateId={temp.templateId ?? ''}
+            exercises={temp.exercises}
           />
         ))
       ) : (

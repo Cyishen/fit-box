@@ -103,14 +103,14 @@ model Exercise {
   id               String  @id @default(cuid())
   movementId       String // 固定的動作ID，例如啞鈴胸推 1, 划船 2)
   name             String
-  exerciseCategory String?
+  exerciseCategory String
 
   sets                Set[]
-  refWorkoutSessionId String
-  workoutSession      WorkoutSession @relation(fields: [refWorkoutSessionId], references: [id], onDelete: Cascade)
+  refWorkoutSessionId String?
+  workoutSession      WorkoutSession? @relation(fields: [refWorkoutSessionId], references: [id], onDelete: Cascade)
 
   templateId String
-  template   Template @relation(fields: [templateId], references: [id])
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
 
   @@index([movementId]) // 創建索引，提升查詢效率
 }

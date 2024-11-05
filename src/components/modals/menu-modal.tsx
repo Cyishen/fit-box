@@ -18,6 +18,8 @@ import { useDeleteMenuModal } from "@/lib/use-delete-modal";
 import { useMenuStore, useTemplateStore } from "@/lib/store";
 
 import { useSession } from 'next-auth/react'
+import { upsertTemplate } from "@/actions/user-create";
+
 
 
 const fetchMenuById = async (id: string) => {
@@ -48,7 +50,7 @@ export const MenuModal = () => {
   const templates = useTemplateStore((state) => state.templates);
   const countTemplate = templates.filter(template => template.menuId === id);
 
-  // 用戶登入, 抓取資料庫用戶所有menu
+  // 用戶登入, 抓取資料庫用戶menu id
   const [dateMenuId, setDateMenuId] = useState<MenuType | null>(null);
 
   useEffect(() => {
@@ -60,9 +62,9 @@ export const MenuModal = () => {
   }, [userId, id]);
 
   // 判斷打開小視窗id, 是資料庫的還是本地
-  const openMenu = userId 
-  ? dateMenuId
-  : menus.find((menu) => menu.id === id); 
+  const openMenu = userId
+    ? dateMenuId
+    : menus.find((menu) => menu.id === id);
 
   // 刪除時, 打開另一個小視窗
   const handleDeleteOpen = (id: string) => {
@@ -75,23 +77,43 @@ export const MenuModal = () => {
     return Math.random().toString(36).substring(2, 6);
   };
 
-  const handleAddTemplate = (menuId: string) => {
-    const newCardId = generateTemplateId();
-    const newTemplate: TemplateType = {
+  const handleAddTemplate = async (menuId: string) => {
+    const dataAddTemplate: TemplateType = {
       userId: userId || "Guest",
-      templateId: newCardId,
       templateCategory: "胸",
-      templateTitle: "未命名訓練卡🗒︎",
+      templateTitle: "未命名模板",
       menuId: menuId,
-      exercises: []
+      exercises: [],
+      templateId: null
     };
 
-    addTemplate(newTemplate);
+    if (userId) {
+      // 資料庫
+      const updatedTemplate = await upsertTemplate(dataAddTemplate);
 
-    router.push(`/fit/${menuId}/${newCardId}/create-template`);
+      router.push(`/fit/${menuId}/${updatedTemplate.id}/create-template`);
+    } else {
+      // 本地
+      const newCardId = generateTemplateId();
+
+      dataAddTemplate.templateId = newCardId;
+      // const localAddTemplate: TemplateType = {
+      //   userId: userId || "Guest",
+      //   templateCategory: "胸",
+      //   templateTitle: "未命名模板🗒︎",
+      //   menuId: menuId,
+      //   exercises: [],
+      //   templateId: newCardId,
+      // };
+
+      addTemplate(dataAddTemplate);
+
+      router.push(`/fit/${menuId}/${newCardId}/create-template`);
+    }
 
     close();
   };
+
 
   useEffect(() => setIsClient(true), []);
 

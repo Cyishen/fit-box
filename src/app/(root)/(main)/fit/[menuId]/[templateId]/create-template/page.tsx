@@ -5,44 +5,70 @@ import { useRouter } from 'next/navigation'
 import TemplateForm from '../TemplateForm'
 import { useTemplateStore } from '@/lib/store'
 
+import { useSession } from 'next-auth/react'
+import { getExerciseByTemplateId, upsertTemplate } from '@/actions/user-create'
+
 
 const CreateTemplate = ({ params }: { params: { menuId: string; templateId: string } }) => {
   const { menuId, templateId } = params;
 
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
   const router = useRouter()
 
-  const templates = useTemplateStore(state => state.templates);
+  // 本地
+  const { templates, addTemplate, editTemplate } = useTemplateStore(state => state);
   const existingTemplate = templates.find(template => template.templateId === templateId);
 
-  const addTemplate = useTemplateStore((state) => state.addTemplate);
-  const editTemplate = useTemplateStore((state) => state.editTemplate);
 
   const [template, setTemplate] = useState<TemplateType>({
-    userId: "Guest",
-    templateId: templateId,
-    templateCategory: "",
-    templateTitle: "",
+    userId: userId || "Guest",
     menuId,
+    templateId: templateId,
+    templateCategory: "胸",
+    templateTitle: "未命名模板🗒︎",
     exercises: [],
   });
 
   useEffect(() => {
-    if (existingTemplate) {
-      setTemplate(existingTemplate);
-    }
-  }, [existingTemplate]);
+    const fetchExercises = async () => {
+      // 資料庫
+      if (userId && templateId) {
+        const exercises = await getExerciseByTemplateId(templateId);
+
+        setTemplate(prevTemplate => ({
+          ...prevTemplate,
+          exercises: exercises,
+        }));
+      } else if (existingTemplate) {
+        // 本地
+        setTemplate(existingTemplate);
+      }
+    };
+
+    fetchExercises();
+  }, [existingTemplate, templateId, userId]);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const updatedTemplate: TemplateType = {
-      ...template,
-    };
+    if(userId) {
+      // 資料庫
+      await upsertTemplate(template)
 
-    if (existingTemplate) {
-      editTemplate(templateId, updatedTemplate);
     } else {
-      addTemplate(updatedTemplate);
+      // 本地
+      const updatedTemplate: TemplateType = {
+        ...template,
+      };
+      
+      if (existingTemplate) {
+        editTemplate(templateId, updatedTemplate);
+      } else {
+        addTemplate(updatedTemplate);
+      }
     }
 
     router.push("/fit");

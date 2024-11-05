@@ -164,6 +164,7 @@ export const POST = async (req: Request) => {
                   movementId: exercise.movementId,
                   name: exercise.name,
                   templateId: session.templateId,
+                  exerciseCategory: exercise.exerciseCategory,
                   refWorkoutSessionId: workoutSession.id,
                   sets: {
                     create: exercise.sets.map((set) => ({

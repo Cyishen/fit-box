@@ -8,21 +8,62 @@ import Image from 'next/image';
 import FitSideBar from './FitSideBar';
 import { exerciseTemplates } from '@/constants/constants';
 
+import { useSession } from 'next-auth/react'
+import { getExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
+
 
 const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
   const router = useRouter();
   const { templateId } = params;
 
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+  // 本地存儲
   const templates = useTemplateStore(state => state.templates);
   const currentTemplate = templates.find(template => template.templateId === templateId);
 
+  // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
 
   useEffect(() => {
-    if (currentTemplate) {
-      setSelectedExercises(currentTemplate.exercises);
+    const fetchSelectedExercises = async () => {
+      if (userId) {
+        // 資料庫
+        const existingExercises = await getExerciseByTemplateId(templateId);
+        setSelectedExercises(existingExercises as ExerciseType[]);
+      } else {
+        // 本地
+        if (currentTemplate) {
+          setSelectedExercises(currentTemplate.exercises);
+        }
+      }
+    };
+  
+    fetchSelectedExercises();
+  }, [currentTemplate, templateId, userId]);
+
+
+  const handleSaveExercises = async() => {
+    if(userId) {
+      // 資料庫
+      await upsertExercise(selectedExercises, templateId, null);
+
+    } else {
+      // 本地
+      if (currentTemplate) {
+        const updatedTemplate: TemplateType = {
+          ...currentTemplate,
+          exercises: selectedExercises,
+        };
+    
+        const updateTemplate = useTemplateStore.getState().editTemplate;
+        updateTemplate(templateId, updatedTemplate);
+      }
     }
-  }, [currentTemplate]);
+
+    router.back()
+  };
 
   const handleToggleExercise = (exercise: ExerciseType) => {
     const isSelected = selectedExercises.some(ex => ex.movementId === exercise.movementId);
@@ -31,20 +72,6 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
       setSelectedExercises(selectedExercises.filter(ex => ex.movementId !== exercise.movementId));
     } else {
       setSelectedExercises([...selectedExercises, exercise]);
-    }
-  };
-
-  const handleSaveExercises = () => {
-    if (currentTemplate) {
-      const updatedTemplate: TemplateType = {
-        ...currentTemplate,
-        exercises: selectedExercises,
-      };
-
-      const updateTemplate = useTemplateStore.getState().editTemplate;
-      updateTemplate(templateId, updatedTemplate);
-
-      router.back()
     }
   };
 

@@ -5,49 +5,77 @@ import { useRouter } from 'next/navigation'
 import { useTemplateStore } from '@/lib/store'
 import TemplateForm from '../TemplateForm'
 
+import { useSession } from 'next-auth/react'
+import { getExerciseByTemplateId, getTemplateById, upsertTemplate } from '@/actions/user-create'
 
-const UpdateTemplate = ({ params }: { params: { templateId: string } }) => {
-  const { templateId } = params;
+
+const UpdateTemplate = ({ params }: { params: { menuId: string ,templateId: string } }) => {
+  const { menuId,templateId } = params;
   const router = useRouter();
 
-  // Todo?: 取得zustand 所有模板, 並找出 id 一樣的模板
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+  // 本地
   const templates = useTemplateStore((state) => state.templates);
   const existingTemplate = templates.find(template => template.templateId === templateId);
-
+  const editTemplate = useTemplateStore((state) => state.editTemplate);
 
   const [template, setTemplate] = useState<TemplateType>({
-    userId: "",
-    templateId: "",
+    userId: userId || "Guest",
+    menuId: menuId,
+    templateId: templateId,
     templateCategory: "",
     templateTitle: "",
-    menuId: "",
     exercises: [],
   });
 
   useEffect(() => {
-    if (existingTemplate) {
-      setTemplate(existingTemplate);
-    }
-  }, [existingTemplate]);
+    const fetchExercises = async () => {
+      // 資料庫
+      if (userId && templateId) {
+        try {
+          const template = await getTemplateById(templateId);
+          const exercises = await getExerciseByTemplateId(templateId);
 
-  const editTemplate = useTemplateStore((state) => state.editTemplate);
+          setTemplate(prevTemplate => ({
+            ...prevTemplate,
+            exercises: exercises,
+            templateTitle: template?.templateTitle || '',
+            templateCategory: template?.templateCategory || '',
+          }));
+        } catch (error) {
+          console.error("Failed to fetch template or exercises", error);
+        }
+      } else if (existingTemplate) {
+        // 本地
+        setTemplate(existingTemplate);
+      }
+    };
+
+    fetchExercises();
+  }, [existingTemplate, templateId, userId]);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (template) {
-      const editTemplateData: TemplateType = {
-        userId: template.userId,
-        templateId: template.templateId, 
-        templateCategory: template.templateCategory,
-        templateTitle: template.templateTitle,
-        menuId: template.menuId,
-        exercises: template.exercises || [],
-      };
-
-      editTemplate(template.templateId, editTemplateData);
-      router.push("/fit");
+    if (userId) {
+      // 資料庫
+      await upsertTemplate(template)
+    } else {
+      // 本地
+      if (template) {
+        const editTemplateData: TemplateType = {
+          ...template,
+          templateCategory: template.templateCategory,
+          templateTitle: template.templateTitle,
+          exercises: template.exercises || [],
+        };
+        editTemplate(template.templateId ?? '', editTemplateData);
+      }
     }
+    router.push("/fit");
   };
 
   if (!template) {
