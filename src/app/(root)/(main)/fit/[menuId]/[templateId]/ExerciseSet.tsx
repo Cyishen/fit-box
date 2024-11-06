@@ -112,6 +112,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     maxLength={4}
                     value={set.leftWeight || ''}
                     inputMode='decimal'
+                    step="0.1"
                     onChange={(e) => handleChange(index, e)}
                     onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
                     onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
