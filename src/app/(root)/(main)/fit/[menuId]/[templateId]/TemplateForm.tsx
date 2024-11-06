@@ -5,11 +5,8 @@ import { ChangeEvent, useEffect, useState } from "react"
 
 import ExerciseList from "./ExerciseList";
 import { useRouter } from "next/navigation";
-// import { usePracticeModal } from "@/lib/use-practice-modal";
-
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
-import { useSession } from 'next-auth/react'
 
 
 type Props = {
@@ -24,22 +21,9 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPendin
   const [count, setCount] = useState(0);
   const router = useRouter();
 
-  const { data: session } = useSession()
-  const userId = session?.user?.id
-
-
-  // const { dateAllTemplate } = usePracticeModal();
-  const [exercises, setExercises] = useState<ExerciseType[]>([]);
-
   useEffect(() => {
-    if (userId) {
-      // const selectedTemplate = dateAllTemplate.find(item => item.templateId === template.templateId);
-      // const exercisesToRender = selectedTemplate?.exercises || [];
-      // setExercises(exercisesToRender);
-
-      setExercises(template.exercises);
-    }
-  }, [template.exercises, userId]);
+    setCount(template.templateTitle.length);
+  }, [template.templateTitle]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -111,7 +95,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPendin
           {/* TODO: 添加動作 */}
           <div className="h-full">
             <ExerciseList
-              exercises={exercises || []}
+              exercises={template.exercises || []}
               setTemplateState={setTemplateState}
               template={template}
               isPending={isPending}

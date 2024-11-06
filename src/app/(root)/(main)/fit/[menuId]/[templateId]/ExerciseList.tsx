@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTemplateStore } from '@/lib/store';
 import { CopyPlus } from 'lucide-react';
 import ExerciseListCard from './ExerciseListCard';
 
+// import { usePracticeModal } from "@/lib/use-practice-modal";
+import { useSession } from 'next-auth/react'
 
 type ExerciseListProps = {
   exercises: ExerciseType[];
@@ -15,7 +17,23 @@ type ExerciseListProps = {
 const ExerciseList = ({ exercises, setTemplateState, template, isPending }: ExerciseListProps) => {
   const router = useRouter();
 
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
   const updateTemplate = useTemplateStore(state => state.editTemplate);
+
+  // const { dateAllTemplate } = usePracticeModal();
+  const [exerciseList, setExerciseList] = useState<ExerciseType[]>([]);
+
+  useEffect(() => {
+    if (userId) {
+      // const selectedTemplate = dateAllTemplate.find(item => item.templateId === template.templateId);
+      // const exercisesToRender = selectedTemplate?.exercises || [];
+      // setExercises(exercisesToRender);
+
+      setExerciseList(exercises);
+    }
+  }, [userId, exercises]);
 
   // 點擊下拉, 打開動作的組數設定
   const [openMovementId, setOpenMovementId] = useState<string | null>(null);
@@ -74,7 +92,7 @@ const ExerciseList = ({ exercises, setTemplateState, template, isPending }: Exer
         <div className='pt-3'>
           <div className='overflow-y-scroll max-h-[500px] min-h-[500px] rounded-t-2xl'>
             <div className='flex flex-col gap-3 mb-32'>
-              {exercises.map((exercise) => (
+              {exerciseList.map((exercise) => (
                 <ExerciseListCard
                   key={exercise.movementId}
                   exercise={exercise}
