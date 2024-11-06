@@ -17,7 +17,7 @@ import Link from "next/link";
 import { useTemplateStore } from "@/lib/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getExerciseByTemplateId } from "@/actions/user-create";
+// import { getExerciseByTemplateId } from "@/actions/user-create";
 
 import { useSession } from "next-auth/react"
 
@@ -33,11 +33,12 @@ import { useSession } from "next-auth/react"
 
 export const PracticeModal = () => {
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, menuId, templateId } = usePracticeModal();
-
   const { data: session } = useSession()
   const userId = session?.user?.id
+
+  const [isClient, setIsClient] = useState(false);
+  const { isOpen, close, menuId, templateId, dateAllTemplate } = usePracticeModal();
+
   // 本地
   const templates = useTemplateStore(state => state.templates);
   const openTemplate = templates.find(template => template.templateId === templateId);
@@ -45,30 +46,43 @@ export const PracticeModal = () => {
 
   const [exercise, setExercise] = useState<ExerciseType[]>([])
 
+  // 測試: 透過 dateAllTemplate 取得exercise
   useEffect(() => {
-    const fetchExercises = async () => {
-      if (userId && templateId) {
-        // 伺服器運行
-        const exercises = await getExerciseByTemplateId(templateId);
-        setExercise(exercises);
+    if (userId && templateId) {
+      
+      const newTemplateFromZustand = dateAllTemplate.map((item) => item.exercises.map((item) => item));
+      const renderExercises = newTemplateFromZustand
+      setExercise(renderExercises[0] || []);
+    } else {
+      // 本地
+      setExercise(localExercise || []);
+    }
+  },[dateAllTemplate, localExercise, templateId, userId])
 
-        // 一般 api 請求
-        // await fetchTemplateByTemplateId(templateId)
-        //   .then((data) => {
-        //     setExercise(data);
-        //   })
-        //   .catch((error) => {
-        //     console.error(error);
-        //   });
-      } else {
-        // 本地
-        setExercise(localExercise || []);
-      }
-    };
+  // 一般抓資料庫
+  // useEffect(() => {
+  //   const fetchExercises = async () => {
+  //     if (userId && templateId) {
+  //       // 伺服器運行
+  //       const exercises = await getExerciseByTemplateId(templateId);
+  //       setExercise(exercises);
 
-    fetchExercises();
-  }, [localExercise, userId, templateId])
+  //       // 一般 api 請求
+  //       // await fetchTemplateByTemplateId(templateId)
+  //       //   .then((data) => {
+  //       //     setExercise(data);
+  //       //   })
+  //       //   .catch((error) => {
+  //       //     console.error(error);
+  //       //   });
+  //     } else {
+  //       // 本地
+  //       setExercise(localExercise || []);
+  //     }
+  //   };
 
+  //   fetchExercises();
+  // }, [localExercise, userId, templateId])
 
   useEffect(() => setIsClient(true), []);
 

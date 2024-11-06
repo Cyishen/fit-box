@@ -97,15 +97,6 @@ export const MenuModal = () => {
       const newCardId = generateTemplateId();
 
       dataAddTemplate.templateId = newCardId;
-      // const localAddTemplate: TemplateType = {
-      //   userId: userId || "Guest",
-      //   templateCategory: "胸",
-      //   templateTitle: "未命名模板🗒︎",
-      //   menuId: menuId,
-      //   exercises: [],
-      //   templateId: newCardId,
-      // };
-
       addTemplate(dataAddTemplate);
 
       router.push(`/fit/${menuId}/${newCardId}/create-template`);

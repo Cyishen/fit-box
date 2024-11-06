@@ -7,7 +7,7 @@ import TemplateCardList from './TemplateCardList';
 import MenuList from './MenuList';
 
 import { deleteTemplateById } from '@/actions/user-create';
-
+import { usePracticeModal } from '@/lib/use-practice-modal';
 
 
 interface Props {
@@ -26,6 +26,14 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
   const menus = useMenuStore((state) => state.menus);
   const templates = useTemplateStore((state) => state.templates);
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
+
+  const { setDateAllTemplate } = usePracticeModal()
+
+  useEffect(() => {
+    if (userId && templatesData.length > 0) {
+      setDateAllTemplate(templatesData)
+    }
+  }, [setDateAllTemplate, templatesData, userId])
 
   const selectMenu = (menuId: string | null, menusList: MenuType[]) => {
     if (menuId && menusList.some(menu => menu.id === menuId)) {
@@ -52,7 +60,6 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
     }
   }, [menus, menusData, userId]);
 
-
   const handleMenuClick = (id: string) => {
     setSelectedMenuId(id);
     localStorage.setItem('selectedMenuId', id);
@@ -77,7 +84,6 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
       .slice()
       .reverse();
 
-
   const handleRemoveTemplate = async (templateId: string) => {
     try {
       if (userId) {
@@ -87,11 +93,12 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
       } else {
         removeTemplate(templateId);
       }
-      
+
     } catch (error) {
       console.log(error)
-    } 
+    }
   };
+
 
   return (
     <div className='flex flex-col gap-5 relative'>

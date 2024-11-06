@@ -5,6 +5,7 @@ import { ChangeEvent, useState } from "react"
 
 import ExerciseList from "./ExerciseList";
 import { useRouter } from "next/navigation";
+// import { usePracticeModal } from "@/lib/use-practice-modal";
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
 
@@ -20,7 +21,10 @@ type Props = {
 const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPending }: Props) => {
   const [count, setCount] = useState(0);
   const router = useRouter(); 
+  // const { dateAllTemplate } = usePracticeModal();
 
+  // const newTemplateFromZustand = dateAllTemplate.map((item) => item.exercises.map((item) => item));
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (name === "templateTitle") {
