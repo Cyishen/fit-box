@@ -5,7 +5,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 
 import ExerciseList from "./ExerciseList";
 import { useRouter } from "next/navigation";
-// import { usePracticeModal } from "@/lib/use-practice-modal";
+import { usePracticeModal } from "@/lib/use-practice-modal";
 
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
@@ -21,19 +21,20 @@ type Props = {
 
 const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPending }: Props) => {
   const [count, setCount] = useState(0);
-  const router = useRouter(); 
+  const router = useRouter();
 
-  // const { dateAllTemplate } = usePracticeModal();
-  // const newTemplateFromZustand = dateAllTemplate.map((item) => item.exercises.map((item) => item));
-  // const renderExercises = newTemplateFromZustand[0]
-
+  const { dateAllTemplate } = usePracticeModal();
   const [exercises, setExercises] = useState<ExerciseType[]>([]);
 
   useEffect(() => {
-    if(template) {
-      setExercises(template.exercises)
+    if (template) {
+      const newTemplateFromZustand = dateAllTemplate.map((item) => item.exercises.map((item) => item));
+      const renderExercises = newTemplateFromZustand[0]
+      setExercises(renderExercises)
+
+      // setExercises(template.exercises)
     }
-  },[template])
+  }, [dateAllTemplate, template])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -106,7 +107,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPendin
           <div className="h-full">
             <ExerciseList
               exercises={exercises || []}
-              setTemplateState={setTemplateState} 
+              setTemplateState={setTemplateState}
               template={template}
               isPending={isPending}
             />
