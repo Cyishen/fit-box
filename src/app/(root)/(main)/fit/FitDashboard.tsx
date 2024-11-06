@@ -27,8 +27,8 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
   const templates = useTemplateStore((state) => state.templates);
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
+  // TODO*測試: 儲存setDateAllTemplate, 頁面透過 dateAllTemplate 取得exercise
   const { setDateAllTemplate } = usePracticeModal()
-
   useEffect(() => {
     if (userId && templatesData.length > 0) {
       setDateAllTemplate(templatesData)

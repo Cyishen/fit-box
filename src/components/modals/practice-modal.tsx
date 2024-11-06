@@ -46,13 +46,13 @@ export const PracticeModal = () => {
 
   const [exercise, setExercise] = useState<ExerciseType[]>([])
 
-  // 測試: 透過 dateAllTemplate 取得exercise
+  // TODO*測試: 透過 dateAllTemplate 取得exercise
   useEffect(() => {
     if (userId && templateId) {
       
       const newTemplateFromZustand = dateAllTemplate.map((item) => item.exercises.map((item) => item));
-      const renderExercises = newTemplateFromZustand
-      setExercise(renderExercises[0] || []);
+      const renderExercises = newTemplateFromZustand[0]
+      setExercise(renderExercises || []);
     } else {
       // 本地
       setExercise(localExercise || []);
