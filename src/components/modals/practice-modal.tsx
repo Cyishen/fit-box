@@ -49,10 +49,9 @@ export const PracticeModal = () => {
   // TODO*測試: 透過 dateAllTemplate 取得exercise
   useEffect(() => {
     if (userId && templateId) {
-      
-      const newTemplateFromZustand = dateAllTemplate.map((item) => item.exercises.map((item) => item));
-      const renderExercises = newTemplateFromZustand[0]
-      setExercise(renderExercises || []);
+      const selectedTemplate = dateAllTemplate.map((item) => item.exercises.map((item) => item));
+      const exercisesToRender = selectedTemplate[0]
+      setExercise(exercisesToRender || []);
     } else {
       // 本地
       setExercise(localExercise || []);

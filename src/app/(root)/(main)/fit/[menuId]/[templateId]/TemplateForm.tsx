@@ -5,10 +5,11 @@ import { ChangeEvent, useEffect, useState } from "react"
 
 import ExerciseList from "./ExerciseList";
 import { useRouter } from "next/navigation";
-import { usePracticeModal } from "@/lib/use-practice-modal";
+// import { usePracticeModal } from "@/lib/use-practice-modal";
 
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
+import { useSession } from 'next-auth/react'
 
 
 type Props = {
@@ -23,18 +24,22 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPendin
   const [count, setCount] = useState(0);
   const router = useRouter();
 
-  const { dateAllTemplate } = usePracticeModal();
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+
+  // const { dateAllTemplate } = usePracticeModal();
   const [exercises, setExercises] = useState<ExerciseType[]>([]);
 
   useEffect(() => {
-    if (template) {
-      const newTemplateFromZustand = dateAllTemplate.map((item) => item.exercises.map((item) => item));
-      const renderExercises = newTemplateFromZustand[0]
-      setExercises(renderExercises)
+    if (userId) {
+      // const selectedTemplate = dateAllTemplate.find(item => item.templateId === template.templateId);
+      // const exercisesToRender = selectedTemplate?.exercises || [];
+      // setExercises(exercisesToRender);
 
-      // setExercises(template.exercises)
+      setExercises(template.exercises);
     }
-  }, [dateAllTemplate, template])
+  }, [template.exercises, userId]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
