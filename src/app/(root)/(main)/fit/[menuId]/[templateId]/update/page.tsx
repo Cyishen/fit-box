@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTemplateStore } from '@/lib/store'
 import TemplateForm from '../TemplateForm'
@@ -9,9 +9,10 @@ import { useSession } from 'next-auth/react'
 import { getExerciseByTemplateId, getTemplateById, upsertTemplate } from '@/actions/user-create'
 
 
-const UpdateTemplate = ({ params }: { params: { menuId: string ,templateId: string } }) => {
-  const { menuId,templateId } = params;
+const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: string } }) => {
+  const { menuId, templateId } = params;
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const { data: session } = useSession()
   const userId = session?.user?.id
@@ -31,26 +32,28 @@ const UpdateTemplate = ({ params }: { params: { menuId: string ,templateId: stri
   });
 
   useEffect(() => {
-    const fetchExercises = async () => {
-      // 資料庫
-      if (userId && templateId) {
-        try {
-          const template = await getTemplateById(templateId);
-          const exercises = await getExerciseByTemplateId(templateId);
+    const fetchExercises = () => {
+      startTransition(async () => {
+        // 資料庫
+        if (userId && templateId) {
+          try {
+            const template = await getTemplateById(templateId);
+            const exercises = await getExerciseByTemplateId(templateId);
 
-          setTemplate(prevTemplate => ({
-            ...prevTemplate,
-            exercises: exercises,
-            templateTitle: template?.templateTitle || '',
-            templateCategory: template?.templateCategory || '',
-          }));
-        } catch (error) {
-          console.error("Failed to fetch template or exercises", error);
+            setTemplate(prevTemplate => ({
+              ...prevTemplate,
+              exercises: exercises,
+              templateTitle: template?.templateTitle || '',
+              templateCategory: template?.templateCategory || '',
+            }));
+          } catch (error) {
+            console.error("Failed to fetch template or exercises", error);
+          }
+        } else if (existingTemplate) {
+          // 本地
+          setTemplate(existingTemplate);
         }
-      } else if (existingTemplate) {
-        // 本地
-        setTemplate(existingTemplate);
-      }
+      })
     };
 
     fetchExercises();
@@ -88,6 +91,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string ,templateId: stri
       template={template}
       setTemplateState={setTemplate}
       handleSubmit={handleSubmit}
+      isPending={isPending}
     />
   )
 }

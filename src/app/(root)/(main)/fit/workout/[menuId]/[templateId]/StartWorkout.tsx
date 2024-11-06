@@ -150,6 +150,7 @@ const StartWorkout = ({ template, isEditMode }: StartWorkoutProps) => {
                     onUpdateSets={handleUpdateSets}
                     isOpen={openMovementId === exercise.movementId}
                     onToggle={() => handleToggleExercise(exercise.movementId)}
+                    isPending={false}
                   />
                 ))}
               </div>

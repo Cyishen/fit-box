@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -16,15 +17,58 @@ import Link from "next/link";
 import { useTemplateStore } from "@/lib/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { getExerciseByTemplateId } from "@/actions/user-create";
 
+import { useSession } from "next-auth/react"
+
+// const fetchTemplateByTemplateId = async (templateId: string) => {
+//   const response = await fetch(`/api/template/${templateId}`, {
+//     method: 'GET',
+//   });
+//   if (!response.ok) {
+//     throw new Error('Failed to fetch template');
+//   }
+//   return response.json();
+// }
 
 export const PracticeModal = () => {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const { isOpen, close, menuId, templateId } = usePracticeModal();
 
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+  // 本地
   const templates = useTemplateStore(state => state.templates);
   const openTemplate = templates.find(template => template.templateId === templateId);
+  const localExercise = openTemplate?.exercises
+
+  const [exercise, setExercise] = useState<ExerciseType[]>([])
+
+  useEffect(() => {
+    const fetchExercises = async () => {
+      if (userId && templateId) {
+        // 伺服器運行
+        const exercises = await getExerciseByTemplateId(templateId);
+        setExercise(exercises);
+
+        // 一般 api 請求
+        // await fetchTemplateByTemplateId(templateId)
+        //   .then((data) => {
+        //     setExercise(data);
+        //   })
+        //   .catch((error) => {
+        //     console.error(error);
+        //   });
+      } else {
+        // 本地
+        setExercise(localExercise || []);
+      }
+    };
+
+    fetchExercises();
+  }, [localExercise, userId, templateId])
+
 
   useEffect(() => setIsClient(true), []);
 
@@ -51,7 +95,7 @@ export const PracticeModal = () => {
 
         <div className="bg-gray-100 px-3 py-5">
           <div className="grid grid-cols-2 gap-3 overflow-y-scroll min-h-20 max-h-48">
-            {openTemplate?.exercises.map((exercise) => (
+            {exercise.map((exercise) => (
               <div key={exercise.movementId}>
                 <div className="p-2 bg-white rounded-md">
                   <div className="flex flex-col items-center">
@@ -76,7 +120,7 @@ export const PracticeModal = () => {
                 onClick={close}
                 className="w-full"
               >
-                編輯模板 ({openTemplate?.exercises.length})
+                編輯模板 ({exercise?.length})
               </Button>
             </Link>
 

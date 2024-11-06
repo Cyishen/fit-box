@@ -9,9 +9,10 @@ type ExerciseListProps = {
   exercises: ExerciseType[];
   template: TemplateType;
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
+  isPending: boolean;
 };
 
-const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListProps) => {
+const ExerciseList = ({ exercises, setTemplateState, template, isPending }: ExerciseListProps) => {
   const router = useRouter();
 
   const updateTemplate = useTemplateStore(state => state.editTemplate);
@@ -81,6 +82,7 @@ const ExerciseList = ({ exercises, setTemplateState, template }: ExerciseListPro
                   onUpdateSets={handleUpdateSets}
                   isOpen={openMovementId === exercise.movementId}
                   onToggle={() => handleToggleExercise(exercise.movementId)}
+                  isPending={isPending}
                 />
               ))}
             </div>

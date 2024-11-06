@@ -3,6 +3,8 @@ import Image from 'next/image';
 import ExerciseSet from './ExerciseSet';
 import { Trash2, ChevronLeft } from 'lucide-react';
 import RippleAni from '@/components/RippleAni';
+import { SkeletonCard } from './SkeletonCard';
+
 
 
 interface ExerciseListCardProps {
@@ -11,9 +13,10 @@ interface ExerciseListCardProps {
   onUpdateSets: (movementId: string, updatedSets: SetType[]) => void;
   isOpen: boolean;
   onToggle: () => void;
+  isPending: boolean
 }
 
-const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle }: ExerciseListCardProps) => {
+const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isPending }: ExerciseListCardProps) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
 
@@ -69,68 +72,72 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
   }, []);
 
   return (
-    <div
-      className={`relative flex flex-col justify-center rounded-2xl px-1 py-4 bg-white
+    <>
+      {isPending ? <SkeletonCard /> : (
+        <div
+          className={`relative flex flex-col justify-center rounded-2xl px-1 py-4 bg-white
         ${isOpen ? 'h-full' : 'h-fit'}`}
-      onTouchStart={handleTouchStart}  // 手機觸摸開始
-      onTouchMove={handleTouchMove}    // 手機滑動
-      onMouseDown={handleMouseDown}    // 桌面鼠標點擊開始
-      onMouseMove={handleMouseMove}    // 桌面滑動
-    >
-      <div
-        className={`flex justify-between w-full px-2 gap-3 relative transform transition-transform duration-300 rounded-2xl
+          onTouchStart={handleTouchStart}  // 手機觸摸開始
+          onTouchMove={handleTouchMove}    // 手機滑動
+          onMouseDown={handleMouseDown}    // 桌面鼠標點擊開始
+          onMouseMove={handleMouseMove}    // 桌面滑動
+        >
+          <div
+            className={`flex justify-between w-full px-2 gap-3 relative transform transition-transform duration-300 rounded-2xl
           ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
-      >
-        <div className='min-w-14 min-h-14 max-w-14 max-h-14 flex justify-center items-center rounded-full border'>
-          <Image src="/icons/dumbbell.svg" alt='dumbbell' width={50} height={50} className='w-full h-full' />
-        </div>
-
-        <RippleAni className='flex w-full'>
-          <div className='flex w-full rounded-md justify-between cursor-pointer hover:bg-blue-100 bg-gray-50'
-            onClick={onToggle}
           >
-            <div className='flex flex-col justify-center px-1'>
-              <p>{exercise.name}</p>
+            <div className='min-w-14 min-h-14 max-w-14 max-h-14 flex justify-center items-center rounded-full border'>
+              <Image src="/icons/dumbbell.svg" alt='dumbbell' width={50} height={50} className='w-full h-full' />
+            </div>
 
-              <div className='flex gap-0 text-xs text-muted-foreground'>
-                <p>{exercise.sets.length} 組・</p>
-                <p>{totalWeights} kg</p>
+            <RippleAni className='flex w-full'>
+              <div className='flex w-full rounded-md justify-between cursor-pointer hover:bg-blue-100 bg-gray-50'
+                onClick={onToggle}
+              >
+                <div className='flex flex-col justify-center px-1'>
+                  <p>{exercise.name}</p>
+
+                  <div className='flex gap-0 text-xs text-muted-foreground'>
+                    <p>{exercise.sets.length} 組・</p>
+                    <p>{totalWeights} kg</p>
+                  </div>
+                </div>
+              </div>
+            </RippleAni>
+
+            <div className='w-[30%]'>
+              <div className="group relative h-full cursor-pointer">
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden group-hover:flex items-center justify-center w-full h-full">
+                  <ChevronLeft className='w-6 text-gray-200' />
+                  <span className="text-gray-400 text-xs px-2 no-select">
+                    左滑刪除
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </RippleAni>
 
-        <div className='w-[30%]'>
-          <div className="group relative h-full cursor-pointer">
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 hidden group-hover:flex items-center justify-center w-full h-full">
-              <ChevronLeft className='w-6 text-gray-200' />
-              <span className="text-gray-400 text-xs px-2 no-select">
-                左滑刪除
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 左滑刪除 */}
-      <div
-        ref={cardRef}
-        className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
+          {/* 左滑刪除 */}
+          <div
+            ref={cardRef}
+            className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
           ${isSwiped ? 'w-20' : 'w-0'}`}
-        onClick={() => handleRemoveExercise(exercise.movementId)}
-      >
-        <Trash2 className=' w-full text-white h-8' />
-      </div>
+            onClick={() => handleRemoveExercise(exercise.movementId)}
+          >
+            <Trash2 className=' w-full text-white h-8' />
+          </div>
 
-      {/* 組數設定顯示 */}
-      {isOpen && (
-        <ExerciseSet
-          sets={exercise.sets}
-          movementId={exercise.movementId}
-          onUpdateSets={onUpdateSets}
-        />
+          {/* 組數設定顯示 */}
+          {isOpen && (
+            <ExerciseSet
+              sets={exercise.sets}
+              movementId={exercise.movementId}
+              onUpdateSets={onUpdateSets}
+            />
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import TemplateForm from '../TemplateForm'
 import { useTemplateStore } from '@/lib/store'
@@ -16,6 +16,7 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   const userId = session?.user?.id
 
   const router = useRouter()
+  const [isPending, startTransition] = useTransition();
 
   // 本地
   const { templates, addTemplate, editTemplate } = useTemplateStore(state => state);
@@ -32,19 +33,21 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   });
 
   useEffect(() => {
-    const fetchExercises = async () => {
-      // 資料庫
-      if (userId && templateId) {
-        const exercises = await getExerciseByTemplateId(templateId);
+    const fetchExercises = () => {
+      startTransition(async () => {
+        if (userId && templateId) {
+          // 資料庫
+          const exercises = await getExerciseByTemplateId(templateId);
 
-        setTemplate(prevTemplate => ({
-          ...prevTemplate,
-          exercises: exercises,
-        }));
-      } else if (existingTemplate) {
-        // 本地
-        setTemplate(existingTemplate);
-      }
+          setTemplate(prevTemplate => ({
+            ...prevTemplate,
+            exercises: exercises,
+          }));
+        } else if (existingTemplate) {
+          // 本地
+          setTemplate(existingTemplate);
+        }
+      });
     };
 
     fetchExercises();
@@ -80,6 +83,7 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
       template={template}
       setTemplateState={setTemplate}
       handleSubmit={handleSubmit}
+      isPending={isPending}
     />
   )
 }

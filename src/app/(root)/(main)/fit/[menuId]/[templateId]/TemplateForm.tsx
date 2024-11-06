@@ -14,9 +14,10 @@ type Props = {
   template: TemplateType,
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  isPending: boolean
 };
 
-const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props) => {
+const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPending }: Props) => {
   const [count, setCount] = useState(0);
   const router = useRouter(); 
 
@@ -93,6 +94,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit }: Props)
               exercises={template.exercises || []}
               setTemplateState={setTemplateState} 
               template={template}
+              isPending={isPending}
             />
           </div>
         </form>
