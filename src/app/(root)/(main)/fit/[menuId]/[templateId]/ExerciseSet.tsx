@@ -10,42 +10,76 @@ interface SetProps {
   onUpdateSets: (movementId: string, updatedSets: SetType[]) => void
 }
 
+interface InputProps {
+  leftWeight: string;
+  rightWeight: string;
+  repetitions: string;
+  totalWeight: number;
+}
+
 const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<SetType[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [hasSave, setHasSave] = useState(false);
+  const [saveIcon, setSaveIcon] = useState(false);
+
+  const [inputValues, setInputValues] = useState<InputProps[]>([]);
 
   useEffect(() => {
     if (sets.length > 0) {
       setDynamicSets(sets);
+
+      const newInputValues = sets.map(set => ({
+        leftWeight: set.leftWeight.toString(),
+        rightWeight: set.rightWeight.toString(),
+        repetitions: set.repetitions.toString(),
+        totalWeight: set.totalWeight
+      }));
+      setInputValues(newInputValues);
+
     } else {
       setDynamicSets([{
         leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
         id: '',
-        movementId: ''
+        movementId: movementId
+      }]);
+
+      setInputValues([{
+        leftWeight: '',
+        rightWeight: '',
+        repetitions: '',
+        totalWeight: 0,
       }]);
     }
-  }, [sets]);
+  }, [sets, movementId]);
 
   const handleChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedSets = [...dynamicSets];
-  
+
     const isValidNumber = /^\d*\.?\d{0,1}$/.test(value);
-    
+
     if (!isValidNumber && value !== '') {
       return;
     }
 
+    // 更新輸入框顯示值
+    const updatedInputValues = [...inputValues];
+    updatedInputValues[index] = {
+      ...updatedInputValues[index],
+      [name]: value
+    };
+    setInputValues(updatedInputValues);
+
+    // 儲存時, 轉為數字
     updatedSets[index] = {
       ...updatedSets[index],
-      [name]: value === '' ? 0 : Number(value),
+      [name]: value === '' ? 0 : Number(value)
     };
 
-    const leftWeight = Number(updatedSets[index].leftWeight) || 0; 
-    const rightWeight = Number(updatedSets[index].rightWeight) || 0;
+    const leftWeight = Number(updatedSets[index].leftWeight.toString()) || 0;
+    const rightWeight = Number(updatedSets[index].rightWeight.toString()) || 0;
     updatedSets[index].totalWeight = (leftWeight + rightWeight) * updatedSets[index].repetitions;
-  
+
     setDynamicSets(updatedSets);
   };
 
@@ -82,13 +116,13 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
   }, [openIndex]);
 
   // 保存組數據
-  const handleSaveSets = () => {
+  const handleSaveSetsIcon = () => {
     onUpdateSets(movementId, dynamicSets);
 
-    setHasSave(true);
+    setSaveIcon(true);
 
     setTimeout(() => {
-      setHasSave(false);
+      setSaveIcon(false);
     }, 1000);
   };
 
@@ -110,12 +144,12 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     type="text"
                     name="leftWeight"
                     maxLength={4}
-                    value={set.leftWeight || ''}
+                    value={inputValues[index]?.leftWeight ?? ''}
                     inputMode='decimal'
                     step="0.1"
                     onChange={(e) => handleChange(index, e)}
                     onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
-                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
+                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')}
                     className="w-12 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
                   />
                 </div>
@@ -127,11 +161,11 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     type="text"
                     name="rightWeight"
                     maxLength={4}
-                    value={set.rightWeight || ''}
+                    value={inputValues[index]?.rightWeight ?? ''}
                     inputMode='decimal'
                     onChange={(e) => handleChange(index, e)}
                     onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
-                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
+                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')}
                     className="w-12 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
                   />
                 </div>
@@ -143,11 +177,11 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     type="text"
                     name="repetitions"
                     maxLength={2}
-                    value={set.repetitions || ''}
+                    value={inputValues[index]?.repetitions ?? ''}
                     inputMode='decimal'
                     onChange={(e) => handleChange(index, e)}
                     onFocus={(e) => (e.target.style.backgroundColor = '#dbeafe')}
-                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')} 
+                    onBlur={(e) => (e.target.style.backgroundColor = '#f3f4f6')}
                     className="w-10 bg-gray-100 rounded-md px-2 pt-3 pb-1 text-md font-bold focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 text-end"
                   />
                 </div>
@@ -194,8 +228,8 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
               新增一組
             </Button>
 
-            {!hasSave ? (
-              <Button size='sm' type='button' onClick={handleSaveSets}>
+            {!saveIcon ? (
+              <Button size='sm' type='button' onClick={handleSaveSetsIcon}>
                 保存
               </Button>
             ) : (
