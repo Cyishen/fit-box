@@ -5,8 +5,8 @@ type MenuModalState = {
   id: string | null;
   open: (id: string) => void;
   close: () => void;
-  dateAllMenu: MenuType[];
-  setDateAllMenu: (date: MenuType[]) => void;
+  dataAllMenu: MenuType[];
+  setDataAllMenu: (data: MenuType[]) => void;
 };
 
 export const useMenuModal = create<MenuModalState>()(
@@ -15,7 +15,7 @@ export const useMenuModal = create<MenuModalState>()(
     id: null,
     open: (id: string) => set({ isOpen: true, id: id }),
     close: () => set({ isOpen: false, id: null }),
-    dateAllMenu: [],
-    setDateAllMenu: (date: MenuType[]) => set({ dateAllMenu: date }),
+    dataAllMenu: [],
+    setDataAllMenu: (data: MenuType[]) => set({ dataAllMenu: data }),
   })
 );

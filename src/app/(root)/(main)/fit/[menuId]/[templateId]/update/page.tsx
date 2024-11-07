@@ -1,18 +1,19 @@
 "use client"
 
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTemplateStore } from '@/lib/store'
 import TemplateForm from '../TemplateForm'
 
 import { useSession } from 'next-auth/react'
-import { getExerciseByTemplateId, getTemplateById, upsertTemplate } from '@/actions/user-create'
+import { getTemplateById, upsertTemplate } from '@/actions/user-create'
 
 
 const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: string } }) => {
   const { menuId, templateId } = params;
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  // const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession()
   const userId = session?.user?.id
@@ -31,29 +32,54 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     exercises: [],
   });
 
-  useEffect(() => {
-    const fetchExercises = () => {
-      startTransition(async () => {
-        // 資料庫
-        if (userId && templateId) {
-          try {
-            const template = await getTemplateById(templateId);
-            const exercises = await getExerciseByTemplateId(templateId);
+  // useEffect(() => {
+  //   const fetchExercises = () => {
+  //     startTransition(async () => {
+  //       // 資料庫
+  //       if (userId && templateId) {
+  //         try {
+  //           const template = await getTemplateById(templateId);
 
-            setTemplate(prevTemplate => ({
-              ...prevTemplate,
-              exercises: exercises,
-              templateTitle: template?.templateTitle || '',
-              templateCategory: template?.templateCategory || '',
-            }));
-          } catch (error) {
-            console.error("Failed to fetch template or exercises", error);
-          }
+  //           setTemplate(prevTemplate => ({
+  //             ...prevTemplate,
+  //             exercises: template?.exercises || [],
+  //             templateTitle: template?.templateTitle || '',
+  //             templateCategory: template?.templateCategory || '',
+  //           }));
+  //         } catch (error) {
+  //           console.error("Failed to fetch template or exercises", error);
+  //         }
+  //       } else if (existingTemplate) {
+  //         // 本地
+  //         setTemplate(existingTemplate);
+  //       }
+  //     })
+  //   };
+
+  //   fetchExercises();
+  // }, [existingTemplate, templateId, userId]);
+
+  useEffect(() => {
+    const fetchExercises = async () => {
+      setIsLoading(true);
+      try {
+        if (userId && templateId) {
+          const fetchedTemplate = await getTemplateById(templateId);
+
+          setTemplate(prevTemplate => ({
+            ...prevTemplate,
+            exercises: fetchedTemplate?.exercises || [],
+            templateTitle: fetchedTemplate?.templateTitle || '',
+            templateCategory: fetchedTemplate?.templateCategory || '',
+          }));
         } else if (existingTemplate) {
-          // 本地
           setTemplate(existingTemplate);
         }
-      })
+      } catch (error) {
+        console.error("Failed to fetch template or exercises", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchExercises();
@@ -91,7 +117,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
       template={template}
       setTemplateState={setTemplate}
       handleSubmit={handleSubmit}
-      isPending={isPending}
+      isPending={isLoading}
     />
   )
 }

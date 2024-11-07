@@ -6,8 +6,8 @@ type PracticeModalState = {
   templateId: string | null;
   open: (menuId: string, templateId: string) => void;
   close: () => void;
-  dateAllTemplate: TemplateType[];
-  setDateAllTemplate: (date: TemplateType[]) => void;
+  dataAllTemplate: TemplateType[];
+  setDataAllTemplate: (data: TemplateType[]) => void;
 };
 
 export const usePracticeModal = create<PracticeModalState>((set) => ({
@@ -16,6 +16,6 @@ export const usePracticeModal = create<PracticeModalState>((set) => ({
   templateId: null,
   open: (menuId: string, templateId: string) => set({ isOpen: true, menuId, templateId }),
   close: () => set({ isOpen: false, menuId: null, templateId: null }),
-  dateAllTemplate: [],
-  setDateAllTemplate: (date: TemplateType[]) => set({ dateAllTemplate: date }),
+  dataAllTemplate: [],
+  setDataAllTemplate: (data: TemplateType[]) => set({ dataAllTemplate: data }),
 }));

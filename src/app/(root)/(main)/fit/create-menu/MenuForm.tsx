@@ -60,7 +60,7 @@ const MenuForm = ({ type, menu, setMenu, handleSubmit, isLoading }: Props) => {
                 value={menu.title}
                 required
                 maxLength={20}
-                className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-sm"
+                className="w-full rounded-md border px-3 py-2 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-sm"
               />
             </div>
           </div>

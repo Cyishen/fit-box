@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 
-//TODO menu邏輯
+//TODO? menu邏輯
 export const upsertMenu = async (data: MenuType) => {
   const session = await auth()
   const userId = session?.user?.id
@@ -117,7 +117,7 @@ export const deleteMenuById = async (id: string) => {
   return menus
 }
 
-//TODO 模板邏輯
+//TODO? 模板邏輯
 export const upsertTemplate = async (data: TemplateType) => {
   const session = await auth();
   const userId = session?.user?.id;
@@ -319,6 +319,30 @@ export const getAllTemplatesWithUserId = async () => {
   }));
 }
 
+export const getTemplateById = async (id: string) => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const template = await prismaDb.template.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      exercises: {
+        include: {
+          sets: true
+        }
+      }
+    }
+  })
+
+  return template
+}
+
 export const getExerciseByTemplateId = async (templateId: string) => {
   const session = await auth();
   const userId = session?.user?.id;
@@ -337,23 +361,6 @@ export const getExerciseByTemplateId = async (templateId: string) => {
   });
 
   return exercises
-}
-
-export const getTemplateById = async (id: string) => {
-  const session = await auth()
-  const userId = session?.user?.id
-
-  if (!userId) {
-    throw new Error("Unauthorized");
-  }
-
-  const template = await prismaDb.template.findUnique({
-    where: {
-      id: id,
-    }
-  })
-
-  return template
 }
 
 export const deleteTemplateById = async (id: string) => {
