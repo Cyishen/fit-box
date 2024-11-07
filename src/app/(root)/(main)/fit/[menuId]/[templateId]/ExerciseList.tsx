@@ -5,6 +5,7 @@ import { CopyPlus } from 'lucide-react';
 import ExerciseListCard from './ExerciseListCard';
 
 
+
 type ExerciseListProps = {
   exercises: ExerciseType[];
   template: TemplateType;
@@ -16,7 +17,6 @@ const ExerciseList = ({ exercises, setTemplateState, template, isPending }: Exer
   const router = useRouter();
 
   const updateTemplate = useTemplateStore(state => state.editTemplate);
-
 
   // 點擊下拉, 打開動作的組數設定
   const [openMovementId, setOpenMovementId] = useState<string | null>(null);

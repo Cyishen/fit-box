@@ -1,5 +1,6 @@
 "use client"
 
+
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTemplateStore } from '@/lib/store'
@@ -8,6 +9,7 @@ import TemplateForm from '../TemplateForm'
 import { useSession } from 'next-auth/react'
 import { getTemplateById, upsertTemplate } from '@/actions/user-create'
 
+// import { usePracticeModal } from '@/lib/use-practice-modal';
 
 const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: string } }) => {
   const { menuId, templateId } = params;
@@ -23,6 +25,10 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
   const existingTemplate = templates.find(template => template.templateId === templateId);
   const editTemplate = useTemplateStore((state) => state.editTemplate);
 
+  // const { dataAllTemplate } = usePracticeModal();
+  // const findTemplateById = dataAllTemplate.find(item => item.templateId === templateId)
+  // console.log('selectedTemplateById', findTemplateById);
+
   const [template, setTemplate] = useState<TemplateType>({
     userId: userId || "Guest",
     menuId: menuId,
@@ -32,38 +38,12 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     exercises: [],
   });
 
-  // useEffect(() => {
-  //   const fetchExercises = () => {
-  //     startTransition(async () => {
-  //       // 資料庫
-  //       if (userId && templateId) {
-  //         try {
-  //           const template = await getTemplateById(templateId);
-
-  //           setTemplate(prevTemplate => ({
-  //             ...prevTemplate,
-  //             exercises: template?.exercises || [],
-  //             templateTitle: template?.templateTitle || '',
-  //             templateCategory: template?.templateCategory || '',
-  //           }));
-  //         } catch (error) {
-  //           console.error("Failed to fetch template or exercises", error);
-  //         }
-  //       } else if (existingTemplate) {
-  //         // 本地
-  //         setTemplate(existingTemplate);
-  //       }
-  //     })
-  //   };
-
-  //   fetchExercises();
-  // }, [existingTemplate, templateId, userId]);
-
   useEffect(() => {
     const fetchExercises = async () => {
       setIsLoading(true);
       try {
         if (userId && templateId) {
+          // setTemplate(findTemplateById as TemplateType);
           const fetchedTemplate = await getTemplateById(templateId);
 
           setTemplate(prevTemplate => ({
