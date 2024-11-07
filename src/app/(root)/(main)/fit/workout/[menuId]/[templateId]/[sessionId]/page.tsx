@@ -1,50 +1,68 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { useTemplateStore, useUserStore, useWorkoutStore } from '@/lib/store';
+import { useTemplateStore, useWorkoutStore } from '@/lib/store';
 import StartWorkout from '../StartWorkout';
 
+import { useSession } from 'next-auth/react'
 
 const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: string; sessionId: string } }) => {
   const { menuId, templateId, sessionId } = params;
-  const user = useUserStore(state => state.user.userId);
 
-  const [session, setSession] = useState<WorkoutSessionType | null>(null);
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
+  const [workoutSession, setWorkoutSession] = useState<WorkoutSessionType | null>(null);
+
+  // 本地
   const templates = useTemplateStore(state => state.templates);
   const workoutSessions = useWorkoutStore(state => state.workoutSessions);
 
   useEffect(() => {
-    if (!templates || templates.length === 0 || !workoutSessions || workoutSessions.length === 0) {
-      return;
-    }
-  
-    const template = templates.find(
-      template => template.templateId === templateId && template.menuId === menuId
-    );
-    const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
+    try {
+      if (userId) {
+        // 資料庫的數據
+      } else {
+        if (!templates || templates.length === 0 || !workoutSessions || workoutSessions.length === 0) {
+          return;
+        }
 
-    if (sessionToEdit) {
-      setSession(sessionToEdit);
-    } else if (template) {
-      setSession({
-        cardSessionId: sessionId,
-        userId: user,
-        menuId: menuId,
-        templateId: templateId,
-        templateTitle: template.templateTitle,
-        date: new Date().toISOString().slice(0, 10),
-        exercises: JSON.parse(JSON.stringify(template.exercises))
-      });
+        const selectedTemplate = templates.find(
+          template => template.templateId === templateId && template.menuId === menuId
+        );
+
+        const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
+
+        if (sessionToEdit) {
+          setWorkoutSession({
+            ...sessionToEdit,
+            exercises: JSON.parse(JSON.stringify(sessionToEdit.exercises))
+          });
+        } else if (selectedTemplate) {
+          // 預防沒有模板情況下, 一樣可以得到訓練卡
+          setWorkoutSession({
+            cardSessionId: sessionId,
+            userId: userId || "Guest",
+            menuId: menuId,
+            templateId: templateId,
+            templateTitle: selectedTemplate.templateTitle,
+            date: new Date().toISOString().slice(0, 10),
+            exercises: JSON.parse(JSON.stringify(selectedTemplate.exercises))
+          });
+        }
+      }
+    } catch (error) {
+      console.error("找不到訓練卡", error);
     }
-  }, [menuId, templateId, sessionId, templates, user, workoutSessions]);
+
+  }, [menuId, sessionId, templateId, templates, userId, workoutSessions]);
 
 
   return (
     <div>
-      {session && (
+      {workoutSession && (
         <StartWorkout
-          template={session}
+          workoutSession={workoutSession}
           isEditMode={true}
         />
       )}

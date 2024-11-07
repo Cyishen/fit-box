@@ -13,10 +13,10 @@ interface ExerciseListCardProps {
   onUpdateSets: (movementId: string, updatedSets: SetType[]) => void;
   isOpen: boolean;
   onToggle: () => void;
-  isPending: boolean
+  isLoading: boolean
 }
 
-const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isPending }: ExerciseListCardProps) => {
+const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading }: ExerciseListCardProps) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
 
@@ -73,7 +73,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
 
   return (
     <>
-      {isPending ? <SkeletonCard /> : (
+      {isLoading ? <SkeletonCard /> : (
         <div
           className={`relative flex flex-col justify-center rounded-2xl px-1 py-4 bg-white
         ${isOpen ? 'h-full' : 'h-fit'}`}

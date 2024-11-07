@@ -72,7 +72,6 @@ export const DeleteMenuModal = () => {
 
   const handleCancelMenuBack = () => {
     closeDelete()
-    localStorage.removeItem('currentSessionId');
   };
 
   useEffect(() => setIsClient(true), []);

@@ -12,7 +12,7 @@ const ShowTraining = () => {
     <>
       {workoutSessions.map((session: WorkoutSessionType) => (
         <ShowTrainingCard
-          key={session.cardSessionId}
+          key={session?.cardSessionId}
           session={session}
         // handleEditWorkout={handleEditWorkout}
         // handleRemoveWorkoutSession={handleRemoveWorkoutSession}

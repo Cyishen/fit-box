@@ -117,25 +117,25 @@ const ShowTrainingCard = ({ session }: Props) => {
         ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
         >
           <div className='flex w-[70%] flex-col px-2 rounded-xl group-hover:bg-white py-1'
-            onClick={() => handleEditWorkout(session.cardSessionId)}
+            onClick={() => handleEditWorkout(session?.cardSessionId)}
           >
-            <p className='font-bold line-clamp-1'>{session.templateTitle}</p>
+            <p className='font-bold line-clamp-1'>{session?.templateTitle}</p>
 
             <div className='flex items-center gap-1 text-[10px]'>
               <div className='flex items-center'>
                 <div className='w-5 h-5'>
                   <Image src='/icons/dumbbell.svg' width={20} height={20} alt='dumbbell' />
                 </div>
-                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>{session.exercises.length} 動作</p>
+                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>{session?.exercises.length} 動作</p>
               </div>
 
               <div className='flex items-center gap-1'>
                 <ListOrdered width={16} />
-                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>共 {session.exercises.reduce((total, e) => total + e.sets.length, 0)} 組</p>
+                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>共 {session?.exercises.reduce((total, e) => total + e.sets.length, 0)} 組</p>
               </div>
 
               <div className='text-muted-foreground line-clamp-1'>
-                <p>日期 {session.date}</p>
+                <p>日期 {session?.date}</p>
               </div>
             </div>
           </div>
@@ -156,7 +156,7 @@ const ShowTrainingCard = ({ session }: Props) => {
           ref={cardRef}
           className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
           ${isSwiped ? 'w-20' : 'w-0'}`}
-          onClick={() => handleRemoveWorkoutSession(session.cardSessionId)}
+          onClick={() => handleRemoveWorkoutSession(session?.cardSessionId)}
         >
           <Trash2 className=' w-full text-white h-8' />
         </div>

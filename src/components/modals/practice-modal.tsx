@@ -91,7 +91,6 @@ export const PracticeModal = () => {
 
   const handleNewWorkout = () => {
     router.push(`/fit/workout/${menuId}/${templateId}`);
-    localStorage.removeItem('currentSessionId');
   };
 
   return (

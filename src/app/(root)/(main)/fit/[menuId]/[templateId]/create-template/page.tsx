@@ -92,7 +92,7 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
       template={template}
       setTemplateState={setTemplate}
       handleSubmit={handleSubmit}
-      isPending={isLoading}
+      isLoading={isLoading}
     />
   )
 }

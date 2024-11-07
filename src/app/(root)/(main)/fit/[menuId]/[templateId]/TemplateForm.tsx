@@ -15,10 +15,10 @@ type Props = {
   template: TemplateType,
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
-  isPending: boolean
+  isLoading: boolean
 };
 
-const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPending }: Props) => {
+const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoading }: Props) => {
   const [count, setCount] = useState(0);
   const router = useRouter();
 
@@ -49,8 +49,8 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPendin
 
               <h3 className="font-bold">{type}</h3>
 
-              <Button size='sm' type="submit" disabled={isPending} className="font-bold">
-                {isPending ? (
+              <Button size='sm' type="submit" disabled={isLoading} className="font-bold">
+                {isLoading ? (
                   <>
                     <Loader size={14} className="animate-spin" />
                   </>
@@ -105,7 +105,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPendin
               exercises={template.exercises || []}
               setTemplateState={setTemplateState}
               template={template}
-              isPending={isPending}
+              isLoading={isLoading}
             />
           </div>
         </form>
