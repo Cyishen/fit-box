@@ -12,12 +12,15 @@ import { exerciseTemplates } from '@/constants/constants';
 import { useSession } from 'next-auth/react'
 import { getExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
 import { usePracticeModal } from '@/lib/use-practice-modal';
+import { Loader } from 'lucide-react';
 
 
 
 const ExercisePicker = ({ params }: { params: { menuId: string, templateId: string } }) => {
   const router = useRouter();
   const { templateId } = params;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession()
   const userId = session?.user?.id
@@ -45,19 +48,21 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
         }
       }
     };
-  
+
     fetchSelectedExercises();
   }, [currentTemplate, templateId, userId]);
 
 
-  const handleSaveExercises = async() => {
+  const handleSaveExercises = async () => {
+    setIsLoading(true);
+
     try {
-      if(userId) {
+      if (userId) {
         // 更新動作到資料庫
         await upsertExercise(selectedExercises, templateId, null);
-  
+
         // TODO* 同時更新動作到 setDataAllTemplate
-        if(dataAllTemplateSession) {
+        if (dataAllTemplateSession) {
           const updatedDataAllTemplate = dataAllTemplateSession.map(item => {
             if (item.templateId === templateId) {
               return {
@@ -76,17 +81,19 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
             ...currentTemplate,
             exercises: selectedExercises,
           };
-      
+
           const updateTemplate = useTemplateStore.getState().editTemplate;
           updateTemplate(templateId, updatedTemplate);
         }
       }
-  
+
       router.back()
     } catch (error) {
       console.error("Error saving exercises:", error);
       alert("儲存失敗，請稍後再試！");
     }
+
+    setIsLoading(false);
   };
 
   const handleToggleExercise = (exercise: ExerciseType) => {
@@ -106,13 +113,26 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
         <div className="bg-gray-100 p-4 sm:rounded-2xl">
           <div className='flex justify-between'>
             <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
-            <Button size='sm' type='button' onClick={handleSaveExercises}>儲存 {selectedExercises.length}</Button>
+            <Button
+              size='sm'
+              type="button" disabled={isLoading}
+              className="font-bold"
+              onClick={handleSaveExercises}
+            >
+              {isLoading ? (
+                <>
+                  <Loader size={14} className="animate-spin" />
+                </>
+              ) : (
+                <>儲存 {selectedExercises.length}</>
+              )}
+            </Button>
           </div>
 
           <div className='flex mt-5 gap-3'>
             <div className='w-32'>
               <h3 className="font-bold">選擇動作</h3>
-              <hr className='my-2'/>
+              <hr className='my-2' />
 
               <FitSideBar />
             </div>

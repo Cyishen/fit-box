@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState, useTransition } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import TemplateForm from '../TemplateForm'
 import { useTemplateStore } from '@/lib/store'
@@ -11,12 +11,12 @@ import { getExerciseByTemplateId, upsertTemplate } from '@/actions/user-create'
 
 const CreateTemplate = ({ params }: { params: { menuId: string; templateId: string } }) => {
   const { menuId, templateId } = params;
+  const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession()
   const userId = session?.user?.id
-
-  const router = useRouter()
-  const [isPending, startTransition] = useTransition();
 
   // 本地
   const { templates, addTemplate, editTemplate } = useTemplateStore(state => state);
@@ -33,8 +33,8 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   });
 
   useEffect(() => {
-    const fetchExercises = () => {
-      startTransition(async () => {
+    const fetchExercises = async () => {
+      try {
         if (userId && templateId) {
           // 資料庫
           const exercises = await getExerciseByTemplateId(templateId);
@@ -47,7 +47,9 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
           // 本地
           setTemplate(existingTemplate);
         }
-      });
+      } catch (error) {
+        console.error("Failed to fetch template", error);
+      }
     };
 
     fetchExercises();
@@ -57,24 +59,31 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if(userId) {
-      // 資料庫
-      await upsertTemplate(template)
+    setIsLoading(true);
 
-    } else {
-      // 本地
-      const updatedTemplate: TemplateType = {
-        ...template,
-      };
-      
-      if (existingTemplate) {
-        editTemplate(templateId, updatedTemplate);
+    try {
+      if (userId) {
+        // 資料庫
+        await upsertTemplate(template)
+
       } else {
-        addTemplate(updatedTemplate);
+        // 本地
+        const updatedTemplate: TemplateType = {
+          ...template,
+        };
+
+        if (existingTemplate) {
+          editTemplate(templateId, updatedTemplate);
+        } else {
+          addTemplate(updatedTemplate);
+        }
       }
+      router.push("/fit");
+    } catch (error) {
+      console.log('伺服器忙碌中, 請稍後再試', error)
     }
 
-    router.push("/fit");
+    setIsLoading(false);
   };
 
   return (
@@ -83,7 +92,7 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
       template={template}
       setTemplateState={setTemplate}
       handleSubmit={handleSubmit}
-      isPending={isPending}
+      isPending={isLoading}
     />
   )
 }

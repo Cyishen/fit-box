@@ -60,7 +60,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
           setTemplate(existingTemplate);
         }
       } catch (error) {
-        console.error("Failed to fetch template or exercises", error);
+        console.error("Failed to fetch template", error);
       } finally {
         setIsLoading(false);
       }
@@ -73,22 +73,30 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (userId) {
-      // 資料庫
-      await upsertTemplate(template)
-    } else {
-      // 本地
-      if (template) {
-        const editTemplateData: TemplateType = {
-          ...template,
-          templateCategory: template.templateCategory,
-          templateTitle: template.templateTitle,
-          exercises: template.exercises || [],
-        };
-        editTemplate(template.templateId ?? '', editTemplateData);
+    setIsLoading(true);
+
+    try {
+      if (userId) {
+        // 資料庫
+        await upsertTemplate(template)
+      } else {
+        // 本地
+        if (template) {
+          const editTemplateData: TemplateType = {
+            ...template,
+            templateCategory: template.templateCategory,
+            templateTitle: template.templateTitle,
+            exercises: template.exercises || [],
+          };
+          editTemplate(template.templateId ?? '', editTemplateData);
+        }
       }
+      router.push("/fit");
+    } catch (error) {
+      console.log('伺服器忙碌中, 請稍後再試', error)
     }
-    router.push("/fit");
+
+    setIsLoading(false);
   };
 
   if (!template) {

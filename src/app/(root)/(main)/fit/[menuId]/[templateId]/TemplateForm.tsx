@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 
 import ExerciseList from "./ExerciseList";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
 
@@ -48,7 +49,13 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isPendin
 
               <h3 className="font-bold">{type}</h3>
 
-              <Button size='sm' className='font-bold'>保存</Button>
+              <Button size='sm' type="submit" disabled={isPending} className="font-bold">
+                {isPending ? (
+                  <>
+                    <Loader size={14} className="animate-spin" />
+                  </>
+                ) : type === '編輯' ? '保存' : '建立'}
+              </Button>
             </div>
 
             <div className="mt-3 sm:mt-5">
