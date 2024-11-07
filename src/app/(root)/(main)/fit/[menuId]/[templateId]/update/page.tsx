@@ -7,14 +7,15 @@ import { useTemplateStore } from '@/lib/store'
 import TemplateForm from '../TemplateForm'
 
 import { useSession } from 'next-auth/react'
-import { getTemplateById, upsertTemplate } from '@/actions/user-create'
+import { upsertTemplate } from '@/actions/user-create'
+// import { getTemplateById } from '@/actions/user-create'
 
-// import { usePracticeModal } from '@/lib/use-practice-modal';
+import { usePracticeModal } from '@/lib/use-practice-modal';
 
 const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: string } }) => {
   const { menuId, templateId } = params;
   const router = useRouter();
-  // const [isPending, startTransition] = useTransition();
+
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: session } = useSession()
@@ -24,10 +25,11 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
   const templates = useTemplateStore((state) => state.templates);
   const existingTemplate = templates.find(template => template.templateId === templateId);
   const editTemplate = useTemplateStore((state) => state.editTemplate);
+  
+  // TODO*測試透過 dataAllTemplateSession 取得exercise, 加快顯示速度
+  const { dataAllTemplateSession } = usePracticeModal();
+  const findTemplateById = dataAllTemplateSession.find(item => item.templateId === templateId);
 
-  // const { dataAllTemplate } = usePracticeModal();
-  // const findTemplateById = dataAllTemplate.find(item => item.templateId === templateId)
-  // console.log('selectedTemplateById', findTemplateById);
 
   const [template, setTemplate] = useState<TemplateType>({
     userId: userId || "Guest",
@@ -43,15 +45,17 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
       setIsLoading(true);
       try {
         if (userId && templateId) {
-          // setTemplate(findTemplateById as TemplateType);
-          const fetchedTemplate = await getTemplateById(templateId);
+          //  TODO* 測試透過 dataAllTemplateSession, 加快載入速度, 顯示template內容, 
+          setTemplate(findTemplateById as TemplateType);
 
-          setTemplate(prevTemplate => ({
-            ...prevTemplate,
-            exercises: fetchedTemplate?.exercises || [],
-            templateTitle: fetchedTemplate?.templateTitle || '',
-            templateCategory: fetchedTemplate?.templateCategory || '',
-          }));
+          // 原本抓資料庫, 顯示template內容
+          // const fetchedTemplate = await getTemplateById(templateId);
+          // setTemplate(prevTemplate => ({
+          //   ...prevTemplate,
+          //   exercises: fetchedTemplate?.exercises || [],
+          //   templateTitle: fetchedTemplate?.templateTitle || '',
+          //   templateCategory: fetchedTemplate?.templateCategory || '',
+          // }));
         } else if (existingTemplate) {
           setTemplate(existingTemplate);
         }
@@ -63,7 +67,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     };
 
     fetchExercises();
-  }, [existingTemplate, templateId, userId]);
+  }, [existingTemplate, findTemplateById, templateId, userId]);
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

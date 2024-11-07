@@ -37,7 +37,7 @@ export const PracticeModal = () => {
   const userId = session?.user?.id
 
   const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, menuId, templateId, dataAllTemplate: dateAllTemplate } = usePracticeModal();
+  const { isOpen, close, menuId, templateId, dataAllTemplateSession } = usePracticeModal();
 
   // 本地
   const templates = useTemplateStore(state => state.templates);
@@ -46,17 +46,17 @@ export const PracticeModal = () => {
 
   const [exercise, setExercise] = useState<ExerciseType[]>([])
 
-  // TODO*測試方式2: 透過 dateAllTemplate 取得exercise, 加快顯示速度
+  // TODO*測試方式2: 透過 dataAllTemplateSession 取得exercise, 加快顯示速度
   useEffect(() => {
     if (userId && templateId) {
-      const selectedTemplate = dateAllTemplate.find(item => item.templateId === templateId);
+      const selectedTemplate = dataAllTemplateSession.find(item => item.templateId === templateId);
       const exercisesToRender = selectedTemplate?.exercises || [];
       setExercise(exercisesToRender);
     } else {
       // 本地
       setExercise(localExercise || []);
     }
-  },[dateAllTemplate, localExercise, templateId, userId])
+  },[dataAllTemplateSession, localExercise, templateId, userId])
 
   // 方式1: 透過資料庫或本地模板
   // useEffect(() => {

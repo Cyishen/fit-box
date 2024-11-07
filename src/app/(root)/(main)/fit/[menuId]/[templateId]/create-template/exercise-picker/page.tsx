@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useTemplateStore } from '@/lib/store';
@@ -10,9 +11,11 @@ import { exerciseTemplates } from '@/constants/constants';
 
 import { useSession } from 'next-auth/react'
 import { getExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
+import { usePracticeModal } from '@/lib/use-practice-modal';
 
 
-const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
+
+const ExercisePicker = ({ params }: { params: { menuId: string, templateId: string } }) => {
   const router = useRouter();
   const { templateId } = params;
 
@@ -22,6 +25,9 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
   // 本地存儲
   const templates = useTemplateStore(state => state.templates);
   const currentTemplate = templates.find(template => template.templateId === templateId);
+
+  // TODO* 測試透過 dataAllTemplateSession 取得exercise, 加快顯示速度
+  const { dataAllTemplateSession, setDataAllTemplateToSession } = usePracticeModal();
 
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
@@ -45,24 +51,42 @@ const ExercisePicker = ({ params }: { params: { templateId: string } }) => {
 
 
   const handleSaveExercises = async() => {
-    if(userId) {
-      // 資料庫
-      await upsertExercise(selectedExercises, templateId, null);
-
-    } else {
-      // 本地
-      if (currentTemplate) {
-        const updatedTemplate: TemplateType = {
-          ...currentTemplate,
-          exercises: selectedExercises,
-        };
-    
-        const updateTemplate = useTemplateStore.getState().editTemplate;
-        updateTemplate(templateId, updatedTemplate);
+    try {
+      if(userId) {
+        // 更新動作到資料庫
+        await upsertExercise(selectedExercises, templateId, null);
+  
+        // TODO* 同時更新動作到 setDataAllTemplate
+        if(dataAllTemplateSession) {
+          const updatedDataAllTemplate = dataAllTemplateSession.map(item => {
+            if (item.templateId === templateId) {
+              return {
+                ...item,
+                exercises: selectedExercises,
+              };
+            }
+            return item;
+          });
+          setDataAllTemplateToSession(updatedDataAllTemplate);
+        }
+      } else {
+        // 本地
+        if (currentTemplate) {
+          const updatedTemplate: TemplateType = {
+            ...currentTemplate,
+            exercises: selectedExercises,
+          };
+      
+          const updateTemplate = useTemplateStore.getState().editTemplate;
+          updateTemplate(templateId, updatedTemplate);
+        }
       }
+  
+      router.back()
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+      alert("儲存失敗，請稍後再試！");
     }
-
-    router.back()
   };
 
   const handleToggleExercise = (exercise: ExerciseType) => {

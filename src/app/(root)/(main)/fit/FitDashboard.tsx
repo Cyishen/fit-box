@@ -27,13 +27,13 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
   const templates = useTemplateStore((state) => state.templates);
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
-  // TODO*測試把資料抓到 setDateAllTemplate, 頁面透過 dateAllTemplate 取得exercise改善載入速度
-  const { setDataAllTemplate: setDateAllTemplate } = usePracticeModal()
+  // TODO*測試把資料抓到 setDateAllTemplate, 頁面透過 dataAllTemplateSession 取得exercise改善載入速度
+  const { setDataAllTemplateToSession } = usePracticeModal()
   useEffect(() => {
     if (userId && templatesData.length > 0) {
-      setDateAllTemplate(templatesData)
+      setDataAllTemplateToSession(templatesData)
     }
-  }, [setDateAllTemplate, templatesData, userId])
+  }, [setDataAllTemplateToSession, templatesData, userId])
 
   const selectMenu = (menuId: string | null, menusList: MenuType[]) => {
     if (menuId && menusList.some(menu => menu.id === menuId)) {

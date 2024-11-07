@@ -6,7 +6,7 @@ import FitDashboard from './FitDashboard'
 import ShowTraining from './ShowTraining'
 import ShowMenu from './ShowMenu'
 
-import { getAllMenusByUserId, getAllTemplatesWithUserId } from '@/actions/user-create'
+import { getAllMenusByUserId, getAllTemplatesByUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
 
 
@@ -17,9 +17,9 @@ const FitPage = async() => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userData = await getAllMenusByUserId(userId);
+  const userMenuData = await getAllMenusByUserId(userId);
 
-  const userTemplateData = await getAllTemplatesWithUserId();
+  const userTemplateData = await getAllTemplatesByUserId();
   const userAllTemplate: TemplateType[] = userTemplateData.map(template => ({
     userId: template.userId,
     menuId: template.menuId,
@@ -33,7 +33,7 @@ const FitPage = async() => {
     userMenu,
     userTemplates 
   ] = await Promise.all([ 
-    userData,
+    userMenuData,
     userAllTemplate 
   ]);
 

@@ -290,10 +290,11 @@ export const upsertExercise = async (exercises: ExerciseType[], templateId: stri
     }
   }));
 
+  revalidatePath('/fit');
   return updatedExercises;
 };
 
-export const getAllTemplatesWithUserId = async () => {
+export const getAllTemplatesByUserId = async () => {
   const session = await auth();
   const userId = session?.user?.id;
 
