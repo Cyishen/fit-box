@@ -34,12 +34,14 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
         const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
 
         if (sessionToEdit) {
+          console.log("編輯執行中")
           setWorkoutSession({
             ...sessionToEdit,
             exercises: JSON.parse(JSON.stringify(sessionToEdit.exercises))
           });
         } else if (selectedTemplate) {
           // 預防沒有模板情況下, 一樣可以得到訓練卡
+          console.log("找不到訓練卡, 一樣可以得到訓練卡")
           setWorkoutSession({
             cardSessionId: sessionId,
             userId: userId || "Guest",

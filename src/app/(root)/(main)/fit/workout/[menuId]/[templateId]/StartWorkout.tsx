@@ -16,7 +16,7 @@ const StartWorkout = ({ workoutSession, isEditMode }: StartWorkoutProps) => {
   const router = useRouter();
 
   // 本地訓練卡
-  const { addWorkoutSession, editWorkoutSession } = useWorkoutStore();
+  const editWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
 
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     editWorkoutSession(updatedSession.cardSessionId, updatedSession);
@@ -28,6 +28,7 @@ const StartWorkout = ({ workoutSession, isEditMode }: StartWorkoutProps) => {
       const updatedExercises = workoutSession.exercises.map(exercise =>
         exercise.movementId === movementId ? { ...exercise, sets: updatedSets } : exercise
       );
+
       const updatedSession = { ...workoutSession, exercises: updatedExercises };
       updateCurrentSession(updatedSession);
     }
@@ -54,8 +55,6 @@ const StartWorkout = ({ workoutSession, isEditMode }: StartWorkoutProps) => {
     if (isEditMode) {
       const updatedSession = { ...workoutSession };
       updateCurrentSession(updatedSession as WorkoutSessionType);
-    } else {
-      addWorkoutSession(workoutSession);
     }
 
     localStorage.removeItem('currentSessionId');
