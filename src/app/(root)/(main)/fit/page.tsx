@@ -42,9 +42,9 @@ const FitPage = async () => {
     userWorkSessionData
   ]);
 
-  const hasUserMenu = Array.isArray(userMenu) && userMenu.length > 0;
+  // const hasUserMenu = Array.isArray(userMenu) && userMenu.length > 0;
   const hasUserTemplates = Array.isArray(userTemplates) && userTemplates.length > 0;
-  const hasUserSessions = Array.isArray(userSessionCard) && userSessionCard.length > 0;
+  // const hasUserSessions = Array.isArray(userSessionCard) && userSessionCard.length > 0;
 
 
   // console.log('所有模板', JSON.stringify(userTemplates, null, 2));
