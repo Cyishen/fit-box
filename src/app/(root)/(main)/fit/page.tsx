@@ -6,7 +6,7 @@ import FitDashboard from './FitDashboard'
 // import ShowTraining from './ShowTraining'
 import ShowMenu from './ShowMenu'
 
-import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUserId } from '@/actions/user-create'
+import { getAllMenusByUserId, getAllTemplatesByUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
 
 // import { format } from "date-fns"
@@ -29,7 +29,7 @@ const FitPage = async() => {
     isDeleted: template.isDeleted,
   }));
 
-  const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
+  // const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
 
   // const userWorkSessionData = userId
   // ? getAllWorkoutSessionByUserId(userId)
@@ -38,11 +38,11 @@ const FitPage = async() => {
   const [ 
     userMenu,
     userTemplates,
-    userSessionCard 
+    // userSessionCard 
   ] = await Promise.all([ 
     userMenuData,
     userAllTemplate,
-    userWorkSessionData 
+    // userWorkSessionData 
   ]);
 
 
