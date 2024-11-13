@@ -42,11 +42,6 @@ const FitPage = async () => {
     userWorkSessionData
   ]);
 
-  // const hasUserMenu = Array.isArray(userMenu) && userMenu.length > 0;
-  // const hasUserTemplates = Array.isArray(userTemplates) && userTemplates.length > 0;
-  // const hasUserSessions = Array.isArray(userSessionCard) && userSessionCard.length > 0;
-
-
   // console.log('所有模板', JSON.stringify(userTemplates, null, 2));
 
   // TODO: 篩選用戶當天紀錄
@@ -68,24 +63,13 @@ const FitPage = async () => {
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>
               <ShowMenu />
+
               <div className='overflow-hidden mb-20'>
                 <FitDashboard
                   menusData={userMenu}
                   templatesData={userTemplates}
                 />
               </div>
-              {/* {hasUserTemplates ? (
-                <>
-                  <div className='overflow-hidden mb-20'>
-                    <FitDashboard
-                      menusData={userMenu}
-                      templatesData={userTemplates}
-                    />
-                  </div>
-                </>
-              ) : (
-                <div>沒有模板可顯示</div>
-              )} */}
             </div>
           </div>
         </div>
