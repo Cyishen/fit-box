@@ -55,29 +55,67 @@ model User {
 }
 
 model Menu {
-  id     String @id @default(cuid())
-  userId String @map("user_id")
-  title  String
+  id        String  @id @default(cuid())
+  userId    String  @map("user_id")
+  title     String
+  isDeleted Boolean @default(false)
 
   user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   templates      Template[]
   workoutSession WorkoutSession[]
-  isDeleted  Boolean  @default(false) 
+
+  @@index([userId])
+  @@map("menus")
 }
 
 model Template {
   id               String  @id @default(cuid())
   menuId           String  @map("menu_id")
-  templateTitle   String @map("templateTittle")
+  templateTitle    String  @map("templateTittle")
   templateCategory String
+  isDeleted        Boolean @default(false)
 
-  exercises      Exercise[]
-  workoutSession WorkoutSession[]
-  menu           Menu             @relation(fields: [menuId], references: [id], onDelete: Cascade)
-  isDeleted  Boolean  @default(false)
+  templateExercises TemplateExercise[]
+  workoutSession    WorkoutSession[]
+  menu              Menu               @relation(fields: [menuId], references: [id], onDelete: Cascade)
+
+  @@index([menuId])
+  @@map("templates")
 }
 
-// TODO*訓練記錄
+model TemplateExercise {
+  id               String @id @default(cuid())
+  templateId       String @map("template_id")
+  movementId       String // 固定的動作ID
+  name             String
+  exerciseCategory String
+  sortOrder        Int // 用於排序顯示順序
+
+  template     Template      @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateSets TemplateSet[]
+
+  @@index([templateId])
+  @@index([movementId])
+  @@map("template_exercises")
+}
+
+model TemplateSet {
+  id          String @id @default(cuid())
+  movementId  String // 固定的動作ID（如：啞鈴胸推 = 1）
+  leftWeight  Float // 預設左側重量
+  rightWeight Float // 預設右側重量
+  repetitions Int // 預設重複次數
+  totalWeight Float // 預設總重量
+
+  exerciseId       String           @map("tp_exercise_id")
+  templateExercise TemplateExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@index([exerciseId])
+  @@index([movementId]) // 添加索引以優化特定動作的查詢
+  @@map("template_sets")
+}
+
+// TODO*訓練卡記錄
 model WorkoutSession {
   id            String    @id @default(cuid())
   cardSessionId String    @unique
@@ -89,45 +127,49 @@ model WorkoutSession {
   startTime     DateTime? // 開始時間
   endTime       DateTime? // 結束時間
   notes         String?
+  createdAt     DateTime  @default(now())
 
-  exercises        Exercise[]
+  exercises        WorkoutExercise[]
   workoutSummaries WorkoutSummary[]
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   menu    Menu     @relation(fields: [menuId], references: [id])
   tempate Template @relation(fields: [templateId], references: [id])
+
+  @@index([userId])
+  @@map("workout_session_cards")
 }
 
 // 動作模型
-model Exercise {
-  id               String  @id @default(cuid())
-  movementId       String // 固定的動作ID，例如啞鈴胸推 1, 划船 2)
+model WorkoutExercise {
+  id               String @id @default(cuid())
+  movementId       String
   name             String
   exerciseCategory String
 
-  sets                Set[]
-  refWorkoutSessionId String?
-  workoutSession      WorkoutSession? @relation(fields: [refWorkoutSessionId], references: [id], onDelete: Cascade)
+  sets WorkoutSet[]
 
-  templateId String
-  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  workoutSessionId String
+  workoutSession   WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
 
   @@index([movementId]) // 創建索引，提升查詢效率
+  @@map("workout_exercises")
 }
 
 // 組數模型
-model Set {
-  id          String @id @default(cuid()) // 組數唯一ID
-  movementId  String // 這裡直接儲存 Exercise 的固定動作ID（如啞鈴胸推的 ID 為 1）
-  leftWeight  Float // 左側重量
-  rightWeight Float // 右側重量
-  repetitions Int // 重複次數
-  totalWeight Float // 總重量
+model WorkoutSet {
+  id          String @id @default(cuid())
+  movementId  String
+  leftWeight  Float
+  rightWeight Float
+  repetitions Int
+  totalWeight Float
 
-  refExerciseId String
-  exercise      Exercise @relation(fields: [refExerciseId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   WorkoutExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
 
   @@index([movementId])
+  @@map("workout_sets")
 }
 
 // TODO*統計
@@ -139,17 +181,19 @@ model Set {
 // 當天總組數 5（啞鈴胸推） + 3（肩推） = 8 組
 // 當天總重量  250（啞鈴胸推） + 144（肩推） = 394 公斤
 model WorkoutSummary {
-  id                 String            @id @default(cuid())
-  userId             String            @map("user_id")
-  workoutSessionId   String            @unique @map("WorkoutSession_id")
+  id                 String   @id @default(cuid())
+  userId             String   @map("user_id")
+  workoutSessionId   String   @unique @map("workout_session_id")
   date               DateTime
   totalSessionSets   Int
   totalSessionWeight Float
-  exerciseSummary    ExerciseSummary[]
+
+  exerciseSummary ExerciseSummary[]
 
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   workoutSession WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("workout_summaries")
 }
 

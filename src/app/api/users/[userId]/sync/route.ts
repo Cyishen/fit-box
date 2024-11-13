@@ -24,12 +24,12 @@ export const POST = async (req: Request) => {
           create: {
             id: menu.id,
             userId: userId,
-            title: menu.title || "未命名的訓練盒🗒︎"
+            title: menu.title || "新訓練盒🥚"
           },
           update: {
             id: menu.id,
             userId: userId,
-            title: menu.title || "未命名的訓練盒🗒︎"
+            title: menu.title || "新訓練盒🥚"
           }
         })
       })
@@ -44,13 +44,13 @@ export const POST = async (req: Request) => {
             },
             create: {
               id: template.templateId ?? '',
-              templateTitle: template.templateTitle || "未命名的模板",
+              templateTitle: template.templateTitle || "新模板",
               templateCategory: template.templateCategory,
               menuId: template.menuId
             },
             update: {
               id: template.templateId ?? '',
-              templateTitle: template.templateTitle || "未命名的模板",
+              templateTitle: template.templateTitle || "新模板",
               templateCategory: template.templateCategory,
               menuId: template.menuId
             }
@@ -150,22 +150,21 @@ export const POST = async (req: Request) => {
           }));
 
           // 2. 用戶更新訓練卡, 先刪除 workoutSession模型的 exercises欄位內的所有資料
-          await tx.exercise.deleteMany({
+          await tx.workoutExercise.deleteMany({
             where: {
-              refWorkoutSessionId: workoutSession.id
+              workoutSessionId: workoutSession.id
             },
           });
 
           // 3. 創建新的 exercises 和 sets
           const exercises = await Promise.all(
             session.exercises.map(async (exercise) => {
-              return await tx.exercise.create({
+              return await tx.workoutExercise.create({
                 data: {
                   movementId: exercise.movementId,
                   name: exercise.name,
-                  templateId: session.templateId,
                   exerciseCategory: exercise.exerciseCategory,
-                  refWorkoutSessionId: workoutSession.id,
+                  workoutSessionId: workoutSession.id,
                   sets: {
                     create: exercise.sets.map((set) => ({
                       leftWeight: parseFloat(set.leftWeight.toString()),

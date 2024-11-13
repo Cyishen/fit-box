@@ -1,20 +1,12 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { ListOrdered, Trash2 } from 'lucide-react';
 
 import RippleAni from '@/components/RippleAni';
+import { multiFormatDateString } from '@/lib/TimeFn/Timer';
 
-import { useWorkoutStore } from '@/lib/store';
-
-
-type Props = {
-  session: WorkoutSessionType
-  // handleEditWorkout: (sessionId: string) => void
-  // handleRemoveWorkoutSession: (sessionId: string) => void
-}
 
 const heroImage = [
   '/imgs/cap.png',
@@ -24,13 +16,18 @@ const heroImage = [
   '/imgs/girl.png',
 ];
 
-const ShowTrainingCard = ({ session }: Props) => {
+type Props = {
+  sessionCards: WorkoutSessionType
+  handleRemoveWorkoutSession: (cardSessionId: string) => void
+  handleEditWorkout: (cardSessionId: string) => void
+}
+
+const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEditWorkout }: Props) => {
+  const cardRef = useRef<HTMLDivElement>(null);
   const randomImage = heroImage[Math.floor(Math.random() * heroImage.length)];
 
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
-
-  const cardRef = useRef<HTMLDivElement>(null);
 
   // 手機觸摸事件處理
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -65,24 +62,22 @@ const ShowTrainingCard = ({ session }: Props) => {
       setIsSwiped(false);
     }
   };
+  //   if(userId) {
+  //     // 資料庫
+  //     if (sessionCards) {
+  //       router.push(`/fit/workout/${sessionCards.menuId}/${sessionCards.templateId}/${sessionId}`);
+  //     }
+  //     localStorage.setItem('currentSessionId', sessionId);
+  //   } else {
+  //     // 本地
+  //     const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
 
-  const router = useRouter();
-
-  //TODO: menu編輯和刪除
-  const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
-
-  const handleEditWorkout = (sessionId: string) => {
-    const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
-
-    if (sessionToEdit) {
-      router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${sessionId}`);
-    }
-    localStorage.setItem('currentSessionId', sessionId);
-  };
-
-  const handleRemoveWorkoutSession = (sessionId: string) => {
-    removeWorkoutSession(sessionId);
-  };
+  //     if (sessionToEdit) {
+  //       router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${sessionId}`);
+  //     }
+  //     localStorage.setItem('currentSessionId', sessionId);
+  //   }
+  // };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -117,25 +112,29 @@ const ShowTrainingCard = ({ session }: Props) => {
         ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
         >
           <div className='flex w-[70%] flex-col px-2 rounded-xl group-hover:bg-white py-1'
-            onClick={() => handleEditWorkout(session?.cardSessionId)}
+            onClick={() => handleEditWorkout(sessionCards?.cardSessionId)}
           >
-            <p className='font-bold line-clamp-1'>{session?.templateTitle}</p>
+            <p className='font-bold line-clamp-1'>{sessionCards?.templateTitle}</p>
 
             <div className='flex items-center gap-1 text-[10px]'>
               <div className='flex items-center'>
                 <div className='w-5 h-5'>
                   <Image src='/icons/dumbbell.svg' width={20} height={20} alt='dumbbell' />
                 </div>
-                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>{session?.exercises.length} 動作</p>
+                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>
+                  {sessionCards?.exercises.length} 動作
+                </p>
               </div>
 
               <div className='flex items-center gap-1'>
                 <ListOrdered width={16} />
-                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>共 {session?.exercises.reduce((total, e) => total + e.sets.length, 0)} 組</p>
+                <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>
+                  共 {sessionCards?.exercises.reduce((total, e) => total + e.sets.length, 0)} 組
+                </p>
               </div>
 
               <div className='text-muted-foreground line-clamp-1'>
-                <p>日期 {session?.date}</p>
+                <p>{multiFormatDateString(sessionCards.createdAt as string)}</p>
               </div>
             </div>
           </div>
@@ -156,7 +155,7 @@ const ShowTrainingCard = ({ session }: Props) => {
           ref={cardRef}
           className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
           ${isSwiped ? 'w-20' : 'w-0'}`}
-          onClick={() => handleRemoveWorkoutSession(session?.cardSessionId)}
+          onClick={() => handleRemoveWorkoutSession(sessionCards?.cardSessionId)}
         >
           <Trash2 className=' w-full text-white h-8' />
         </div>

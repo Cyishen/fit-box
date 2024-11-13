@@ -81,9 +81,9 @@ export const MenuModal = () => {
     const dataAddTemplate: TemplateType = {
       userId: userId || "Guest",
       templateCategory: "胸",
-      templateTitle: "未命名模板",
+      templateTitle: "新模板",
       menuId: menuId,
-      exercises: [],
+      templateExercises: [],
       templateId: null
     };
 

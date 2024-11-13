@@ -1,29 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import ExerciseSet from './ExerciseSet';
+
 import { Trash2, ChevronLeft } from 'lucide-react';
 import RippleAni from '@/components/RippleAni';
-import { SkeletonCard } from './SkeletonCard';
+import { SkeletonCard } from '../../../[menuId]/[templateId]/SkeletonCard';
+
+import WorkoutSet from './WorkoutSet';
 
 
-
-interface ExerciseListCardProps {
-  exercise: TemplateExerciseType;
+interface WorkoutListCardProps {
+  exercise: WorkoutExerciseType;
   handleRemoveExercise: (movementId: string) => void;
-  onUpdateSets: (movementId: string, updatedSets: TemplateSetType[]) => void;
+  onUpdateSets: (movementId: string, updatedSets: WorkoutSetType[]) => void;
   isOpen: boolean;
   onToggle: () => void;
   isLoading: boolean
 }
 
-const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading }: ExerciseListCardProps) => {
+const WorkoutListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading }: WorkoutListCardProps) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const totalWeights = exercise.templateSets.reduce((sum, set) => sum + set.totalWeight, 0)
-
+  const totalWeights = exercise.sets.reduce((sum, set) => sum + set.totalWeight, 0);
 
   // 手機觸摸事件處理
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -99,7 +99,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
                   <p>{exercise.name}</p>
 
                   <div className='flex gap-0 text-xs text-muted-foreground'>
-                    <p>{exercise.templateSets.length} 組・</p>
+                    <p>{exercise.sets.length} 組・</p>
                     <p>{totalWeights} kg</p>
                   </div>
                 </div>
@@ -130,8 +130,8 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
 
           {/* 組數設定顯示 */}
           {isOpen && (
-            <ExerciseSet
-              sets={exercise.templateSets}
+            <WorkoutSet
+              sets={exercise.sets}
               movementId={exercise.movementId}
               onUpdateSets={onUpdateSets}
             />
@@ -142,4 +142,4 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
   );
 };
 
-export default ExerciseListCard;
+export default WorkoutListCard;

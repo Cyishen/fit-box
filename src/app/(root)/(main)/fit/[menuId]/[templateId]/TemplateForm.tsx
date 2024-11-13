@@ -23,8 +23,10 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
   const router = useRouter();
 
   useEffect(() => {
-    setCount(template.templateTitle.length);
-  }, [template.templateTitle]);
+    if(type==='編輯'){
+      setCount(template?.templateTitle.length);
+    }
+  }, [template?.templateTitle.length, type]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -65,7 +67,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
                   <button
                     key={index}
                     type="button"
-                    className={`cursor-pointer py-1 px-5 text-sm rounded-full ${template.templateCategory === item ? "bg-black text-white" : "bg-white hover:bg-gray-200"}`}
+                    className={`cursor-pointer py-1 px-5 text-sm rounded-full ${template?.templateCategory === item ? "bg-black text-white" : "bg-white hover:bg-gray-200"}`}
                     onClick={() => {
                       setTemplateState({ ...template, templateCategory: item });
                     }}
@@ -90,7 +92,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
                   placeholder="來取名吧 🤔"
                   onChange={handleChange}
                   name="templateTitle"
-                  value={template.templateTitle}
+                  value={template?.templateTitle}
                   required
                   maxLength={20}
                   className="w-full rounded-md border px-3 py-1 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 placeholder:text-sm"
@@ -102,7 +104,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
           {/* TODO: 添加動作 */}
           <div className="h-full">
             <ExerciseList
-              exercises={template.exercises || []}
+              exercises={template?.templateExercises || []}
               setTemplateState={setTemplateState}
               template={template}
               isLoading={isLoading}

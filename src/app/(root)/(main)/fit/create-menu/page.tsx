@@ -22,7 +22,7 @@ const CreateMenu = () => {
 
   const [menu, setMenu] = useState({
     userId: userId || "Guest",
-    title: "未命名訓練盒🗒︎",
+    title: "新訓練盒🥚",
     id: '',
   })
 

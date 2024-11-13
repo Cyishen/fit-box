@@ -49,6 +49,7 @@ const FitProfile = () => {
                 <p className='text-[10px]'>{session?.user?.email}</p>
               </div>
 
+              {/* TODO: 測試用, 實際要刪除 */}
               <div className='flex items-center'>
                 <Button onClick={handleLogout} variant='outline' size='sm'>登出</Button>
               </div>
@@ -58,7 +59,6 @@ const FitProfile = () => {
               <div className='text-sm'>
                 <p className='capitalize'>Guest</p>
               </div>
-
               <Link href="/sign-in">
                 <Button variant='outline' size='sm'>登入</Button>
               </Link>

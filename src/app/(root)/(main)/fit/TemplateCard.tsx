@@ -6,6 +6,7 @@ import { EllipsisVertical, Trash2, SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import { usePracticeModal } from '@/lib/use-practice-modal';
 
+
 type Props = {
   iconSrc: string;
   templateCategory: string;
@@ -13,7 +14,7 @@ type Props = {
   templateId: string;
   menuId: string;
   onRemove: () => void;
-  exercises: ExerciseType[]
+  exercises: TemplateExerciseType[]
 };
 
 const TemplateCard = ({ iconSrc, templateCategory, templateTitle, onRemove, templateId, menuId, exercises }: Props) => {
@@ -89,7 +90,7 @@ const TemplateCard = ({ iconSrc, templateCategory, templateTitle, onRemove, temp
             {templateCategory}
           </p>
 
-          <p className='absolute top-0 left-0 font-bold text-sm px-3 py-1 no-select'>
+          <p className='absolute top-0 left-0 px-3 py-1 text-gray-400 text-[10px] no-select'>
             {exercises.length} 動作
           </p>
 

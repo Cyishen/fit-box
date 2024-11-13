@@ -1,55 +1,74 @@
-declare type UserModelType = {
-  userId: string;                  
-  email?: string;                               
-  name?: string;
-  image?: string;                    
-  dateOfBirth?: string;            
-  workoutSessions?: WorkoutSessionType[]; 
-  createdAt?: string;
-  updatedAt?: string;
-  lastActiveDate?: string;
-};
-
-// TODO: 用戶每天的訓練紀錄
-type WorkoutSessionType = {
-  cardSessionId: string;
-  userId: string;
-  menuId: string;
-  templateId: string;
-  templateTitle: string;
-  date: string;
-  exercises: ExerciseType[];
-  startTime?: string;     
-  endTime?: string; 
-  notes?: string; 
-};
-
-// 分割線 =========================== 分割線
-
-type TemplateType = {
-  userId?: string;
-  menuId: string;
-  templateId: string | null;
-  templateCategory: string;
-  templateTitle: string;
-  exercises: ExerciseType[];
-};
-
 type MenuType = {
   id: string;
   userId: string;
   title: string;
 };
 
-type ExerciseType = {
+// 模板定義
+type TemplateType = {
+  id?: string;
+  userId?: string;
+  menuId: string;
+  templateId?: string;
+  templateCategory: string;
+  templateTitle: string;
+
+  templateExercises: TemplateExerciseType[];
+};
+
+type TemplateExerciseType = {
+  id?: string;
+  templateId?: string
+  movementId: string; // 動作ID，例如啞鈴胸推 "1"
+  name: string; // 動作名稱，例如 "啞鈴胸推"
+  exerciseCategory: string; // 動作類別
+
+  sortOrder?: number;
+
+  templateSets: TemplateSetType[];
+}
+
+type TemplateSetType = {
+  id: string;
+  movementId: string;
+  leftWeight: number; 
+  rightWeight: number; 
+  repetitions: number; 
+  totalWeight: number;
+
+  sortOrder?: number;
+}
+
+// 訓練卡複製模板內容
+type WorkoutSessionType = {
+  id?: string;
+  cardSessionId: string;
+  userId: string;
+  menuId: string;
+  templateId: string;
+  templateTitle: string;
+
+  date: string | Date;
+  createdAt: string | Date;
+  startTime: string | null;
+  endTime: string | null;
+
+  notes: string | null; 
+
+  exercises: WorkoutExerciseType[];
+};
+
+type WorkoutExerciseType = {
   id?: string;
   movementId: string; // 動作ID，例如啞鈴胸推 "1"
   name: string; // 動作名稱，例如 "啞鈴胸推"
   exerciseCategory: string; // 動作類別
-  sets: SetType[];
+
+  sets: WorkoutSetType[];
+  workoutSessionId: string;
 };
 
-type SetType = {
+type WorkoutSetType = {
   id: string;
   movementId: string;
   leftWeight: number; 
@@ -57,3 +76,16 @@ type SetType = {
   repetitions: number; 
   totalWeight: number;
 };
+
+
+// declare type UserModelType = {
+//   userId: string;                  
+//   email?: string;                               
+//   name?: string;
+//   image?: string;                    
+//   dateOfBirth?: string;            
+//   workoutSessions?: WorkoutSessionType[]; 
+//   createdAt?: string;
+//   updatedAt?: string;
+//   lastActiveDate?: string;
+// };

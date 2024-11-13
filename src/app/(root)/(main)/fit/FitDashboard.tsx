@@ -27,14 +27,6 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
   const templates = useTemplateStore((state) => state.templates);
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
-  // TODO*測試把資料抓到 setDateAllTemplate, 頁面透過 dataAllTemplateSession 取得exercise改善載入速度
-  const { setDataAllTemplateToSession } = usePracticeModal()
-  useEffect(() => {
-    if (userId && templatesData.length > 0) {
-      setDataAllTemplateToSession(templatesData)
-    }
-  }, [setDataAllTemplateToSession, templatesData, userId])
-
   const selectMenu = (menuId: string | null, menusList: MenuType[]) => {
     if (menuId && menusList.some(menu => menu.id === menuId)) {
       setSelectedMenuId(menuId);
@@ -74,6 +66,14 @@ const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
       return newState;
     });
   };
+
+  // TODO*測試把資料抓到zustand, 頁面透過 dataAllTemplate 取得exercise改善載入速度
+  const { setDataAllTemplate } = usePracticeModal()
+  useEffect(() => {
+    if (userId && templatesData.length > 0) {
+      setDataAllTemplate(templatesData)
+    }
+  }, [setDataAllTemplate, templatesData, userId])
 
   // 以下模板設定
   const selectedTemplates = userId

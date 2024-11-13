@@ -5,9 +5,9 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import { EllipsisVertical, Trash2, Check } from 'lucide-react'
 
 interface SetProps {
-  sets: TemplateSetType[],
+  sets: WorkoutSetType[],
   movementId: string,
-  onUpdateSets: (movementId: string, updatedSets: TemplateSetType[]) => void
+  onUpdateSets: (movementId: string, updatedSets: WorkoutSetType[]) => void
 }
 
 interface InputProps {
@@ -17,8 +17,8 @@ interface InputProps {
   totalWeight: number;
 }
 
-const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
-  const [dynamicSets, setDynamicSets] = useState<TemplateSetType[]>([]);
+const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
+  const [dynamicSets, setDynamicSets] = useState<WorkoutSetType[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [saveIcon, setSaveIcon] = useState(false);
 
@@ -244,4 +244,4 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
   )
 }
 
-export default ExerciseSet;
+export default WorkoutSet;

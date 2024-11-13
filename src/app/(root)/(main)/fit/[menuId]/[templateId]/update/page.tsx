@@ -12,6 +12,7 @@ import { upsertTemplate } from '@/actions/user-create'
 
 import { usePracticeModal } from '@/lib/use-practice-modal';
 
+
 const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: string } }) => {
   const { menuId, templateId } = params;
   const router = useRouter();
@@ -25,10 +26,10 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
   const templates = useTemplateStore((state) => state.templates);
   const existingTemplate = templates.find(template => template.templateId === templateId);
   const editTemplate = useTemplateStore((state) => state.editTemplate);
-  
-  // TODO*測試透過 dataAllTemplateSession 取得exercise, 加快顯示速度
-  const { dataAllTemplateSession } = usePracticeModal();
-  const findTemplateById = dataAllTemplateSession.find(item => item.templateId === templateId);
+
+  // TODO*方式二,測試透過 dataAllTemplate 取得exercise, 加快圖片顯示速度
+  const { dataAllTemplate } = usePracticeModal();
+  const findTemplate = dataAllTemplate.find(item => item.templateId === templateId);
 
 
   const [template, setTemplate] = useState<TemplateType>({
@@ -37,27 +38,30 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     templateId: templateId,
     templateCategory: "",
     templateTitle: "",
-    exercises: [],
+    templateExercises: [],
   });
 
   useEffect(() => {
     const fetchExercises = async () => {
       setIsLoading(true);
       try {
-        if (userId && templateId) {
-          //  TODO* 測試透過 dataAllTemplateSession, 加快載入速度, 顯示template內容, 
-          setTemplate(findTemplateById as TemplateType);
-
-          // 原本抓資料庫, 顯示template內容
+        if (userId) {
+          // TODO:方式二, 測試dataAllTemplate
+          if (findTemplate) {
+            setTemplate(findTemplate)
+          }
+          // 方式一抓資料庫資料, 刷新網頁正常
           // const fetchedTemplate = await getTemplateById(templateId);
-          // setTemplate(prevTemplate => ({
-          //   ...prevTemplate,
-          //   exercises: fetchedTemplate?.exercises || [],
-          //   templateTitle: fetchedTemplate?.templateTitle || '',
-          //   templateCategory: fetchedTemplate?.templateCategory || '',
-          // }));
-        } else if (existingTemplate) {
-          setTemplate(existingTemplate);
+          // if (fetchedTemplate) {
+          //   setTemplate(fetchedTemplate);
+          // } else {
+          //   console.log("Template not found");
+          // }
+        } else {
+          // 本地
+          if (existingTemplate) {
+            setTemplate(existingTemplate);
+          }
         }
       } catch (error) {
         console.error("Failed to fetch template", error);
@@ -67,7 +71,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     };
 
     fetchExercises();
-  }, [existingTemplate, findTemplateById, templateId, userId]);
+  }, [existingTemplate, findTemplate, templateId, userId]);
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -78,7 +82,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     try {
       if (userId) {
         // 資料庫
-        await upsertTemplate(template)
+        await upsertTemplate(template as TemplateType);
       } else {
         // 本地
         if (template) {
@@ -86,7 +90,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
             ...template,
             templateCategory: template.templateCategory,
             templateTitle: template.templateTitle,
-            exercises: template.exercises || [],
+            templateExercises: template.templateExercises || [],
           };
           editTemplate(template.templateId ?? '', editTemplateData);
         }
@@ -98,10 +102,6 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
 
     setIsLoading(false);
   };
-
-  if (!template) {
-    return <div>Loading...</div>
-  }
 
   return (
     <TemplateForm

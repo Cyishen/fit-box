@@ -10,7 +10,7 @@ import FitSideBar from './FitSideBar';
 import { exerciseTemplates } from '@/constants/constants';
 
 import { useSession } from 'next-auth/react'
-import { getExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
+import { getTemplateExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
 import { usePracticeModal } from '@/lib/use-practice-modal';
 import { Loader } from 'lucide-react';
 
@@ -29,22 +29,22 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
   const templates = useTemplateStore(state => state.templates);
   const currentTemplate = templates.find(template => template.templateId === templateId);
 
-  // TODO* 測試透過 dataAllTemplateSession 取得exercise, 加快顯示速度
-  const { dataAllTemplateSession, setDataAllTemplateToSession } = usePracticeModal();
+  // TODO* 測試透過 dataAllTemplate 取得exercise, 加快顯示速度
+  const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
 
   // 選中的動作管理
-  const [selectedExercises, setSelectedExercises] = useState<ExerciseType[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<TemplateExerciseType[]>([]);
 
   useEffect(() => {
     const fetchSelectedExercises = async () => {
       if (userId) {
         // 資料庫
-        const existingExercises = await getExerciseByTemplateId(templateId);
-        setSelectedExercises(existingExercises as ExerciseType[]);
+        const existingExercises = await getTemplateExerciseByTemplateId(templateId);
+        setSelectedExercises(existingExercises);
       } else {
         // 本地
         if (currentTemplate) {
-          setSelectedExercises(currentTemplate.exercises);
+          setSelectedExercises(currentTemplate.templateExercises);
         }
       }
     };
@@ -59,27 +59,27 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
     try {
       if (userId) {
         // 更新動作到資料庫
-        await upsertExercise(selectedExercises, templateId, null);
+        await upsertExercise(selectedExercises, templateId);
 
         // TODO* 同時更新動作到 setDataAllTemplate
-        if (dataAllTemplateSession) {
-          const updatedDataAllTemplate = dataAllTemplateSession.map(item => {
+        if (dataAllTemplate) {
+          const updatedDataAllTemplate = dataAllTemplate.map(item => {
             if (item.templateId === templateId) {
               return {
                 ...item,
-                exercises: selectedExercises,
+                templateExercises: selectedExercises,
               };
             }
             return item;
           });
-          setDataAllTemplateToSession(updatedDataAllTemplate);
+          setDataAllTemplate(updatedDataAllTemplate as TemplateType[]);
         }
       } else {
         // 本地
         if (currentTemplate) {
           const updatedTemplate: TemplateType = {
             ...currentTemplate,
-            exercises: selectedExercises,
+            templateExercises: selectedExercises,
           };
 
           const updateTemplate = useTemplateStore.getState().editTemplate;
@@ -96,7 +96,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
     setIsLoading(false);
   };
 
-  const handleToggleExercise = (exercise: ExerciseType) => {
+  const handleToggleExercise = (exercise: TemplateExerciseType) => {
     const isSelected = selectedExercises.some(ex => ex.movementId === exercise.movementId);
 
     if (isSelected) {

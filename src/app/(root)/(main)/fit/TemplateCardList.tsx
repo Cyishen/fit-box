@@ -34,7 +34,7 @@ const TemplateCardList = ({ selectedTemplates, handleRemoveTemplate, isPending }
             onRemove={() => handleRemoveTemplate(temp.templateId ?? '')}
             menuId={temp.menuId}
             templateId={temp.templateId ?? ''}
-            exercises={temp.exercises}
+            exercises={temp.templateExercises}
           />
         ))
       ) : (

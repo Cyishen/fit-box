@@ -1,10 +1,14 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { useTemplateStore, useWorkoutStore } from '@/lib/store';
+import { Loader } from 'lucide-react';
+
+import { useWorkoutStore } from '@/lib/store';
 import StartWorkout from '../StartWorkout';
 
 import { useSession } from 'next-auth/react'
+import { getWorkoutSessionByCardId } from '@/actions/user-create';
+
 
 const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: string; sessionId: string } }) => {
   const { menuId, templateId, sessionId } = params;
@@ -12,60 +16,61 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  const [workoutSession, setWorkoutSession] = useState<WorkoutSessionType | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [currentWorkout, setCurrentWorkout] = useState<WorkoutSessionType | null>(null);
 
   // 本地
-  const templates = useTemplateStore(state => state.templates);
   const workoutSessions = useWorkoutStore(state => state.workoutSessions);
 
   useEffect(() => {
-    try {
-      if (userId) {
-        // 資料庫的數據
-      } else {
-        if (!templates || templates.length === 0 || !workoutSessions || workoutSessions.length === 0) {
-          return;
-        }
-
-        const selectedTemplate = templates.find(
-          template => template.templateId === templateId && template.menuId === menuId
-        );
-
-        const sessionToEdit = workoutSessions.find(session => session.cardSessionId === sessionId);
-
-        if (sessionToEdit) {
-          console.log("編輯執行中")
-          setWorkoutSession({
-            ...sessionToEdit,
-            exercises: JSON.parse(JSON.stringify(sessionToEdit.exercises))
-          });
-        } else if (selectedTemplate) {
-          // 預防沒有模板情況下, 一樣可以得到訓練卡
-          console.log("找不到訓練卡, 一樣可以得到訓練卡")
-          setWorkoutSession({
-            cardSessionId: sessionId,
-            userId: userId || "Guest",
-            menuId: menuId,
-            templateId: templateId,
-            templateTitle: selectedTemplate.templateTitle,
-            date: new Date().toISOString().slice(0, 10),
-            exercises: JSON.parse(JSON.stringify(selectedTemplate.exercises))
-          });
-        }
-      }
-    } catch (error) {
-      console.error("找不到訓練卡", error);
+    if (!sessionId) {
+      setIsLoading(false);
+      return;
     }
 
-  }, [menuId, sessionId, templateId, templates, userId, workoutSessions]);
+    if (userId) {
+      // 資料庫數據
+      const fetchWorkout = async () => {
+        try {
+          const workoutCard = await getWorkoutSessionByCardId(sessionId)
 
+          if (workoutCard) {
+            setCurrentWorkout(workoutCard);
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      fetchWorkout()
+    } else {
+      // 本地
+      const findSession = workoutSessions.find(
+        session => session.cardSessionId === sessionId
+      );
+
+      if (findSession) {
+        setCurrentWorkout(findSession);
+        setIsLoading(false);
+      }
+    }
+  }, [menuId, sessionId, templateId, userId, workoutSessions]);
+
+
+  if (isLoading) {
+    return <div className='flex h-screen justify-center mt-20'>
+      <Loader size={20} className="animate-spin" /> &nbsp; 加載中...
+    </div>
+  }
 
   return (
     <div>
-      {workoutSession && (
+      {currentWorkout && (
         <StartWorkout
-          workoutSession={workoutSession}
           isEditMode={true}
+          workoutSession={currentWorkout}
+          setCurrentWorkout={setCurrentWorkout}
         />
       )}
     </div>

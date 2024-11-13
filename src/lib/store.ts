@@ -2,23 +2,37 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 
-type UserModelStore = {
-  user: UserModelType;
-  setUser: (newUser: UserModelType) => void;
+// 菜單
+interface BoxStore {
+  menus: MenuType[];
+  addMenu: (box: MenuType) => void;
+  removeMenu: (id: string) => void;
+  editMenu: (id: string, updatedMenu: MenuType) => void;
 }
 
-export const useUserStore = create<UserModelStore>()(
+export const useMenuStore = create<BoxStore>()(
   persist(
     (set) => ({
-      user: {
-        userId: "Guest",
-        workoutSessions: [],
-      } as UserModelType,
-      setUser: (newUser: UserModelType) => set({ user: newUser }),
+      menus: [],
+      addMenu: (box) =>
+        set((state) => ({
+          menus: [box, ...state.menus],
+        })),
+      removeMenu: (id) =>
+        set((state) => ({
+          menus: state.menus.filter(box => box.id !== id),
+        })),
+      editMenu: (id, updatedMenu) =>
+        set((state) => ({
+          menus: state.menus.map(menu => menu.id === id
+            ? updatedMenu
+            : menu
+          ),
+        })),
     }),
     {
-      name: 'user-storage',
-      storage: createJSONStorage(() => localStorage)
+      name: 'menu-storage',
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
@@ -55,41 +69,6 @@ export const useTemplateStore = create<TemplateStore>()(
     }),
     {
       name: 'template-storage',
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
-
-// 菜單
-interface BoxStore {
-  menus: MenuType[];
-  addMenu: (box: MenuType) => void;
-  removeMenu: (id: string) => void;
-  editMenu: (id: string, updatedMenu: MenuType) => void;
-}
-
-export const useMenuStore = create<BoxStore>()(
-  persist(
-    (set) => ({
-      menus: [],
-      addMenu: (box) =>
-        set((state) => ({
-          menus: [box, ...state.menus],
-        })),
-      removeMenu: (id) =>
-        set((state) => ({
-          menus: state.menus.filter(box => box.id !== id),
-        })),
-      editMenu: (id, updatedMenu) =>
-        set((state) => ({
-          menus: state.menus.map(menu => menu.id === id
-            ? updatedMenu
-            : menu
-          ),
-        })),
-    }),
-    {
-      name: 'menu-storage',
       storage: createJSONStorage(() => localStorage),
     }
   )
@@ -134,4 +113,26 @@ export const useWorkoutStore = create<WorkoutStore>()(
     }
   )
 );
+
+
+// type UserModelStore = {
+//   user: UserModelType;
+//   setUser: (newUser: UserModelType) => void;
+// }
+
+// export const useUserStore = create<UserModelStore>()(
+//   persist(
+//     (set) => ({
+//       user: {
+//         userId: "Guest",
+//         workoutSessions: [],
+//       } as UserModelType,
+//       setUser: (newUser: UserModelType) => set({ user: newUser }),
+//     }),
+//     {
+//       name: 'user-storage',
+//       storage: createJSONStorage(() => localStorage)
+//     }
+//   )
+// );
 

@@ -7,7 +7,7 @@ import ExerciseListCard from './ExerciseListCard';
 
 
 type ExerciseListProps = {
-  exercises: ExerciseType[];
+  exercises: TemplateExerciseType[];
   template: TemplateType;
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
   isLoading: boolean;
@@ -18,10 +18,29 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
 
   const updateTemplate = useTemplateStore(state => state.editTemplate);
 
-  // 點擊下拉, 打開動作的組數設定
+  // 打開動作的組數設定
   const [openMovementId, setOpenMovementId] = useState<string | null>(null);
   const handleToggleExercise = (movementId: string) => {
     setOpenMovementId((prev) => (prev === movementId ? null : movementId));
+  };
+
+  // 修改動作組數
+  const handleUpdateSets = (movementId: string, updatedSets: TemplateSetType[]) => {
+    const updatedExercises = exercises.map((exercise) =>
+      exercise.movementId === movementId
+        ? { ...exercise, templateSets: updatedSets }
+        : exercise
+    );
+
+    const updatedTemplate: TemplateType = {
+      ...template,
+      templateExercises: updatedExercises,
+    };
+    // 更新組數設定
+    // 本地
+    updateTemplate(template.templateId ?? '', updatedTemplate);
+    // 資料庫狀態
+    setTemplateState(updatedTemplate);
   };
 
   // 左滑後, 點擊刪除
@@ -30,27 +49,12 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
 
     const updatedTemplate: TemplateType = {
       ...template,
-      exercises: updatedExercises,
+      templateExercises: updatedExercises,
     };
     // 更新刪除後的儲存
+    // 本地
     updateTemplate(template.templateId ?? '', updatedTemplate);
-    setTemplateState(updatedTemplate);
-  };
-
-  // 修改動作組數
-  const handleUpdateSets = (movementId: string, updatedSets: SetType[]) => {
-    const updatedExercises = exercises.map((exercise) =>
-      exercise.movementId === movementId
-        ? { ...exercise, sets: updatedSets }
-        : exercise
-    );
-
-    const updatedTemplate: TemplateType = {
-      ...template,
-      exercises: updatedExercises,
-    };
-    // 更新組數設定
-    updateTemplate(template.templateId ?? '', updatedTemplate);
+    // 資料庫狀態
     setTemplateState(updatedTemplate);
   };
 

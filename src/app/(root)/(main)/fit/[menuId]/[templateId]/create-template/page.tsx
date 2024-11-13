@@ -6,7 +6,7 @@ import TemplateForm from '../TemplateForm'
 import { useTemplateStore } from '@/lib/store'
 
 import { useSession } from 'next-auth/react'
-import { getExerciseByTemplateId, upsertTemplate } from '@/actions/user-create'
+import { getTemplateExerciseByTemplateId, upsertTemplate } from '@/actions/user-create'
 
 
 const CreateTemplate = ({ params }: { params: { menuId: string; templateId: string } }) => {
@@ -28,8 +28,8 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
     menuId,
     templateId: templateId,
     templateCategory: "胸",
-    templateTitle: "未命名模板🗒︎",
-    exercises: [],
+    templateTitle: "新模板",
+    templateExercises: [],
   });
 
   useEffect(() => {
@@ -37,11 +37,11 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
       try {
         if (userId && templateId) {
           // 資料庫
-          const exercises = await getExerciseByTemplateId(templateId);
+          const exercises = await getTemplateExerciseByTemplateId(templateId);
 
           setTemplate(prevTemplate => ({
             ...prevTemplate,
-            exercises: exercises,
+            templateExercises: exercises,
           }));
         } else if (existingTemplate) {
           // 本地

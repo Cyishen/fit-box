@@ -3,7 +3,8 @@
 import { prismaDb } from "@/lib/db"
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { Prisma } from "@prisma/client";
+
+// import { Prisma } from "@prisma/client";
 
 //TODO? menu邏輯
 export const upsertMenu = async (data: MenuType) => {
@@ -135,29 +136,29 @@ export const upsertTemplate = async (data: TemplateType) => {
       data: {
         templateTitle: data.templateTitle,
         templateCategory: data.templateCategory,
-        exercises: {
+        templateExercises: {
           deleteMany: {},
-          create: data.exercises.map((exercise) => ({
+          create: data.templateExercises.map((exercise) => ({
+            sortOrder: Number(exercise.sortOrder),
             movementId: exercise.movementId,
             name: exercise.name,
             exerciseCategory: exercise.exerciseCategory,
-            sets: {
-              create: exercise.sets.map((set) => ({
+            templateSets: {
+              create: exercise.templateSets.map((set) => ({
+                movementId: exercise.movementId,
                 leftWeight: set.leftWeight,
                 rightWeight: set.rightWeight,
                 repetitions: set.repetitions,
                 totalWeight: set.totalWeight,
-                movementId: exercise.movementId,
               })),
             },
-            refWorkoutSessionId: null,
-          })) as Prisma.ExerciseUncheckedCreateWithoutTemplateInput[],
+          })),
         }
       },
       include: {
-        exercises: {
+        templateExercises: {
           include: {
-            sets: true,
+            templateSets: true,
           },
         },
       },
@@ -173,28 +174,28 @@ export const upsertTemplate = async (data: TemplateType) => {
       menuId: data.menuId,
       templateTitle: data.templateTitle,
       templateCategory: data.templateCategory,
-      exercises: {
-        create: data.exercises.map((exercise) => ({
+      templateExercises: {
+        create: data.templateExercises.map((exercise) => ({
+          sortOrder: Number(exercise.sortOrder),
           movementId: exercise.movementId,
           name: exercise.name,
           exerciseCategory: exercise.exerciseCategory,
-          sets: {
-            create: exercise.sets.map((set) => ({
+          templateSets: {
+            create: exercise.templateSets.map((set) => ({
+              movementId: exercise.movementId,
               leftWeight: set.leftWeight,
               rightWeight: set.rightWeight,
               repetitions: set.repetitions,
               totalWeight: set.totalWeight,
-              movementId: exercise.movementId,
             })),
           },
-          refWorkoutSessionId: null,
-        })) as Prisma.ExerciseUncheckedCreateWithoutTemplateInput[],
+        })),
       }
     },
     include: {
-      exercises: {
+      templateExercises: {
         include: {
-          sets: true,
+          templateSets: true,
         },
       },
     },
@@ -204,7 +205,7 @@ export const upsertTemplate = async (data: TemplateType) => {
   return newTemplate;
 };
 
-export const upsertExercise = async (exercises: ExerciseType[], templateId: string, workoutSessionId: string | null) => {
+export const upsertExercise = async (exercises: TemplateExerciseType[], templateId: string) => {
   const session = await auth();
   const userId = session?.user?.id;
 
@@ -213,7 +214,7 @@ export const upsertExercise = async (exercises: ExerciseType[], templateId: stri
   }
 
   // Step 1: 獲取該模板下的現有運動項目
-  const existingExercises = await prismaDb.exercise.findMany({
+  const existingExercises = await prismaDb.templateExercise.findMany({
     where: { templateId }
   });
   // Step 2: 找出需要保留的運動 movementId 列表
@@ -222,28 +223,29 @@ export const upsertExercise = async (exercises: ExerciseType[], templateId: stri
   const exercisesToDelete = existingExercises.filter(exercise => !selectedMovementIds.includes(exercise.movementId));
   // Step 4: 刪除需要刪除的運動項目
   await Promise.all(exercisesToDelete.map(async (exercise) => {
-    await prismaDb.exercise.delete({
+    await prismaDb.templateExercise.delete({
       where: { id: exercise.id },
     });
   }));
 
   // 插入或更新項目
   const updatedExercises = await Promise.all(exercises.map(async (exercise) => {
-    const { movementId, name, sets, exerciseCategory } = exercise;
+    const { movementId, name, templateSets, exerciseCategory } = exercise;
 
-    const existingExercise = await prismaDb.exercise.findFirst({
+    const existingExercise = await prismaDb.templateExercise.findFirst({
       where: { movementId, templateId },
     });
 
     if (existingExercise) {
-      return await prismaDb.exercise.update({
+      return await prismaDb.templateExercise.update({
         where: { id: existingExercise.id },
         data: {
+          sortOrder: Number(exercise.sortOrder),
           name,
           movementId,
           exerciseCategory,
-          sets: {
-            upsert: sets.map(set => ({
+          templateSets: {
+            upsert: templateSets.map(set => ({
               where: { id: set.id },
               create: {
                 movementId: exercise.movementId,
@@ -262,19 +264,19 @@ export const upsertExercise = async (exercises: ExerciseType[], templateId: stri
           },
         },
         include: {
-          sets: true
+          templateSets: true
         }
       });
     } else {
-      return await prismaDb.exercise.create({
+      return await prismaDb.templateExercise.create({
         data: {
+          sortOrder: Number(exercise.sortOrder),
           name,
           movementId,
           exerciseCategory,
           template: { connect: { id: templateId } },
-          ...(workoutSessionId ? { workoutSession: { connect: { id: workoutSessionId } } } : {}),
-          sets: {
-            create: sets.map(set => ({
+          templateSets: {
+            create: templateSets.map(set => ({
               movementId: exercise.movementId,
               leftWeight: set.leftWeight,
               rightWeight: set.rightWeight,
@@ -284,7 +286,7 @@ export const upsertExercise = async (exercises: ExerciseType[], templateId: stri
           },
         },
         include: {
-          sets: true,
+          templateSets: true,
         }
       });
     }
@@ -306,9 +308,9 @@ export const getAllTemplatesByUserId = async () => {
     where: { isDeleted: false },
     include: {
       menu: true,
-      exercises: {
+      templateExercises: {
         include: {
-          sets: true,
+          templateSets: true,
         },
       },
     }
@@ -333,9 +335,9 @@ export const getTemplateById = async (id: string) => {
       id: id,
     },
     include: {
-      exercises: {
+      templateExercises: {
         include: {
-          sets: true
+          templateSets: true
         }
       }
     }
@@ -344,7 +346,7 @@ export const getTemplateById = async (id: string) => {
   return template
 }
 
-export const getExerciseByTemplateId = async (templateId: string) => {
+export const getTemplateExerciseByTemplateId = async (templateId: string) => {
   const session = await auth();
   const userId = session?.user?.id;
 
@@ -352,12 +354,12 @@ export const getExerciseByTemplateId = async (templateId: string) => {
     return [];
   }
 
-  const exercises = await prismaDb.exercise.findMany({
+  const exercises = await prismaDb.templateExercise.findMany({
     where: {
-      templateId: templateId
+      templateId: templateId,
     },
     include: {
-      sets: true
+      templateSets: true
     }
   });
 
@@ -381,3 +383,226 @@ export const deleteTemplateById = async (id: string) => {
   revalidatePath('/fit')
   return template
 }
+
+//TODO? 訓練卡邏輯
+export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // 檢查是否有 id 來判斷是更新還是創建
+  if (data.id) {
+    const updatedWorkoutSession = await prismaDb.workoutSession.update({
+      where: { id: data.id },
+      data: {
+        ...data,
+        date: new Date(data.date).toISOString(),
+        exercises: {
+          deleteMany: {},
+          create: data.exercises.map((exercise) => ({
+            id: exercise.id,
+            movementId: exercise.movementId,
+            name: exercise.name,
+            exerciseCategory: exercise.exerciseCategory,
+            // template: { 
+            //   connect: { id: data.templateId } 
+            // },
+            sets: {
+              create: exercise.sets.map((set) => ({
+                movementId: exercise.movementId,
+                leftWeight: set.leftWeight,
+                rightWeight: set.rightWeight,
+                repetitions: set.repetitions,
+                totalWeight: set.totalWeight,
+              })),
+            },
+          })),
+        },
+      },
+      include: {
+        exercises: {
+          include: {
+            sets: true
+          }
+        }
+      }
+    });
+    revalidatePath('/fit');
+    return updatedWorkoutSession;
+  }
+
+  // 1. 首先創建 WorkoutSession
+  try {
+    const newWorkoutSession = await prismaDb.workoutSession.create({
+      data: {
+        cardSessionId: data.cardSessionId,
+        userId: userId,
+        menuId: data.menuId,
+        templateId: data.templateId,
+        templateTitle: data.templateTitle,
+        date: new Date(data.date).toISOString(),
+      },
+    });
+
+    // 2. 為新的 WorkoutSession 創建exercises和sets
+    const exercisePromises = data.exercises.map(async (exercise) => {
+      // 創建新的 Exercise 記錄，與原模板無關聯
+      return await prismaDb.workoutExercise.create({
+        data: {
+          movementId: exercise.movementId,
+          name: exercise.name,
+          exerciseCategory: exercise.exerciseCategory,
+          workoutSessionId: newWorkoutSession.id, // 關聯到新的訓練卡
+          sets: {
+            create: exercise.sets.map((set) => ({
+              movementId: exercise.movementId,
+              leftWeight: set.leftWeight,
+              rightWeight: set.rightWeight,
+              repetitions: set.repetitions,
+              totalWeight: set.totalWeight,
+            })),
+          },
+        },
+        include: {
+          sets: true,
+        },
+      });
+    });
+
+    // 等待所有 exercises 創建完成
+    await Promise.all(exercisePromises);
+
+    // 3. 返回完整的訓練卡數據
+    const completeWorkoutSession = await prismaDb.workoutSession.findUnique({
+      where: {
+        id: newWorkoutSession.id,
+      },
+      include: {
+        exercises: {
+          include: {
+            sets: true,
+          },
+        },
+      },
+    });
+
+    revalidatePath('/fit');
+    return completeWorkoutSession;
+  } catch (error) {
+    console.error("Error creating workout session:", error);
+    throw error;
+  }
+}
+
+export const getWorkoutSessionByCardId = async (cardSessionId: string) => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const getWorkoutSession = await prismaDb.workoutSession.findFirst({
+    where: {
+      cardSessionId: cardSessionId,
+      userId: userId
+    },
+    include: {
+      exercises: {
+        include: {
+          sets: true
+        }
+      }
+    }
+  })
+
+  if (getWorkoutSession) {
+    return {
+      ...getWorkoutSession,
+      date: getWorkoutSession.date.toISOString().slice(0, 10),
+      startTime: getWorkoutSession.startTime ? getWorkoutSession.startTime.toISOString() : null,
+      endTime: getWorkoutSession.endTime ? getWorkoutSession.endTime.toISOString() : null,
+      createdAt: getWorkoutSession.createdAt.toISOString(),
+    };
+  }
+
+  return null;
+}
+
+export const getAllWorkoutSessionByUserId = async (id: string) => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return []
+  }
+
+  const getWorkoutSession = await prismaDb.workoutSession.findMany({
+    where: {
+      userId: id
+    },
+    include: {
+      exercises: {
+        include: {
+          sets: true
+        }
+      }
+    }
+  })
+
+  const formattedSessions = getWorkoutSession.map(session => ({
+    ...session,
+    date: session.date.toISOString().slice(0, 10),
+    startTime: session.startTime ? session.startTime.toISOString() : null,
+    endTime: session.endTime ? session.endTime.toISOString() : null,
+    createdAt: session.createdAt.toISOString(),
+  }));
+
+  revalidatePath('/fit');
+  revalidatePath('/profile');
+  return formattedSessions;
+}
+
+export const deleteWorkoutSessionByCardId = async (cardSessionId: string) => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const workSession = await prismaDb.workoutSession.delete({
+    where: {
+      cardSessionId: cardSessionId,
+    }
+  })
+
+  revalidatePath('/fit')
+  return workSession
+}
+
+export const getFirstWorkoutSessionDay = async () => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return null;
+  } 
+
+  const firstTraining = await prismaDb.workoutSession.findFirst({
+    where: { 
+      userId: userId
+    },
+    orderBy: {
+      createdAt: 'asc'
+    }
+  })
+
+  return firstTraining
+}
+
+
+

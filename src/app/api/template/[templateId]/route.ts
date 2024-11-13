@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { getExerciseByTemplateId } from '@/actions/user-create';
+import { getTemplateExerciseByTemplateId } from '@/actions/user-create';
 
 export async function GET( request: Request, { params }: { params: { templateId: string } }) {
   const { templateId } = params;
 
   try {
-    const template = await getExerciseByTemplateId(templateId);
+    const template = await getTemplateExerciseByTemplateId(templateId);
 
     return NextResponse.json(template);
   } catch (error) {

@@ -1,7 +1,7 @@
 "use client";
 
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +14,13 @@ import { Button } from "@/components/ui/button";
 
 import { usePracticeModal } from "@/lib/use-practice-modal";
 import Link from "next/link";
-import { useTemplateStore } from "@/lib/store";
+import { useTemplateStore, useWorkoutStore } from "@/lib/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 // import { getExerciseByTemplateId } from "@/actions/user-create";
 
 import { useSession } from "next-auth/react"
+import { upsertWorkoutSession } from "@/actions/user-create";
 
 // const fetchTemplateByTemplateId = async (templateId: string) => {
 //   const response = await fetch(`/api/template/${templateId}`, {
@@ -37,34 +38,43 @@ export const PracticeModal = () => {
   const userId = session?.user?.id
 
   const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, menuId, templateId, dataAllTemplateSession } = usePracticeModal();
+  const { isOpen, close, menuId, templateId, dataAllTemplate } = usePracticeModal();
 
   // 本地
   const templates = useTemplateStore(state => state.templates);
-  const openTemplate = templates.find(template => template.templateId === templateId);
-  const localExercise = openTemplate?.exercises
+  const openLocalTemplate = templates.find(template => template.templateId === templateId);
+  const localExercise = openLocalTemplate?.templateExercises
 
-  const [exercise, setExercise] = useState<ExerciseType[]>([])
+  const addWorkoutSession = useWorkoutStore(state => state.addWorkoutSession);
 
-  // TODO*測試方式2: 透過 dataAllTemplateSession 取得exercise, 加快顯示速度
+  // TODO*測試方式2: 透過zustand 取得exercise, 加快圖片顯示速度
+  const [exercise, setExercise] = useState<TemplateExerciseType[]>([])
+  
+  // 第一步, useMemo緩存 dataAllTemplate有變動才更新, 避免useEffect重複執行
+  const filteredData = useMemo(() => {
+    return dataAllTemplate
+  }, [dataAllTemplate]);
+
+  // 第二步, 依據 templateId 更新 exercise
   useEffect(() => {
     if (userId && templateId) {
-      const selectedTemplate = dataAllTemplateSession.find(item => item.templateId === templateId);
-      const exercisesToRender = selectedTemplate?.exercises || [];
+      const selectedTemplate = filteredData.find(item => item.templateId === templateId);
+      const exercisesToRender = selectedTemplate?.templateExercises || [];
+
       setExercise(exercisesToRender);
     } else {
       // 本地
       setExercise(localExercise || []);
     }
-  },[dataAllTemplateSession, localExercise, templateId, userId])
+  }, [filteredData, localExercise, templateId, userId])
 
-  // 方式1: 透過資料庫或本地模板
+  // 方式1: 透過資料庫
   // useEffect(() => {
   //   const fetchExercises = async () => {
   //     if (userId && templateId) {
   //       // 伺服器運行
-  //       const exercises = await getExerciseByTemplateId(templateId);
-  //       setExercise(exercises);
+  //       const exerciseList = await getExerciseByTemplateId(templateId);
+  //       setExercise(exerciseList as ExerciseType[]);
 
   //       // 一般 api 請求
   //       // await fetchTemplateByTemplateId(templateId)
@@ -83,22 +93,97 @@ export const PracticeModal = () => {
   //   fetchExercises();
   // }, [localExercise, userId, templateId])
 
+
+  const handleToWorkoutSession = async () => {
+    const existingSessionId = localStorage.getItem('currentSessionId');
+    const newSessionId = existingSessionId || Date.now().toString();
+
+    const copyTitle = dataAllTemplate.find(item => item.templateId === templateId)?.templateTitle || '';
+
+    try {
+      if (userId) {
+        // 資料庫
+        const newCurrentSession = await upsertWorkoutSession({
+          cardSessionId: Date.now().toString(),
+          userId: userId,
+          menuId: menuId ?? '',
+          templateId: templateId ?? '',
+          templateTitle: copyTitle,
+          date: new Date().toISOString().slice(0, 10),
+          createdAt: new Date().toISOString(),
+          startTime: null,
+          endTime: null,
+          notes: null,
+          exercises: exercise.map(exercise => ({
+            ...exercise,
+            workoutSessionId: newSessionId,
+            sets: exercise.templateSets.map(set => ({ 
+              ...set 
+            })),
+          })),
+        })
+
+        localStorage.setItem('currentSessionId', newCurrentSession?.cardSessionId || '');
+        router.push(`/fit/workout/${menuId}/${templateId}`);
+      } else {
+        // 本地, 如果沒有currentSessionId && 但openTemplate存在，創建新訓練卡
+        if (!existingSessionId && openLocalTemplate) {
+          const newWorkoutSession: WorkoutSessionType = {
+            cardSessionId: newSessionId,
+            userId: userId || "Guest",
+            date: new Date().toISOString().slice(0, 10),
+            createdAt: new Date().toISOString(),
+            startTime: null,
+            endTime: null,
+            notes: null,
+            menuId: openLocalTemplate.menuId,
+            templateId: openLocalTemplate.templateId || '',
+            templateTitle: openLocalTemplate.templateTitle,
+            exercises: openLocalTemplate.templateExercises.map(exercise => ({
+              movementId: exercise.movementId,
+              name: exercise.name,
+              exerciseCategory: exercise.exerciseCategory,
+              workoutSessionId: newSessionId,
+              sets: exercise.templateSets.map(set => ({
+                id: '',
+                movementId: set.movementId,
+                leftWeight: set.leftWeight,
+                rightWeight: set.rightWeight,
+                repetitions: set.repetitions,
+                totalWeight: set.totalWeight,
+              })),
+            })),
+          };
+
+          // 添加新訓練卡到 store
+          addWorkoutSession(newWorkoutSession as WorkoutSessionType);
+
+          // 儲存 currentSessionId 以便後續頁面操作
+          localStorage.setItem('currentSessionId', newWorkoutSession.cardSessionId);
+        }
+
+        // 導航到 WorkoutPage
+        router.push(`/fit/workout/${menuId}/${templateId}`);
+      }
+    } catch (error) {
+      console.log('找不到模板', error)
+    }
+
+    close()
+  };
+
   useEffect(() => setIsClient(true), []);
 
   if (!isClient) {
     return null;
   }
 
-  const handleNewWorkout = () => {
-    router.push(`/fit/workout/${menuId}/${templateId}`);
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={close}>
       <DialogContent className="max-w-md rounded-lg">
         <DialogHeader>
           <DialogTitle className="text-center font-bold text-xl">
-            {openTemplate?.templateTitle}
+            {openLocalTemplate?.templateTitle}
           </DialogTitle>
           <DialogDescription className="text-center text-sm">
             持續訓練, 維持體態
@@ -137,12 +222,9 @@ export const PracticeModal = () => {
             </Link>
 
             <div className="flex w-full"
-              onClick={handleNewWorkout}
+              onClick={handleToWorkoutSession}
             >
-              <Button
-                onClick={close}
-                className="w-full"
-              >
+              <Button className="w-full">
                 開始訓練
               </Button>
             </div>
