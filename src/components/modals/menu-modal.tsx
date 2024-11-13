@@ -84,7 +84,7 @@ export const MenuModal = () => {
       templateTitle: "新模板",
       menuId: menuId,
       templateExercises: [],
-      templateId: null
+      templateId: '',
     };
 
     if (userId) {
