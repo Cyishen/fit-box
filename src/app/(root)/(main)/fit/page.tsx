@@ -29,7 +29,11 @@ const FitPage = async() => {
     isDeleted: template.isDeleted,
   }));
 
-  const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
+  // const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
+
+  const userWorkSessionData = userId
+  ? getAllWorkoutSessionByUserId(userId)
+  : Promise.resolve([]);
 
   const [ 
     userMenu,
@@ -40,6 +44,7 @@ const FitPage = async() => {
     userAllTemplate,
     userWorkSessionData 
   ]);
+
 
   // console.log('所有模板', JSON.stringify(userTemplates, null, 2));
 
