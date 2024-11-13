@@ -27,7 +27,7 @@ const FitPage = async () => {
     templateTitle: template.templateTitle,
     templateExercises: template.templateExercises,
     isDeleted: template.isDeleted,
-  }));
+  })) || [];
 
   const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
 
@@ -37,8 +37,8 @@ const FitPage = async () => {
     userTemplates,
     userSessionCard
   ] = await Promise.all([
-    userMenuData || [],
-    userAllTemplate || [],
+    userMenuData,
+    userAllTemplate,
     userWorkSessionData
   ]);
 
@@ -63,7 +63,7 @@ const FitPage = async () => {
           <div className="flex flex-col w-full gap-3">
             <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
               <h1 className='font-bold'>今日訓練</h1>
-                <ShowTraining sessionData={userSessionCard} />
+              <ShowTraining sessionData={userSessionCard} />
             </div>
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>
