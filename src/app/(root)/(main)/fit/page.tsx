@@ -66,14 +66,14 @@ const FitPage = async () => {
               {hasUserSessions ? (
                 <ShowTraining sessionData={userSessionCard} />
               ) : (
-                <div>今天還沒有訓練紀錄</div>
+                ''
               )}
             </div>
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>
+              <ShowMenu />
               {hasUserMenu && hasUserTemplates ? (
                 <>
-                  <ShowMenu />
                   <div className='overflow-hidden mb-20'>
                     <FitDashboard
                       menusData={userMenu}
