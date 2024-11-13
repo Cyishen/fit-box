@@ -3,7 +3,7 @@ import Wrapper from '@/components/Wrapper'
 import FitProfile from './FitProfile'
 import FitDashboard from './FitDashboard'
 
-import ShowTraining from './ShowTraining'
+// import ShowTraining from './ShowTraining'
 import ShowMenu from './ShowMenu'
 
 import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUserId } from '@/actions/user-create'
