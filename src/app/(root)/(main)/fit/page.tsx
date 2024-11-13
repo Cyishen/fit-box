@@ -3,16 +3,16 @@ import Wrapper from '@/components/Wrapper'
 import FitProfile from './FitProfile'
 import FitDashboard from './FitDashboard'
 
-// import ShowTraining from './ShowTraining'
+import ShowTraining from './ShowTraining'
 import ShowMenu from './ShowMenu'
 
-import { getAllMenusByUserId, getAllTemplatesByUserId } from '@/actions/user-create'
+import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
 
 // import { format } from "date-fns"
 
 
-const FitPage = async() => {
+const FitPage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
@@ -29,21 +29,22 @@ const FitPage = async() => {
     isDeleted: template.isDeleted,
   }));
 
-  // const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
+  const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
 
-  // const userWorkSessionData = userId
-  // ? getAllWorkoutSessionByUserId(userId)
-  // : Promise.resolve([]);
 
-  const [ 
+  const [
     userMenu,
     userTemplates,
-    // userSessionCard 
-  ] = await Promise.all([ 
+    userSessionCard
+  ] = await Promise.all([
     userMenuData || [],
     userAllTemplate || [],
-    // userWorkSessionData 
+    userWorkSessionData
   ]);
+
+  const hasUserMenu = Array.isArray(userMenu) && userMenu.length > 0;
+  const hasUserTemplates = Array.isArray(userTemplates) && userTemplates.length > 0;
+  const hasUserSessions = Array.isArray(userSessionCard) && userSessionCard.length > 0;
 
 
   // console.log('所有模板', JSON.stringify(userTemplates, null, 2));
@@ -62,20 +63,27 @@ const FitPage = async() => {
           <div className="flex flex-col w-full gap-3">
             <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
               <h1 className='font-bold'>今日訓練</h1>
-              {/* <ShowTraining
-                sessionData={userSessionCard}
-              /> */}
+              {hasUserSessions ? (
+                <ShowTraining sessionData={userSessionCard} />
+              ) : (
+                <div>今天還沒有訓練紀錄</div>
+              )}
             </div>
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>
-              <ShowMenu />
-
-              <div className='overflow-hidden mb-20'>
-                <FitDashboard 
-                  menusData={userMenu} 
-                  templatesData={userTemplates} 
-                />
-              </div>
+              {hasUserMenu && hasUserTemplates ? (
+                <>
+                  <ShowMenu />
+                  <div className='overflow-hidden mb-20'>
+                    <FitDashboard
+                      menusData={userMenu}
+                      templatesData={userTemplates}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div>沒有訓練菜單或模板可顯示</div>
+              )}
             </div>
           </div>
         </div>
