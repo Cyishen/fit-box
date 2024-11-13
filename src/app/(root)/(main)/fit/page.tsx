@@ -41,7 +41,7 @@ const FitPage = async() => {
     // userSessionCard 
   ] = await Promise.all([ 
     userMenuData || [],
-    userAllTemplate,
+    userAllTemplate || [],
     // userWorkSessionData 
   ]);
 
