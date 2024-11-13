@@ -69,7 +69,6 @@ const FitPage = async() => {
                 <FitDashboard 
                   menusData={userMenu} 
                   templatesData={userTemplates} 
-                  userId={userId || null} 
                 />
               </div>
             </div>

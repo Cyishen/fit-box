@@ -9,14 +9,17 @@ import MenuList from './MenuList';
 import { deleteTemplateById } from '@/actions/user-create';
 import { usePracticeModal } from '@/lib/use-practice-modal';
 
+import { useSession } from "next-auth/react"
 
 interface Props {
   menusData: MenuType[];
   templatesData: TemplateType[]
-  userId?: string | null;
 }
 
-const FitDashboard = ({ menusData, userId, templatesData }: Props) => {
+const FitDashboard = ({ menusData, templatesData }: Props) => {
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
   const [isMenuOpen, setIsMenuOpen] = useState<{ [key: string]: boolean }>({});
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
 
