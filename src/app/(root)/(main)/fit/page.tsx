@@ -43,7 +43,7 @@ const FitPage = async () => {
   ]);
 
   // const hasUserMenu = Array.isArray(userMenu) && userMenu.length > 0;
-  const hasUserTemplates = Array.isArray(userTemplates) && userTemplates.length > 0;
+  // const hasUserTemplates = Array.isArray(userTemplates) && userTemplates.length > 0;
   // const hasUserSessions = Array.isArray(userSessionCard) && userSessionCard.length > 0;
 
 
@@ -68,7 +68,13 @@ const FitPage = async () => {
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>
               <ShowMenu />
-              {hasUserTemplates ? (
+              <div className='overflow-hidden mb-20'>
+                <FitDashboard
+                  menusData={userMenu}
+                  templatesData={userTemplates}
+                />
+              </div>
+              {/* {hasUserTemplates ? (
                 <>
                   <div className='overflow-hidden mb-20'>
                     <FitDashboard
@@ -79,7 +85,7 @@ const FitPage = async () => {
                 </>
               ) : (
                 <div>沒有模板可顯示</div>
-              )}
+              )} */}
             </div>
           </div>
         </div>
