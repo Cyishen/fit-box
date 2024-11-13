@@ -63,16 +63,12 @@ const FitPage = async () => {
           <div className="flex flex-col w-full gap-3">
             <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
               <h1 className='font-bold'>今日訓練</h1>
-              {hasUserSessions ? (
                 <ShowTraining sessionData={userSessionCard} />
-              ) : (
-                ''
-              )}
             </div>
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>
               <ShowMenu />
-              {hasUserMenu && hasUserTemplates ? (
+              {hasUserTemplates ? (
                 <>
                   <div className='overflow-hidden mb-20'>
                     <FitDashboard
@@ -82,7 +78,7 @@ const FitPage = async () => {
                   </div>
                 </>
               ) : (
-                <div>沒有訓練菜單或模板可顯示</div>
+                <div>沒有模板可顯示</div>
               )}
             </div>
           </div>
