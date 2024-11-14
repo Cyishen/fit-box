@@ -78,7 +78,7 @@ export const MenuModal = () => {
   };
 
   const handleAddTemplate = async (menuId: string) => {
-    const dataAddTemplate: TemplateType = {
+    const addNewTemplate: TemplateType = {
       userId: userId || "Guest",
       templateCategory: "胸",
       templateTitle: "新模板",
@@ -89,15 +89,15 @@ export const MenuModal = () => {
 
     if (userId) {
       // 資料庫
-      const updatedTemplate = await upsertTemplate(dataAddTemplate);
+      const updatedTemplate = await upsertTemplate(addNewTemplate);
 
       router.push(`/fit/${menuId}/${updatedTemplate.id}/create-template`);
     } else {
       // 本地
       const newCardId = generateTemplateId();
 
-      dataAddTemplate.templateId = newCardId;
-      addTemplate(dataAddTemplate);
+      addNewTemplate.templateId = newCardId;
+      addTemplate(addNewTemplate);
 
       router.push(`/fit/${menuId}/${newCardId}/create-template`);
     }

@@ -26,11 +26,11 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   const [template, setTemplate] = useState<TemplateType>({
     userId: userId || "Guest",
     menuId,
-    templateId: templateId,
     templateCategory: "胸",
     templateTitle: "新模板",
     templateExercises: [],
   });
+  console.log(template)
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -55,7 +55,6 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
     fetchExercises();
   }, [existingTemplate, templateId, userId]);
 
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -64,7 +63,10 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
     try {
       if (userId) {
         // 資料庫
-        await upsertTemplate(template)
+        await upsertTemplate({
+          ...template,
+          templateExercises: template.templateExercises || [],
+        })
 
       } else {
         // 本地

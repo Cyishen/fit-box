@@ -47,9 +47,9 @@ export const PracticeModal = () => {
 
   const addWorkoutSession = useWorkoutStore(state => state.addWorkoutSession);
 
-  // TODO*測試方式2: 透過zustand 取得exercise, 加快圖片顯示速度
+  // TODO* 測試方式2: 透過zustand 取得exercise, 加快圖片顯示速度
   const [exercise, setExercise] = useState<TemplateExerciseType[]>([])
-  
+
   // 第一步, useMemo緩存 dataAllTemplate有變動才更新, 避免useEffect重複執行
   const filteredData = useMemo(() => {
     return dataAllTemplate
@@ -57,8 +57,8 @@ export const PracticeModal = () => {
 
   // 第二步, 依據 templateId 更新 exercise
   useEffect(() => {
-    if (userId && templateId) {
-      const selectedTemplate = filteredData.find(item => item.templateId === templateId);
+    if (userId) {
+      const selectedTemplate = filteredData.find(item => item.id === templateId);
       const exercisesToRender = selectedTemplate?.templateExercises || [];
 
       setExercise(exercisesToRender);

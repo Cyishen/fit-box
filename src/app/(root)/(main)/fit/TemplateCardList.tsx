@@ -49,13 +49,13 @@ const TemplateCardList = ({ selectedTemplates }: TemplateCardListProps) => {
       {selectedTemplates.length > 0 ? (
         selectedTemplates.map((temp) => (
           <TemplateCard
-            key={temp.templateId}
+            key={temp.id || temp.templateId}
             iconSrc={CategoryIcons[temp.templateCategory] || "/icons/dumbbell.svg"}
             templateCategory={temp.templateCategory}
             templateTitle={temp.templateTitle}
-            onRemove={() => handleRemoveTemplate(temp.templateId ?? '')}
+            onRemove={() => handleRemoveTemplate(temp.templateId || temp.id || '')}
             menuId={temp.menuId}
-            templateId={temp.templateId ?? ''}
+            templateId={temp.templateId || temp.id || ''}
             exercises={temp.templateExercises}
           />
         ))

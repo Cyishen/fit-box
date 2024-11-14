@@ -1,7 +1,6 @@
 "use client"
 
 
-// import { useMenuStore } from '@/lib/store';
 import { useMenuStore, useTemplateStore } from '@/lib/store';
 import { useEffect, useState } from 'react';
 import TemplateCardList from './TemplateCardList';
@@ -77,7 +76,6 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
       .slice()
       .reverse();
 
-
   // TODO* 測試把資料庫資料抓到zustand, 頁面透過 dataAllTemplate取得exercise改善顯示圖片速度
   const { setDataAllTemplate } = usePracticeModal()
   useEffect(() => {
@@ -96,13 +94,11 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
         isMenuOpen={isMenuOpen}
       />
 
-      {/* <TemplateCardList
-        selectedTemplates={selectedTemplates}
-      /> */}
-      {selectedTemplates.length > 0 && (
-        <TemplateCardList selectedTemplates={selectedTemplates} />
+      {selectedTemplates && selectedTemplates.length > 0 && (
+        <TemplateCardList
+          selectedTemplates={selectedTemplates}
+        />
       )}
-
     </div>
   );
 };

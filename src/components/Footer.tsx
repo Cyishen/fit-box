@@ -31,7 +31,7 @@ const Footer = () => {
               <input
                 type="text"
                 placeholder="Email"
-                className="w-full h-full px-3 py-2 text-sm border rounded-l-md font-mono focus-visible:outline-none focus-visible:border-sky-400 focus-visible:border-2"
+                className="w-full h-full px-3 py-2 text-base border rounded-l-md font-mono focus-visible:outline-none focus-visible:border-sky-400 focus-visible:border-2"
               />
               <Button className="rounded-none text-sm font-mono rounded-r-md h-full">Submit</Button>
             </div>

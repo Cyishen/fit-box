@@ -4,8 +4,10 @@
 import { useTemplateStore } from '@/lib/store';
 import { useMenuModal } from '@/lib/use-menu-modal';
 import { ChevronDown, ChevronRight, EllipsisVertical } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { useSession } from "next-auth/react"
+import { getTemplateByMenuId } from '@/actions/user-create';
 
 interface MenuListProps {
   menus: MenuType[];
@@ -20,13 +22,45 @@ const MenuList: React.FC<MenuListProps> = ({
   onMenuSelect,
   isMenuOpen,
 }) => {
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
   const templates = useTemplateStore((state) => state.templates);
+
+  const [templateCounts, setTemplateCounts] = useState<{ [key: string]: number }>({});
+
+  useEffect(() => {
+    const fetchTemplateCounts = async () => {
+      if (userId) {
+        // 資料庫
+        const counts: { [key: string]: number } = {};
+        for (const menu of menus) {
+          const menuTemplate = await getTemplateByMenuId(menu.id);
+          counts[menu.id] = menuTemplate.length;
+        }
+
+        setTemplateCounts(counts);
+      } else {
+        // 本地
+        const counts: { [key: string]: number } = {};
+        menus.forEach((menu) => {
+          const localTemplates = templates.filter((template) => template.menuId === menu.id);
+          counts[menu.id] = localTemplates.length;
+        });
+
+        setTemplateCounts(counts);
+      }
+    };
+
+    fetchTemplateCounts();
+  }, [menus, userId, templates]);
+
 
   const { open } = useMenuModal();
   const handleOpen = (id: string) => {
     open(id);
   };
+
 
   return (
     <div className='w-full flex items-center gap-3 overflow-x-scroll whitespace-nowrap'>
@@ -43,7 +77,7 @@ const MenuList: React.FC<MenuListProps> = ({
               <div className='flex flex-col'>
                 <p className='font-bold line-clamp-2 min-w-20 max-w-20 min-h-10 max-h-10 whitespace-pre-wrap capitalize text-sm'>{menu.title}</p>
                 <p className='text-gray-400 text-[10px]'>
-                  模板數量 {templates.filter(template => template.menuId === menu.id).length}
+                  模板數量 {templateCounts[menu.id] || 0}
                 </p>
               </div>
 
@@ -56,11 +90,11 @@ const MenuList: React.FC<MenuListProps> = ({
             </div>
 
             {/* open modal */}
-            <div 
-              onClick={() => handleOpen(menu.id)} 
+            <div
+              onClick={() => handleOpen(menu.id)}
               className='bg-white text-black min-w-8 min-h-8 rounded-full flex justify-center items-center'
             >
-              <EllipsisVertical width={14}/>
+              <EllipsisVertical width={14} />
             </div>
           </div>
         ))

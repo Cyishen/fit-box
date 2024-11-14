@@ -29,7 +29,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
 
   // TODO*方式二,測試透過 dataAllTemplate 取得exercise, 加快圖片顯示速度
   const { dataAllTemplate } = usePracticeModal();
-  const findTemplate = dataAllTemplate.find(item => item.templateId === templateId);
+  const findTemplate = dataAllTemplate.find(item => item.id === templateId);
 
 
   const [template, setTemplate] = useState<TemplateType>({

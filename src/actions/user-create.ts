@@ -127,11 +127,11 @@ export const upsertTemplate = async (data: TemplateType) => {
     throw new Error("Unauthorized");
   }
 
-  // 檢查是否有 templateId 來判斷是更新還是創建
-  if (data.templateId) {
+  // 檢查是否有 id 來判斷是更新還是創建
+  if (data.id) {
     const updatedTemplate = await prismaDb.template.update({
       where: {
-        id: data.templateId
+        id: data.id
       },
       data: {
         templateTitle: data.templateTitle,
@@ -346,6 +346,23 @@ export const getTemplateById = async (id: string) => {
   })
 
   return template
+}
+
+export const getTemplateByMenuId = async (menuId: string) => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const menuTemplate = await prismaDb.template.findMany({
+    where: {
+      menuId: menuId,
+    },
+  })
+
+  return menuTemplate
 }
 
 export const getTemplateExerciseByTemplateId = async (templateId: string) => {

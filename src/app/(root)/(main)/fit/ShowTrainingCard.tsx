@@ -111,7 +111,7 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
         <div className={`flex w-full
         ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
         >
-          <div className='flex w-[70%] flex-col px-2 rounded-xl group-hover:bg-white py-1'
+          <div className='flex w-[70%] flex-col px-2 rounded-xl bg-white py-1 overflow-hidden'
             onClick={() => handleEditWorkout(sessionCards?.cardSessionId)}
           >
             <p className='font-bold line-clamp-1'>{sessionCards?.templateTitle}</p>
@@ -127,7 +127,7 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
               </div>
 
               <div className='flex items-center gap-1'>
-                <ListOrdered width={16} />
+                <ListOrdered width={16} className='group-hover:text-[#66CCFF]'/>
                 <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>
                   共 {sessionCards?.exercises.reduce((total, e) => total + e.sets.length, 0)} 組
                 </p>
