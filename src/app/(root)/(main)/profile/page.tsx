@@ -24,7 +24,7 @@ const ProfilePage = async () => {
       <Wrapper>
         <h1 className='text-2xl font-bold mt-5'>設定</h1>
         <Info 
-          sessionData={userSessionCard}
+          sessionData={userSessionCard as WorkoutSessionType[]}
           userFirstSession={userFirstSession as WorkoutSessionType}
         />
 

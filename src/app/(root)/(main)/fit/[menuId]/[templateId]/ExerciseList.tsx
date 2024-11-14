@@ -38,7 +38,7 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
     };
     // 更新組數設定
     // 本地
-    updateTemplate(template.templateId ?? '', updatedTemplate);
+    updateTemplate(template.id ?? '', updatedTemplate);
     // 資料庫狀態
     setTemplateState(updatedTemplate);
   };
@@ -53,7 +53,7 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
     };
     // 更新刪除後的儲存
     // 本地
-    updateTemplate(template.templateId ?? '', updatedTemplate);
+    updateTemplate(template.id ?? '', updatedTemplate);
     // 資料庫狀態
     setTemplateState(updatedTemplate);
   };
@@ -66,7 +66,7 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
 
         <button
           type="button"
-          onClick={() => router.push(`/fit/${template.menuId}/${template.templateId}/create-template/exercise-picker`)}
+          onClick={() => router.push(`/fit/${template.menuId}/${template.id}/create-template/exercise-picker`)}
           className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
         >
           <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>

@@ -32,6 +32,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout }: StartWo
 
   const handleCompleteWorkout = async() => {
     setIsLoading(true);
+
     if(userId){
       // 資料庫
       await upsertWorkoutSession(workoutSession)
@@ -43,6 +44,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout }: StartWo
     }
 
     localStorage.removeItem('currentSessionId');
+    
     setIsLoading(false);
     router.push('/fit');
   };
@@ -71,6 +73,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout }: StartWo
       <WorkoutList
         workoutSession={workoutSession}
         setCurrentWorkout={setCurrentWorkout}
+        isLoading={isLoading}
       />
     </div>
   );

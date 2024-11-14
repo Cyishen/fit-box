@@ -45,6 +45,7 @@ export const DeleteMenuModal = () => {
   const removeMenu = useMenuStore((state) => state.removeMenu);
 
   const handleRemoveMenu = async (menuId: string) => {
+
     try {
       if (userId) {
         // todo*刪除資料 (兩個方式, 都不用手動刷新頁面, 能立即看到更新的畫面)

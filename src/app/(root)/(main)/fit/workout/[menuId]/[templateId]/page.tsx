@@ -35,7 +35,7 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
         try {
           const workoutCard = await getWorkoutSessionByCardId(currentSessionId)
           if (workoutCard) {
-            setCurrentWorkout(workoutCard);
+            setCurrentWorkout(workoutCard as WorkoutSessionType);
           }
         } catch (error) {
           console.log(error);

@@ -50,7 +50,7 @@ const ActionPicker = () => {
           const workoutCardExercises = workoutCard?.exercises || [];
 
           if (workoutCard) {
-            setCurrentSession(workoutCard);
+            setCurrentSession(workoutCard as WorkoutSessionType);
             setSelectedExercises(workoutCardExercises);
           }
         } catch (error) {

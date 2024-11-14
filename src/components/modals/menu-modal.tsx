@@ -79,12 +79,13 @@ export const MenuModal = () => {
 
   const handleAddTemplate = async (menuId: string) => {
     const addNewTemplate: TemplateType = {
+      id: '',
       userId: userId || "Guest",
+      menuId: menuId,
       templateCategory: "胸",
       templateTitle: "新模板",
-      menuId: menuId,
       templateExercises: [],
-      templateId: '',
+      // templateId: '',
     };
 
     if (userId) {
@@ -96,7 +97,7 @@ export const MenuModal = () => {
       // 本地
       const newCardId = generateTemplateId();
 
-      addNewTemplate.templateId = newCardId;
+      addNewTemplate.id = newCardId;
       addTemplate(addNewTemplate);
 
       router.push(`/fit/${menuId}/${newCardId}/create-template`);

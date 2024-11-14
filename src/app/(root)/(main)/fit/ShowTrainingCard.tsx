@@ -26,6 +26,7 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
   const cardRef = useRef<HTMLDivElement>(null);
   const randomImage = heroImage[Math.floor(Math.random() * heroImage.length)];
 
+
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
 

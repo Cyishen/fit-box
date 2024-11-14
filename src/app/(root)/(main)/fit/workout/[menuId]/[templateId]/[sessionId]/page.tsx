@@ -35,7 +35,7 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
           const workoutCard = await getWorkoutSessionByCardId(sessionId)
 
           if (workoutCard) {
-            setCurrentWorkout(workoutCard);
+            setCurrentWorkout(workoutCard as WorkoutSessionType);
           }
         } catch (error) {
           console.log(error);

@@ -6,10 +6,10 @@ type MenuType = {
 
 // 模板定義
 type TemplateType = {
-  id?: string;
+  id: string;
   userId?: string;
   menuId: string;
-  templateId?: string;
+  // templateId?: string;
   templateCategory: string;
   templateTitle: string;
 
@@ -44,8 +44,8 @@ type WorkoutSessionType = {
   id?: string;
   cardSessionId: string;
   userId: string;
-  menuId: string;
-  templateId: string;
+  menuId?: string;
+  templateId?: string;
   templateTitle: string;
 
   date: string | Date;

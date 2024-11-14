@@ -42,7 +42,7 @@ export const PracticeModal = () => {
 
   // 本地
   const templates = useTemplateStore(state => state.templates);
-  const openLocalTemplate = templates.find(template => template.templateId === templateId);
+  const openLocalTemplate = templates.find(template => template.id === templateId);
   const localExercise = openLocalTemplate?.templateExercises
 
   const addWorkoutSession = useWorkoutStore(state => state.addWorkoutSession);
@@ -99,7 +99,7 @@ export const PracticeModal = () => {
     const existingSessionId = localStorage.getItem('currentSessionId');
     const newSessionId = existingSessionId || Date.now().toString();
 
-    const copyTitle = dataAllTemplate.find(item => item.templateId === templateId)?.templateTitle || '';
+    const copyTitle = dataAllTemplate.find(item => item.id === templateId)?.templateTitle || '';
 
     try {
       if (userId) {
@@ -138,7 +138,7 @@ export const PracticeModal = () => {
             endTime: null,
             notes: null,
             menuId: openLocalTemplate.menuId,
-            templateId: openLocalTemplate.templateId || '',
+            templateId: openLocalTemplate.id || '',
             templateTitle: openLocalTemplate.templateTitle,
             exercises: openLocalTemplate.templateExercises.map(exercise => ({
               movementId: exercise.movementId,

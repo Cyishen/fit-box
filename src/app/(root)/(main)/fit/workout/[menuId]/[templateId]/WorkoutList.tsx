@@ -12,9 +12,10 @@ import { upsertWorkoutSession } from "@/actions/user-create";
 type StartWorkoutProps = {
   workoutSession: WorkoutSessionType;
   setCurrentWorkout: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
+  isLoading: boolean
 }
 
-const WorkoutList = ({ workoutSession, setCurrentWorkout }: StartWorkoutProps) => {
+const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading }: StartWorkoutProps) => {
   const router = useRouter();
 
   const { data: session } = useSession()
@@ -113,7 +114,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout }: StartWorkoutProps) =
                     onUpdateSets={handleUpdateSets}
                     isOpen={openMovementId === exercise.movementId}
                     onToggle={() => handleToggleExercise(exercise.movementId)}
-                    isLoading={false}
+                    isLoading={isLoading}
                   />
                 ))}
               </div>

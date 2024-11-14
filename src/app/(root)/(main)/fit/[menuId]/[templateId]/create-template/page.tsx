@@ -20,17 +20,17 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
 
   // 本地
   const { templates, addTemplate, editTemplate } = useTemplateStore(state => state);
-  const existingTemplate = templates.find(template => template.templateId === templateId);
+  const existingTemplate = templates.find(template => template.id === templateId);
 
 
   const [template, setTemplate] = useState<TemplateType>({
+    id: templateId,
     userId: userId || "Guest",
     menuId,
     templateCategory: "胸",
     templateTitle: "新模板",
     templateExercises: [],
   });
-  console.log(template)
 
   useEffect(() => {
     const fetchExercises = async () => {

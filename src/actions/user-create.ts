@@ -110,7 +110,7 @@ export const deleteMenuById = async (id: string) => {
   const menus = await prismaDb.menu.delete({
     where: {
       id: id,
-      userId: userId
+      // userId: userId
     }
   })
 

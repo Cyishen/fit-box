@@ -24,7 +24,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
 
   // 本地
   const templates = useTemplateStore((state) => state.templates);
-  const existingTemplate = templates.find(template => template.templateId === templateId);
+  const existingTemplate = templates.find(template => template.id === templateId);
   const editTemplate = useTemplateStore((state) => state.editTemplate);
 
   // TODO*方式二,測試透過 dataAllTemplate 取得exercise, 加快圖片顯示速度
@@ -33,9 +33,9 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
 
 
   const [template, setTemplate] = useState<TemplateType>({
+    id: templateId,
     userId: userId || "Guest",
     menuId: menuId,
-    templateId: templateId,
     templateCategory: "",
     templateTitle: "",
     templateExercises: [],
@@ -92,7 +92,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
             templateTitle: template.templateTitle,
             templateExercises: template.templateExercises || [],
           };
-          editTemplate(template.templateId ?? '', editTemplateData);
+          editTemplate(template.id ?? '', editTemplateData);
         }
       }
       router.push("/fit");

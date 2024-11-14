@@ -40,16 +40,16 @@ export const POST = async (req: Request) => {
         return await prismaDb.$transaction(async (tx) => {
           await tx.template.upsert({
             where: {
-              id: template.templateId ?? '',
+              id: template.id ?? '',
             },
             create: {
-              id: template.templateId ?? '',
+              id: template.id ?? '',
               templateTitle: template.templateTitle || "新模板",
               templateCategory: template.templateCategory,
               menuId: template.menuId
             },
             update: {
-              id: template.templateId ?? '',
+              id: template.id ?? '',
               templateTitle: template.templateTitle || "新模板",
               templateCategory: template.templateCategory,
               menuId: template.menuId

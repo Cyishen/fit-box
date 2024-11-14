@@ -27,7 +27,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
 
   // 本地存儲
   const templates = useTemplateStore(state => state.templates);
-  const currentTemplate = templates.find(template => template.templateId === templateId);
+  const currentTemplate = templates.find(template => template.id === templateId);
 
   // TODO* 測試透過 dataAllTemplate 取得exercise, 加快顯示速度
   const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
@@ -64,7 +64,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
         // TODO* 同時更新動作到 setDataAllTemplate
         if (dataAllTemplate) {
           const updatedDataAllTemplate = dataAllTemplate.map(item => {
-            if (item.templateId === templateId) {
+            if (item.id === templateId) {
               return {
                 ...item,
                 templateExercises: selectedExercises,
