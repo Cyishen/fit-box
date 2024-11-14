@@ -19,7 +19,7 @@ const FitPage = async () => {
   const userMenuData = await getAllMenusByUserId(userId);
 
   const userTemplateData = await getAllTemplatesByUserId();
-  const userAllTemplate: TemplateType[] = userTemplateData.map(template => ({
+  const userAllTemplate: TemplateType[] = userTemplateData?.map(template => ({
     userId: template.userId,
     menuId: template.menuId,
     templateId: template.id,

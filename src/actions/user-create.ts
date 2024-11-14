@@ -305,7 +305,9 @@ export const getAllTemplatesByUserId = async () => {
   }
 
   const templates = await prismaDb.template.findMany({
-    where: { isDeleted: false },
+    where: {
+      isDeleted: false 
+    },
     include: {
       menu: true,
       templateExercises: {
