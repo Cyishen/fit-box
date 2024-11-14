@@ -98,9 +98,8 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
       router.push("/fit");
     } catch (error) {
       console.log('伺服器忙碌中, 請稍後再試', error)
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (

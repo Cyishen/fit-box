@@ -81,8 +81,6 @@ const AuthForm = ({ type }: { type: string }) => {
     //     console.error("授權過程中出錯:", error)
     //   }
     // }
-
-    setIsLoading(false);
   }
 
   return (

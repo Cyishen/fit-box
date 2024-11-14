@@ -90,10 +90,9 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
       router.back()
     } catch (error) {
       console.error("Error saving exercises:", error);
+      setIsLoading(false);
       alert("儲存失敗，請稍後再試！");
     }
-
-    setIsLoading(false);
   };
 
   const handleToggleExercise = (exercise: TemplateExerciseType) => {

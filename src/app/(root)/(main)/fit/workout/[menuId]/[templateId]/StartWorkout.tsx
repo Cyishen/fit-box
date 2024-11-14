@@ -44,8 +44,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout }: StartWo
     }
 
     localStorage.removeItem('currentSessionId');
-    
-    setIsLoading(false);
+
     router.push('/fit');
   };
 

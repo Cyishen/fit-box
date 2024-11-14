@@ -42,8 +42,6 @@ const CreateMenu = () => {
       };
       addMenu(newMenu);
     }
-
-    setIsLoading(false);
   
     router.push("/fit");
   };
