@@ -94,6 +94,7 @@ export const PracticeModal = () => {
   // }, [localExercise, userId, templateId])
 
 
+    // Todo: 建立訓練卡
   const handleToWorkoutSession = async () => {
     const existingSessionId = localStorage.getItem('currentSessionId');
     const newSessionId = existingSessionId || Date.now().toString();

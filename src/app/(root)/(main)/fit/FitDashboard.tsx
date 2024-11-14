@@ -30,6 +30,7 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
   const templates = useTemplateStore((state) => state.templates);
   const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
+  // 以下menu設定
   const selectMenu = (menuId: string | null, menusList: MenuType[]) => {
     if (menuId && menusList.some(menu => menu.id === menuId)) {
       setSelectedMenuId(menuId);
@@ -70,7 +71,8 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
     });
   };
 
-  // TODO*測試把資料抓到zustand, 頁面透過 dataAllTemplate 取得exercise改善載入速度
+  // 以下模板設定
+  // TODO* 測試把資料庫資料抓到zustand, 頁面透過 dataAllTemplate取得exercise改善顯示圖片速度
   const { setDataAllTemplate } = usePracticeModal()
   useEffect(() => {
     if (userId && templatesData.length > 0) {
@@ -78,7 +80,7 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
     }
   }, [setDataAllTemplate, templatesData, userId])
 
-  // 以下模板設定
+
   const selectedTemplates = userId
     ? templatesData.filter(template => template.menuId === selectedMenuId)
       .slice()

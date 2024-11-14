@@ -19,15 +19,15 @@ const FitPage = async () => {
   const userMenuData = await getAllMenusByUserId(userId);
 
   const userTemplateData = await getAllTemplatesByUserId();
-  const userAllTemplate: TemplateType[] = userTemplateData?.map(template => ({
-    userId: template.userId,
-    menuId: template.menuId,
-    templateId: template.id,
-    templateCategory: template.templateCategory,
-    templateTitle: template.templateTitle,
-    templateExercises: template.templateExercises,
-    isDeleted: template.isDeleted,
-  })) || [];
+  // const userAllTemplate: TemplateType[] = userTemplateData?.map(template => ({
+  //   userId: template.userId,
+  //   menuId: template.menuId,
+  //   templateId: template.id,
+  //   templateCategory: template.templateCategory,
+  //   templateTitle: template.templateTitle,
+  //   templateExercises: template.templateExercises,
+  //   isDeleted: template.isDeleted,
+  // })) || [];
 
   const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
 
@@ -38,7 +38,7 @@ const FitPage = async () => {
     userSessionCard
   ] = await Promise.all([
     userMenuData,
-    userAllTemplate,
+    userTemplateData,
     userWorkSessionData
   ]);
 
