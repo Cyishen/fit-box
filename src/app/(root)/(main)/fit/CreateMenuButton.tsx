@@ -5,7 +5,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 
-const ShowMenu = () => {
+const CreateMenuButton = () => {
   const [randomBoxImage, setRandomBoxImage] = useState<string>('');
 
   useEffect(() => {
@@ -42,4 +42,4 @@ const ShowMenu = () => {
   )
 }
 
-export default ShowMenu
+export default CreateMenuButton

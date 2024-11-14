@@ -4,7 +4,7 @@ import FitProfile from './FitProfile'
 import FitDashboard from './FitDashboard'
 
 import ShowTraining from './ShowTraining'
-import ShowMenu from './ShowMenu'
+import CreateMenuButton from './CreateMenuButton'
 
 import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
@@ -18,16 +18,7 @@ const FitPage = async () => {
 
   const userMenuData = await getAllMenusByUserId(userId);
 
-  const userTemplateData = await getAllTemplatesByUserId() || [];
-  // const userAllTemplate: TemplateType[] = userTemplateData?.map(template => ({
-  //   userId: template.userId,
-  //   menuId: template.menuId,
-  //   templateId: template.id,
-  //   templateCategory: template.templateCategory,
-  //   templateTitle: template.templateTitle,
-  //   templateExercises: template.templateExercises,
-  //   isDeleted: template.isDeleted,
-  // })) || [];
+  const userTemplateData = await getAllTemplatesByUserId();
 
   const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
 
@@ -42,7 +33,7 @@ const FitPage = async () => {
     userWorkSessionData
   ]);
 
-  // console.log('所有模板', JSON.stringify(userTemplates, null, 2));
+  // console.log('MENU?', JSON.stringify(userMenu, null, 2));
 
   // TODO: 篩選用戶當天紀錄
   // const todayDate = format(new Date(), 'yyyy-MM-dd');
@@ -62,7 +53,7 @@ const FitPage = async () => {
             </div>
 
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>
-              <ShowMenu />
+              <CreateMenuButton />
 
               <div className='overflow-hidden mb-20'>
                 <FitDashboard

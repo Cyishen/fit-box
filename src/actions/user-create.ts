@@ -297,12 +297,12 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
 };
 
 export const getAllTemplatesByUserId = async () => {
-  // const session = await auth();
-  // const userId = session?.user?.id;
+  const session = await auth();
+  const userId = session?.user?.id;
 
-  // if (!userId) {
-  //   return [];
-  // }
+  if (!userId) {
+    return [];
+  }
 
   const templates = await prismaDb.template.findMany({
     where: {

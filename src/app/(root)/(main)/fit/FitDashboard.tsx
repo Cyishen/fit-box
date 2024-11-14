@@ -2,11 +2,10 @@
 
 
 import { useMenuStore, useTemplateStore } from '@/lib/store';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState } from 'react';
 import TemplateCardList from './TemplateCardList';
 import MenuList from './MenuList';
 
-import { deleteTemplateById } from '@/actions/user-create';
 import { usePracticeModal } from '@/lib/use-practice-modal';
 
 import { useSession } from "next-auth/react"
@@ -23,12 +22,9 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState<{ [key: string]: boolean }>({});
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
 
-  const [isPending, startTransition] = useTransition();
-
   // 本地端
   const menus = useMenuStore((state) => state.menus);
   const templates = useTemplateStore((state) => state.templates);
-  const removeTemplate = useTemplateStore((state) => state.removeTemplate);
 
   // 以下menu設定
   const selectMenu = (menuId: string | null, menusList: MenuType[]) => {
@@ -72,15 +68,6 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
   };
 
   // 以下模板設定
-  // TODO* 測試把資料庫資料抓到zustand, 頁面透過 dataAllTemplate取得exercise改善顯示圖片速度
-  const { setDataAllTemplate } = usePracticeModal()
-  useEffect(() => {
-    if (userId && templatesData.length > 0) {
-      setDataAllTemplate(templatesData)
-    }
-  }, [setDataAllTemplate, templatesData, userId])
-
-
   const selectedTemplates = userId
     ? templatesData.filter(template => template.menuId === selectedMenuId)
       .slice()
@@ -89,20 +76,14 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
       .slice()
       .reverse();
 
-  const handleRemoveTemplate = async (templateId: string) => {
-    try {
-      if (userId) {
-        startTransition(() => {
-          deleteTemplateById(templateId)
-        })
-      } else {
-        removeTemplate(templateId);
-      }
 
-    } catch (error) {
-      console.log(error)
+  // TODO* 測試把資料庫資料抓到zustand, 頁面透過 dataAllTemplate取得exercise改善顯示圖片速度
+  const { setDataAllTemplate } = usePracticeModal()
+  useEffect(() => {
+    if (userId && templatesData.length > 0) {
+      setDataAllTemplate(templatesData)
     }
-  };
+  }, [setDataAllTemplate, templatesData, userId])
 
 
   return (
@@ -116,8 +97,6 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
 
       <TemplateCardList
         selectedTemplates={selectedTemplates}
-        handleRemoveTemplate={handleRemoveTemplate}
-        isPending={isPending}
       />
     </div>
   );
