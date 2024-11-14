@@ -1,9 +1,10 @@
 "use client"
 
 
-import { useMenuStore, useTemplateStore } from '@/lib/store';
+import { useMenuStore } from '@/lib/store';
+// import { useMenuStore, useTemplateStore } from '@/lib/store';
 import { useEffect, useState } from 'react';
-import TemplateCardList from './TemplateCardList';
+// import TemplateCardList from './TemplateCardList';
 import MenuList from './MenuList';
 
 import { usePracticeModal } from '@/lib/use-practice-modal';
@@ -24,7 +25,7 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
 
   // 本地端
   const menus = useMenuStore((state) => state.menus);
-  const templates = useTemplateStore((state) => state.templates);
+  // const templates = useTemplateStore((state) => state.templates);
 
   // 以下menu設定
   const selectMenu = (menuId: string | null, menusList: MenuType[]) => {
@@ -68,13 +69,13 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
   };
 
   // 以下模板設定
-  const selectedTemplates = userId
-    ? templatesData.filter(template => template.menuId === selectedMenuId)
-      .slice()
-      .reverse()
-    : templates.filter(template => template.menuId === selectedMenuId)
-      .slice()
-      .reverse();
+  // const selectedTemplates = userId
+  //   ? templatesData.filter(template => template.menuId === selectedMenuId)
+  //     .slice()
+  //     .reverse()
+  //   : templates.filter(template => template.menuId === selectedMenuId)
+  //     .slice()
+  //     .reverse();
 
 
   // TODO* 測試把資料庫資料抓到zustand, 頁面透過 dataAllTemplate取得exercise改善顯示圖片速度
@@ -95,9 +96,9 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
         isMenuOpen={isMenuOpen}
       />
 
-      <TemplateCardList
+      {/* <TemplateCardList
         selectedTemplates={selectedTemplates}
-      />
+      /> */}
     </div>
   );
 };
