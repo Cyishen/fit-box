@@ -56,12 +56,12 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
 
   return (
     <div>
-        <StartWorkout
-          isEditMode={false}
-          workoutSession={currentWorkout as WorkoutSessionType}
-          setCurrentWorkout={setCurrentWorkout}
-          fetchLoading={fetchLoading}
-        />
+      <StartWorkout
+        isEditMode={false}
+        workoutSession={currentWorkout as WorkoutSessionType}
+        setCurrentWorkout={setCurrentWorkout}
+        fetchLoading={fetchLoading}
+      />
     </div>
   )
 }

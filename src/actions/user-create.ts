@@ -3,6 +3,7 @@
 import { prismaDb } from "@/lib/db"
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { formatDateString } from "@/lib/TimeFn/Timer";
 
 // import { Prisma } from "@prisma/client";
 
@@ -603,6 +604,7 @@ export const deleteWorkoutSessionByCardId = async (cardSessionId: string) => {
   return workSession
 }
 
+//TODO* 訓練卡其他調用邏輯
 export const getFirstWorkoutSessionDay = async () => {
   const session = await auth()
   const userId = session?.user?.id
@@ -623,5 +625,52 @@ export const getFirstWorkoutSessionDay = async () => {
   return firstTraining
 }
 
+export const getDaySessionByUserId = async (id: string) => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return []
+  }
+
+  // 本地時間
+  const now = new Date();
+  const startOfLocalDay = new Date(now.setHours(0, 0, 0, 0));
+  const endOfLocalDay = new Date(now.setHours(23, 59, 59, 999));
+
+  // 資料庫是UTC時間, 要把本地時間轉為UTC
+  const startOfDayUTC = new Date(startOfLocalDay.getTime() - startOfLocalDay.getTimezoneOffset() * 60000); 
+  const endOfDayUTC = new Date(endOfLocalDay.getTime() - endOfLocalDay.getTimezoneOffset() * 60000);
+
+  const getWorkoutSession = await prismaDb.workoutSession.findMany({
+    where: {
+      userId: id,
+      createdAt: {
+        gte: startOfDayUTC,
+        lte: endOfDayUTC
+      }
+    },
+    include: {
+      exercises: {
+        include: {
+          sets: true
+        }
+      }
+    }
+  });
+
+  const formattedSessions = getWorkoutSession.map(session => {
+    const utcDate = new Date(session.createdAt);
+    const localDate = formatDateString(utcDate.toISOString());
+
+    return {
+      ...session,
+      createdAt: localDate,
+    };
+  });
+
+  revalidatePath('/fit');
+  return formattedSessions;
+}
 
 

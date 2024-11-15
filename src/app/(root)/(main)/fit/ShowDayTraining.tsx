@@ -16,7 +16,7 @@ interface Props {
   sessionData: WorkoutSessionType[];
 }
 
-const ShowTraining = ({ sessionData }: Props) => {
+const ShowDayTraining = ({ sessionData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
 
@@ -37,12 +37,12 @@ const ShowTraining = ({ sessionData }: Props) => {
 
 
   const handleEditWorkout = (cardSessionId: string) => {
-    if (userId) {
+    if(userId) {
       // 資料庫
       if (sessionData) {
         const sessionCards = sessionData.find(session => session.cardSessionId === cardSessionId);
 
-        if (sessionCards) {
+        if(sessionCards) {
           router.push(`/fit/workout/${sessionCards.menuId}/${sessionCards.templateId}/${cardSessionId}`);
         }
       }
@@ -50,7 +50,7 @@ const ShowTraining = ({ sessionData }: Props) => {
     } else {
       // 本地
       const sessionToEdit = workoutSessions.find(session => session.cardSessionId === cardSessionId);
-
+    
       if (sessionToEdit) {
         router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${cardSessionId}`);
       }
@@ -59,16 +59,18 @@ const ShowTraining = ({ sessionData }: Props) => {
   };
 
   const handleRemoveWorkoutSession = async (cardSessionId: string) => {
-    if (userId) {
+    if(userId) {
       await deleteWorkoutSessionByCardId(cardSessionId);
     } else {
       removeWorkoutSession(cardSessionId);
     }
   };
 
+  const showToday = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+
   return (
     <>
-      <h1 className='font-bold'>所有訓練</h1>
+      <h1 className='font-bold'>今日訓練 {showToday}</h1>
 
       {workoutCards.map((session) => (
         <ShowTrainingCard
@@ -82,4 +84,4 @@ const ShowTraining = ({ sessionData }: Props) => {
   )
 }
 
-export default ShowTraining
+export default ShowDayTraining
