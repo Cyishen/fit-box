@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { Loader } from 'lucide-react';
+// import { Loader } from 'lucide-react';
 
 import StartWorkout from './StartWorkout'
 
@@ -15,7 +15,8 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [fetchLoading, setFetchIsLoading] = useState(true);
+
   const [currentWorkout, setCurrentWorkout] = useState<WorkoutSessionType | null>(null);
 
   // 本地
@@ -25,7 +26,7 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
     const currentSessionId = localStorage.getItem('currentSessionId');
 
     if (!currentSessionId) {
-      setIsLoading(false);
+      setFetchIsLoading(false);
       return;
     }
 
@@ -40,7 +41,7 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
         } catch (error) {
           console.log(error);
         } finally {
-          setIsLoading(false);
+          setFetchIsLoading(false);
         }
       }
       fetchWorkout()
@@ -50,25 +51,17 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
         (session) => session.cardSessionId === currentSessionId
       );
       setCurrentWorkout(findSession as WorkoutSessionType);
-      setIsLoading(false);
     }
   }, [userId, workoutSessions]);
 
-  if (isLoading) {
-    return <div className='flex h-screen justify-center mt-20'>
-      <Loader size={20} className="animate-spin" /> &nbsp; 建立訓練卡...
-    </div>
-  }
-
   return (
     <div>
-      {currentWorkout && (
         <StartWorkout
           isEditMode={false}
-          workoutSession={currentWorkout}
+          workoutSession={currentWorkout as WorkoutSessionType}
           setCurrentWorkout={setCurrentWorkout}
+          fetchLoading={fetchLoading}
         />
-      )}
     </div>
   )
 }

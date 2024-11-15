@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 import { useWorkoutStore } from "@/lib/store";
 
@@ -8,15 +7,17 @@ import WorkoutList from "./WorkoutList";
 import { useSession } from "next-auth/react"
 import { upsertWorkoutSession } from "@/actions/user-create";
 import { useState } from "react";
+import StaticTitle from "./StaticTitle";
 
 
 type StartWorkoutProps = {
   isEditMode: boolean;
+  fetchLoading: boolean;
   workoutSession: WorkoutSessionType;
   setCurrentWorkout: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
 }
 
-const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout }: StartWorkoutProps) => {
+const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoading }: StartWorkoutProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,30 +50,18 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout }: StartWo
   };
 
   return (
-    <div className="sm:pt-10 bg-gray-100">
-      <div className="px-4 pt-4">
-        <div className='flex w-full justify-between items-center'>
-          <h3 className="font-bold text-xl whitespace-nowrap">
-            {isEditMode ? "進行的訓練" : "開始訓練"}
-          </h3>
-
-          <div>
-            <Button
-              onClick={handleCompleteWorkout}
-              size='sm'
-              className='font-bold'
-              disabled={isLoading}
-            >
-              完成
-            </Button>
-          </div>
-        </div>
-      </div>
+    <div className="sm:pt-10 bg-gray-100 h-screen">
+      <StaticTitle 
+        isEditMode={isEditMode} 
+        handleCompleteWorkout={handleCompleteWorkout}
+        isLoading={isLoading}
+      />
 
       <WorkoutList
         workoutSession={workoutSession}
         setCurrentWorkout={setCurrentWorkout}
         isLoading={isLoading}
+        fetchLoading={fetchLoading}
       />
     </div>
   );

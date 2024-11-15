@@ -7,15 +7,17 @@ import { useWorkoutStore } from "@/lib/store";
 
 import { useSession } from "next-auth/react"
 import { upsertWorkoutSession } from "@/actions/user-create";
+import { SkeletonCard } from "../../../[menuId]/[templateId]/SkeletonCard";
 
 
 type StartWorkoutProps = {
   workoutSession: WorkoutSessionType;
   setCurrentWorkout: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
   isLoading: boolean
+  fetchLoading: boolean
 }
 
-const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading }: StartWorkoutProps) => {
+const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoading }: StartWorkoutProps) => {
   const router = useRouter();
 
   const { data: session } = useSession()
@@ -46,11 +48,11 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading }: StartWork
       exercises: updatedExercises
     }
 
-    if(userId) {
+    if (userId) {
       // 資料庫更新
       await upsertWorkoutSession(updatedSession)
       setCurrentWorkout(updatedSession);
-    } else{
+    } else {
       // 本地更新
       updateCurrentSession(updatedSession);
     }
@@ -67,11 +69,11 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading }: StartWork
         exercises: updatedExercises
       };
 
-      if(userId) {
+      if (userId) {
         // 資料庫更新
         await upsertWorkoutSession(updatedSession)
         setCurrentWorkout(updatedSession);
-      } else{
+      } else {
         // 本地更新
         updateCurrentSession(updatedSession);
       }
@@ -80,14 +82,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading }: StartWork
 
   return (
     <div>
-      <div className="px-4 py-3">
-        <div className='flex items-center justify-end gap-3'>
-          <h3 className="font-bold">計時器</h3>
-          <p className="font-bold text-3xl border px-2 py-1 rounded-lg">00:00</p>
-        </div>
-      </div>
-
-      <div className='flex items-center justify-end gap-3 px-4'>
+      <div className='flex items-center justify-end gap-3 px-4 py-4'>
         <h3 className="font-bold">添加動作</h3>
 
         <button
@@ -95,33 +90,38 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading }: StartWork
           onClick={() => router.push(`/action`)}
           className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
         >
-          <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>
+          <div className='w-full h-full rounded-full flex justify-center items-center hover:invert '>
             <CopyPlus className='w-5' />
           </div>
         </button>
       </div>
 
-      {workoutSession && (
-        <div className='mt-3 px-3 rounded-t-2xl sm:rounded-t-2xl bg-slate-200'>
-          <div className='pt-3'>
-            <div className='overflow-y-scroll h-full min-h-[500px] rounded-t-2xl'>
-              <div className='flex flex-col gap-3 mb-32'>
-                {workoutSession.exercises.map((exercise) => (
-                  <WorkoutListCard
-                    key={exercise.movementId}
-                    exercise={exercise}
-                    handleRemoveExercise={handleRemoveExercise}
-                    onUpdateSets={handleUpdateSets}
-                    isOpen={openMovementId === exercise.movementId}
-                    onToggle={() => handleToggleExercise(exercise.movementId)}
-                    isLoading={isLoading}
-                  />
-                ))}
-              </div>
+      <div className='mt-3 px-3 rounded-t-2xl sm:rounded-t-2xl bg-slate-200'>
+        <div className='pt-3'>
+          <div className='overflow-y-scroll h-full min-h-[500px] rounded-t-2xl'>
+            <div className='flex flex-col gap-3 mb-32'>
+              {fetchLoading
+                ? Array(3)
+                  .fill(null)
+                  .map((_, index) => <SkeletonCard key={index} />)
+                : (
+                  workoutSession?.exercises.map((exercise) => (
+                    <WorkoutListCard
+                      key={exercise.movementId}
+                      exercise={exercise}
+                      handleRemoveExercise={handleRemoveExercise}
+                      onUpdateSets={handleUpdateSets}
+                      isOpen={openMovementId === exercise.movementId}
+                      onToggle={() => handleToggleExercise(exercise.movementId)}
+                      isLoading={isLoading}
+                    />
+                  ))
+
+                )}
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
