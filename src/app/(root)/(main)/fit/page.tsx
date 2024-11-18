@@ -9,6 +9,7 @@ import CreateMenuButton from './CreateMenuButton'
 import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUserId, getDaySessionByUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
 import ShowDayTraining from './ShowDayTraining'
+import FitProfileBar from './FitProfileBar'
 
 // import { format } from "date-fns"
 
@@ -47,6 +48,7 @@ const FitPage = async () => {
   return (
     <section>
       <FitProfile />
+      <FitProfileBar />
 
       <Wrapper>
         <div className='flex mb-16'>

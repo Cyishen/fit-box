@@ -8,7 +8,6 @@ import Image from 'next/image';
 
 
 const FitProfile = () => {
-
   const { data: session, status } = useSession()
 
   // OAuth for google
@@ -21,9 +20,11 @@ const FitProfile = () => {
   };
 
   return (
-    <div className='sticky top-0 flex items-center p-3 bg-gray-200/50 backdrop-blur-lg gap-5 z-50 whitespace-nowrap'>
-      <div className='w-full flex items-center justify-between'>
-        <div className='min-w-[50px] min-h-[50px] rounded-full border border-gray-500 flex justify-center items-center'>
+    <div className='flex items-center p-3 whitespace-nowrap'>
+      <div className='flex w-full'>
+        <div
+          className='min-w-[50px] min-h-[50px] rounded-full border border-gray-500 flex justify-center items-center'
+        >
           <div className='w-full h-full flex justify-center items-center'>
             {session?.user.image ? (
               <Image
@@ -41,7 +42,7 @@ const FitProfile = () => {
           </div>
         </div>
 
-        <div className='w-full flex flex-col font-bold'>
+        <div className='w-full flex flex-col justify-center font-bold'>
           {status === "authenticated" ? (
             <div className='flex justify-between pl-3'>
               <div className='text-sm'>

@@ -125,9 +125,9 @@ const LineChart = () => {
             x2: 0,
             y2: 1,
             colorStops: [
-                { offset: 0, color: 'rgba(59, 130, 246, 0.5)' }, // 渐变起始颜色
-                { offset: 0.7, color: 'rgba(130, 180, 250, 0.7)' },
-                { offset: 1, color: 'rgba(255, 255, 255, 0.5)' }  // 渐变结束颜色
+              { offset: 0, color: 'rgba(59, 130, 246, 0.5)' }, // 渐变起始颜色
+              { offset: 0.7, color: 'rgba(130, 180, 250, 0.7)' },
+              { offset: 1, color: 'rgba(255, 255, 255, 0.5)' }  // 渐变结束颜色
             ],
             global: false
           }
@@ -148,7 +148,7 @@ const LineChart = () => {
           }
         },
         markLine: {
-          data: [{ type: 'average', name: '平均'}],
+          data: [{ type: 'average', name: '平均' }],
           symbol: 'none',
           silent: true,
           label: {
@@ -168,24 +168,22 @@ const LineChart = () => {
 
   return (
     <div className='flex flex-col py-1 pb-3 rounded-lg'>
-      <div className='px-1'>
-        <div className="flex overflow-x-scroll py-2">
-          <div className="flex gap-3">
-            {categories.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setActiveCategory(item)}
-                className={`flex items-center cursor-pointer py-1 px-5 text-sm 
+      <div className="flex py-2">
+        <div className="flex flex-wrap gap-3">
+          {categories.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setActiveCategory(item)}
+              className={`flex items-center cursor-pointer py-1 px-5 text-sm 
                   ${activeCategory === item
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white'
-                  } whitespace-nowrap rounded-full`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
+                  ? 'bg-black text-white'
+                  : 'bg-white'
+                } whitespace-nowrap rounded-full`}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </div>
 
