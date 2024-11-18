@@ -203,15 +203,32 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                 </div>
 
                 <div className="relative w-7 h-7">
+                  {/* <input
+                    type="checkbox"
+                    title="已完成"
+                    onChange={() => handleCheckSet(index)}
+                    checked={dynamicSets[index]?.isCompleted || false}
+                    className="flex items-center justify-center appearance-none cursor-pointer text-xl w-full h-full border-2 border-gray-400 rounded-lg checked:bg-black checked:border-black checked:before:content-['✔'] checked:before:text-blue-300"
+                  /> */}
+
                   <input
                     type="checkbox"
                     title="已完成"
                     onChange={() => handleCheckSet(index)}
                     checked={dynamicSets[index]?.isCompleted || false}
-                    className="flex items-center justify-center appearance-none cursor-pointer text-xl w-full h-full border-2 border-gray-400 rounded-lg checked:bg-black checked:border-black checked:before:content-['✔'] checked:before:text-blue-300 !important"
+                    className="absolute w-full h-full opacity-0 cursor-pointer"
                   />
+                  <div
+                    className={`flex items-center justify-center w-full h-full border-2 rounded-lg ${dynamicSets[index]?.isCompleted
+                      ? 'bg-black border-black text-blue-300 text-xl'
+                      : 'border-gray-400'
+                      }`}
+                  >
+                    {dynamicSets[index]?.isCompleted && '✔'}
+                  </div>
+
                   {/* TODO: 測試用 */}
-                  <div className='absolute top-1/2 -right-10 -translate-y-1/2'>
+                  <div className='absolute top-1/2 -right-9 -translate-y-1/2'>
                     <p className='text-[10px] text-gray-200 whitespace-nowrap'>{set.isCompleted ? '完成' : '未完成'}</p>
                   </div>
                 </div>

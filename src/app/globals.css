@@ -137,8 +137,3 @@ input[type="number"] {
     opacity: 0;
   }
 }
-
-/* input[type='checkbox']:checked::before {
-  content: '✔';
-  color: #60a5fa;
-} */
