@@ -76,7 +76,7 @@ const WorkoutListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen,
     <>
       {isLoading ? <SkeletonCard /> : (
         <div
-          className={`relative flex flex-col justify-center rounded-2xl px-1 py-4 bg-white
+          className={`relative flex flex-col justify-center rounded-2xl px-1 py-4 bg-white overflow-hidden no-select
         ${isOpen ? 'h-full' : 'h-fit'}`}
           onTouchStart={handleTouchStart}  // 手機觸摸開始
           onTouchMove={handleTouchMove}    // 手機滑動

@@ -120,8 +120,8 @@ model WorkoutSession {
   id            String    @id @default(cuid())
   cardSessionId String    @unique
   userId        String    @map("user_id")
-  menuId        String?    @map("menu_id")
-  templateId    String?    @map("template_id")
+  menuId        String?   @map("menu_id")
+  templateId    String?   @map("template_id")
   templateTitle String    @map("template_title")
   date          DateTime // 訓練日期
   startTime     DateTime? // 開始時間
@@ -132,7 +132,7 @@ model WorkoutSession {
   exercises        WorkoutExercise[]
   workoutSummaries WorkoutSummary[]
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   menu    Menu?     @relation(fields: [menuId], references: [id])
   tempate Template? @relation(fields: [templateId], references: [id])
 
@@ -158,12 +158,13 @@ model WorkoutExercise {
 
 // 組數模型
 model WorkoutSet {
-  id          String @id @default(cuid())
+  id          String  @id @default(cuid())
   movementId  String
   leftWeight  Float
   rightWeight Float
   repetitions Int
   totalWeight Float
+  isCompleted Boolean @default(false)
 
   exerciseId String
   exercise   WorkoutExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)

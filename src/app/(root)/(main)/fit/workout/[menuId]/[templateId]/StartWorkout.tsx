@@ -24,9 +24,8 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
   const { data: session } = useSession()
   const userId = session?.user?.id
  
-  // 本地訓練卡
+  // 本地訓練卡更新
   const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
-
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
@@ -45,7 +44,6 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
     }
 
     localStorage.removeItem('currentSessionId');
-
     router.push('/fit');
   };
 

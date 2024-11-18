@@ -11,7 +11,6 @@ import { deleteWorkoutSessionByCardId } from '@/actions/user-create';
 import { useWorkoutStore } from '@/lib/store';
 
 
-
 interface Props {
   sessionData: WorkoutSessionType[];
 }
@@ -22,6 +21,7 @@ const ShowTraining = ({ sessionData }: Props) => {
 
   const router = useRouter();
 
+  // 本地
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
   const [workoutCards, setWorkoutCards] = useState<WorkoutSessionType[]>([]);

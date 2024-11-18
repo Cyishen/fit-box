@@ -29,7 +29,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
 
-  // 打開動作的組數設定
+  // 展開點選的動作, 顯示組數列表
   const [openMovementId, setOpenMovementId] = useState<string | null>(null);
   const handleToggleExercise = (movementId: string) => {
     setOpenMovementId((prev) => (prev === movementId ? null : movementId));
@@ -82,7 +82,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
 
   return (
     <div>
-      <div className='flex items-center justify-end gap-3 px-4 py-4'>
+      <div className='flex items-center justify-end gap-3 px-4'>
         <h3 className="font-bold">添加動作</h3>
 
         <button
@@ -116,7 +116,6 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
                       isLoading={isLoading}
                     />
                   ))
-
                 )}
             </div>
           </div>

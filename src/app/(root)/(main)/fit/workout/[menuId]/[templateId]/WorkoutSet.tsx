@@ -1,8 +1,10 @@
 "use client"
 
+
 import { Button } from '@/components/ui/button'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { EllipsisVertical, Trash2, Check } from 'lucide-react'
+
 
 interface SetProps {
   sets: WorkoutSetType[],
@@ -15,14 +17,15 @@ interface InputProps {
   rightWeight: string;
   repetitions: string;
   totalWeight: number;
+  isCompleted: boolean
 }
 
 const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<WorkoutSetType[]>([]);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [saveIcon, setSaveIcon] = useState(false);
-
   const [inputValues, setInputValues] = useState<InputProps[]>([]);
+
+  const [openDelSet, setOpenDelSet] = useState<number | null>(null);
+  const [saveIcon, setSaveIcon] = useState(false);
 
   useEffect(() => {
     if (sets.length > 0) {
@@ -32,15 +35,17 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
         leftWeight: set.leftWeight.toString(),
         rightWeight: set.rightWeight.toString(),
         repetitions: set.repetitions.toString(),
-        totalWeight: set.totalWeight
+        totalWeight: set.totalWeight,
+        isCompleted: set.isCompleted || false,
       }));
-      setInputValues(newInputValues);
 
+      setInputValues(newInputValues);
     } else {
       setDynamicSets([{
         leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
         id: '',
-        movementId: movementId
+        movementId: movementId,
+        isCompleted: false,
       }]);
 
       setInputValues([{
@@ -48,6 +53,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
         rightWeight: '',
         repetitions: '',
         totalWeight: 0,
+        isCompleted: false
       }]);
     }
   }, [sets, movementId]);
@@ -83,12 +89,22 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     setDynamicSets(updatedSets);
   };
 
-  // 新增一組，確保新組的類型正確
+  // 完成組數
+  const handleCheckSet = (index: number) => {
+    const updatedSets = [...dynamicSets];
+    updatedSets[index].isCompleted = !updatedSets[index].isCompleted;
+
+    setDynamicSets(updatedSets);
+    onUpdateSets(movementId, updatedSets);
+  };
+
+  // 新增一組，確保新增加的類型正確
   const handleAddSet = () => {
     setDynamicSets([...dynamicSets, {
       leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
       id: '',
-      movementId: ''
+      movementId: '',
+      isCompleted: false,
     }]);
   };
 
@@ -112,10 +128,10 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      const isOutside = !target.closest('#outside-close') && openIndex !== null;
+      const isOutside = !target.closest('#outside-close') && openDelSet !== null;
 
       if (isOutside) {
-        setOpenIndex(null);
+        setOpenDelSet(null);
       }
     };
 
@@ -124,14 +140,14 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [openIndex]);
+  }, [openDelSet]);
 
   return (
     <div className='flex w-full mt-4 px-2'>
       <div className='w-full'>
         <div className='flex flex-col'>
           {dynamicSets.map((set, index) => (
-            <div key={index} className='flex items-center justify-between mb-2'>
+            <div key={index} className='flex items-center justify-between mb-2 no-select'>
               <div className='flex gap-2 items-center h-10'>
                 <div className='bg-gray-100 w-8 h-full rounded-md flex justify-center items-center'>
                   <p className='font-bold text-sm'>{index + 1}</p>
@@ -186,23 +202,29 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                   />
                 </div>
 
-                <div className='relative rounded-md'>
-                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>重量 kg</p>
-
-                  <div className="w-12 h-10 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold flex justify-end">
-                    {set.totalWeight === 0 ? '' : set.totalWeight.toFixed(1)}
+                <div className="relative w-7 h-7">
+                  <input
+                    type="checkbox"
+                    title="已完成"
+                    onChange={() => handleCheckSet(index)}
+                    checked={dynamicSets[index]?.isCompleted || false}
+                    className="flex items-center justify-center appearance-none cursor-pointer text-xl w-full h-full border-2 border-gray-400 rounded-lg checked:bg-black checked:border-black checked:before:content-['✔'] checked:before:text-blue-300"
+                  />
+                  {/* TODO: 測試用 */}
+                  <div className='absolute top-1/2 -right-10 -translate-y-1/2'>
+                    <p className='text-[10px] text-gray-200 whitespace-nowrap'>{set.isCompleted ? '完成' : '未完成'}</p>
                   </div>
                 </div>
               </div>
 
-              {/* TODO:刪除按鈕 */}
+              {/* 彈出小視窗刪除按鈕 */}
               <div
                 className='flex items-center justify-center hover:bg-gray-100 min-w-10 h-10 rounded-full relative cursor-pointer'
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                onClick={() => setOpenDelSet(openDelSet === index ? null : index)}
               >
                 <EllipsisVertical className='w-3' />
 
-                {openIndex === index && (
+                {openDelSet === index && (
                   <div
                     id="outside-close"
                     className="absolute -left-10 top-0 translate-y-0 w-fit h-fit bg-black text-white rounded-md shadow-lg"
@@ -210,7 +232,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     <button
                       onClick={() => {
                         handleRemoveSet(index);
-                        setOpenIndex(null);
+                        setOpenDelSet(null);
                       }}
                       className='flex p-2 rounded-md duration-300'
                     >
@@ -222,21 +244,15 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
             </div>
           ))}
 
-          {/* 新增一組按鈕 */}
+          {/* 新增組數按鈕, 保存組數按鈕 */}
           <div className='mt-2 flex justify-between'>
             <Button variant='outline' type='button' onClick={handleAddSet}>
               新增一組
             </Button>
 
-            {!saveIcon ? (
-              <Button size='sm' type='button' onClick={handleSaveSetsIcon}>
-                保存
-              </Button>
-            ) : (
-              <Button size='sm' type='button'>
-                <Check className='w-5 text-green-300' />
-              </Button>
-            )}
+            <Button size='sm' type='button' onClick={handleSaveSetsIcon}>
+              {saveIcon ? <Check className='w-5 text-green-300' /> : '保存'}
+            </Button>
           </div>
         </div>
       </div>

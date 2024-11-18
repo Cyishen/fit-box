@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-// import { Loader } from 'lucide-react';
 
 import StartWorkout from './StartWorkout'
 
@@ -51,7 +50,9 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
         (session) => session.cardSessionId === currentSessionId
       );
       setCurrentWorkout(findSession as WorkoutSessionType);
+      setFetchIsLoading(false);
     }
+
   }, [userId, workoutSessions]);
 
   return (

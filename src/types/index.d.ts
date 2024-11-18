@@ -75,6 +75,7 @@ type WorkoutSetType = {
   rightWeight: number; 
   repetitions: number; 
   totalWeight: number;
+  isCompleted?: boolean;
 };
 
 

@@ -3,7 +3,6 @@
 import { prismaDb } from "@/lib/db"
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { formatDateString } from "@/lib/TimeFn/Timer";
 
 // import { Prisma } from "@prisma/client";
 
@@ -437,6 +436,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
                 rightWeight: set.rightWeight,
                 repetitions: set.repetitions,
                 totalWeight: set.totalWeight,
+                isCompleted: set.isCompleted,
               })),
             },
           })),
@@ -483,6 +483,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
               rightWeight: set.rightWeight,
               repetitions: set.repetitions,
               totalWeight: set.totalWeight,
+              isCompleted: set.isCompleted,
             })),
           },
         },
@@ -661,8 +662,9 @@ export const getDaySessionByUserId = async (id: string) => {
 
   const formattedSessions = getWorkoutSession.map(session => {
     const utcDate = new Date(session.createdAt);
-    const localDate = formatDateString(utcDate.toISOString());
-
+    const localDate = utcDate.toISOString();
+    // const localDate = formatDateString(utcDate.toISOString());
+    
     return {
       ...session,
       createdAt: localDate,

@@ -16,7 +16,7 @@ export function formatDateString(dateString: string) {
   return `${formattedDate} ${time}`;
 }
 
-// TODO* 創立的時間 UTC, 傳入ISO格式字串
+// TODO* 創立時間 UTC, 傳入ISO格式字串
 export const multiFormatDateString = (timestamp: string = ""): string => {
   const timestampNum = Math.round(new Date(timestamp).getTime() / 1000);
   const date: Date = new Date(timestampNum * 1000);
@@ -41,33 +41,6 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
       return "剛剛";
   }
 };
-
-// 傳入當地格式
-export const multiFormatDateStringLocal = (timestamp: string = ""): string => {
-  const date: Date = new Date(timestamp);
-  const now: Date = new Date();
-
-  const diff: number = now.getTime() - date.getTime();
-  const diffInSeconds: number = diff / 1000;
-  const diffInMinutes: number = diffInSeconds / 60;
-  const diffInHours: number = diffInMinutes / 60;
-  const diffInDays: number = diffInHours / 24;
-
-  switch (true) {
-    case Math.floor(diffInDays) >= 7:
-      return formatDateString(timestamp); // 超過 7 天，顯示完整日期
-    case Math.floor(diffInDays) >= 1 && diffInDays < 7:
-      return `${Math.floor(diffInDays)} 天前`;
-    case Math.floor(diffInHours) >= 1:
-      return `${Math.floor(diffInHours)} 小時前`;
-    case Math.floor(diffInMinutes) >= 1:
-      return `${Math.floor(diffInMinutes)} 分鐘前`;
-    default:
-      return "剛剛";
-  }
-};
-
-
 
 // 計算天數
 export const calculateDaysSinceStart = (startDate: string | Date ): number => {

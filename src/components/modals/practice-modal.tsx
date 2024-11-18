@@ -119,7 +119,8 @@ export const PracticeModal = () => {
             ...exercise,
             workoutSessionId: newSessionId,
             sets: exercise.templateSets.map(set => ({ 
-              ...set 
+              ...set,
+              isCompleted: false 
             })),
           })),
         })
@@ -152,6 +153,7 @@ export const PracticeModal = () => {
                 rightWeight: set.rightWeight,
                 repetitions: set.repetitions,
                 totalWeight: set.totalWeight,
+                isCompleted: false
               })),
             })),
           };

@@ -48,6 +48,8 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
       if (findSession) {
         setCurrentWorkout(findSession);
       }
+
+      setFetchIsLoading(false);
     }
   }, [menuId, sessionId, templateId, userId, workoutSessions]);
 
