@@ -208,7 +208,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     title="已完成"
                     onChange={() => handleCheckSet(index)}
                     checked={dynamicSets[index]?.isCompleted || false}
-                    className="flex items-center justify-center appearance-none cursor-pointer text-xl w-full h-full border-2 border-gray-400 rounded-lg checked:bg-black checked:border-black"
+                    className="flex items-center justify-center appearance-none cursor-pointer text-xl w-full h-full border-2 border-gray-400 rounded-lg checked:bg-black checked:border-black checked:before:content-['✔'] checked:before:text-blue-300 !important"
                   />
                   {/* TODO: 測試用 */}
                   <div className='absolute top-1/2 -right-10 -translate-y-1/2'>
