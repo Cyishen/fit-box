@@ -88,7 +88,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     setDynamicSets([...dynamicSets, {
       leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
       id: '',
-      movementId: ''
+      movementId: movementId
     }]);
   };
 

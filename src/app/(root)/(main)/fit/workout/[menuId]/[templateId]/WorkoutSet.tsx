@@ -91,8 +91,9 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
 
   // 完成組數
   const handleCheckSet = (index: number) => {
-    const updatedSets = [...dynamicSets];
-    updatedSets[index].isCompleted = !updatedSets[index].isCompleted;
+    const updatedSets = dynamicSets.map((set, idx) =>
+      idx === index ? { ...set, isCompleted: !set.isCompleted } : { ...set }
+    );
 
     setDynamicSets(updatedSets);
     onUpdateSets(movementId, updatedSets);
@@ -103,7 +104,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     setDynamicSets([...dynamicSets, {
       leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
       id: '',
-      movementId: '',
+      movementId: movementId,
       isCompleted: false,
     }]);
   };
@@ -203,14 +204,6 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                 </div>
 
                 <div className="relative w-7 h-7">
-                  {/* <input
-                    type="checkbox"
-                    title="已完成"
-                    onChange={() => handleCheckSet(index)}
-                    checked={dynamicSets[index]?.isCompleted || false}
-                    className="flex items-center justify-center appearance-none cursor-pointer text-xl w-full h-full border-2 border-gray-400 rounded-lg checked:bg-black checked:border-black checked:before:content-['✔'] checked:before:text-blue-300"
-                  /> */}
-
                   <input
                     type="checkbox"
                     title="已完成"
@@ -230,9 +223,11 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     }
                   </div>
 
-                  {/* TODO: 測試用 */}
-                  <div className='absolute top-1/2 -right-9 -translate-y-1/2'>
-                    <p className='text-[10px] text-gray-200 whitespace-nowrap'>{set.isCompleted ? '完成' : '未完成'}</p>
+                  {/* TODO: 測試顯示 */}
+                  <div className='absolute top-1/2 -right-7 -translate-y-1/2'>
+                    <p className='text-[10px] text-gray-200 whitespace-nowrap'>
+                      {set.isCompleted ? '完成' : ''}
+                    </p>
                   </div>
                 </div>
               </div>
