@@ -219,12 +219,15 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                     className="absolute w-full h-full opacity-0 cursor-pointer"
                   />
                   <div
-                    className={`flex items-center justify-center w-full h-full border-2 rounded-lg ${dynamicSets[index]?.isCompleted
+                    className={`flex items-center justify-center w-full h-full border-2 rounded-lg overflow-hidden ${dynamicSets[index]?.isCompleted
                       ? 'bg-black border-black text-blue-300 text-xl'
                       : 'border-gray-400'
                       }`}
                   >
-                    {dynamicSets[index]?.isCompleted && '✔'}
+                    {dynamicSets[index]?.isCompleted
+                      ? <Check className='w-full text-green-300' />
+                      : ''
+                    }
                   </div>
 
                   {/* TODO: 測試用 */}
