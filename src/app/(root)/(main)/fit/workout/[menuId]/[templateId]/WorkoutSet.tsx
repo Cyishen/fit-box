@@ -43,7 +43,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     } else {
       setDynamicSets([{
         leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
-        id: '',
+        id: `${movementId}-${(sets.length + 1)}`,
         movementId: movementId,
         isCompleted: false,
       }]);
@@ -101,9 +101,11 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
 
   // 新增一組，確保新增加的類型正確
   const handleAddSet = () => {
+    const newId = (dynamicSets.length + 1).toString();
+
     setDynamicSets([...dynamicSets, {
       leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
-      id: '',
+      id: `${movementId}-${newId}`,
       movementId: movementId,
       isCompleted: false,
     }]);
@@ -221,13 +223,6 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                       ? <Check className='w-full text-green-300' />
                       : ''
                     }
-                  </div>
-
-                  {/* TODO: 測試顯示 */}
-                  <div className='absolute top-1/2 -right-7 -translate-y-1/2'>
-                    <p className='text-[10px] text-gray-200 whitespace-nowrap'>
-                      {set.isCompleted ? '完成' : ''}
-                    </p>
                   </div>
                 </div>
               </div>

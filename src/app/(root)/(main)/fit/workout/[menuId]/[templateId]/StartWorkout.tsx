@@ -5,7 +5,7 @@ import { useWorkoutStore } from "@/lib/store";
 import WorkoutList from "./WorkoutList";
 
 import { useSession } from "next-auth/react"
-import { upsertWorkoutSession } from "@/actions/user-create";
+import { upsertWorkoutSession, upsertWorkoutSummary } from "@/actions/user-create";
 import { useState } from "react";
 import StaticTitle from "./StaticTitle";
 
@@ -36,6 +36,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
     if(userId){
       // 資料庫
       await upsertWorkoutSession(workoutSession)
+      await upsertWorkoutSummary(workoutSession.id as string);
     } else {
       // 本地
       const updatedSession = { ...workoutSession };

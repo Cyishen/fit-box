@@ -1,15 +1,16 @@
 import Wrapper from '@/components/Wrapper'
 
 import FitProfile from './FitProfile'
+import FitProfileBar from './FitProfileBar'
+
+import ShowCard from './ShowCard'
 import FitDashboard from './FitDashboard'
 
-import ShowTraining from './ShowTraining'
 import CreateMenuButton from './CreateMenuButton'
 
 import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUserId, getDaySessionByUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
-import ShowDayTraining from './ShowDayTraining'
-import FitProfileBar from './FitProfileBar'
+
 
 // import { format } from "date-fns"
 
@@ -18,7 +19,7 @@ const FitPage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userMenuData = await getAllMenusByUserId(userId);
+  const userMenuData = await getAllMenusByUserId(userId as string);
 
   const userTemplateData = await getAllTemplatesByUserId();
 
@@ -54,13 +55,10 @@ const FitPage = async () => {
         <div className='flex mb-16'>
           <div className="flex flex-col w-full gap-3">
             {/* 訓練卡 */}
-            <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
-              <ShowDayTraining sessionData={userDayCard as WorkoutSessionType[]} />
-            </div>
-
-            <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
-              <ShowTraining sessionData={userSessionCard as WorkoutSessionType[]} />
-            </div>
+            <ShowCard 
+              daySession={userDayCard as WorkoutSessionType[]} 
+              allSession={userSessionCard as WorkoutSessionType[]}
+            />
 
             {/* 模板列表 */}
             <div className='flex flex-col p-2 rounded-lg bg-gray-100 smt-2'>

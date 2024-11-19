@@ -68,7 +68,7 @@ export const upsertMenu = async (data: MenuType) => {
   // } as MenuType;
 }
 
-export const getAllMenusByUserId = async (id?: string) => {
+export const getAllMenusByUserId = async (id: string) => {
   const session = await auth()
   const userId = session?.user?.id
 
@@ -306,7 +306,7 @@ export const getAllTemplatesByUserId = async () => {
 
   const templates = await prismaDb.template.findMany({
     where: {
-      isDeleted: false 
+      isDeleted: false
     },
     include: {
       menu: true,
@@ -475,7 +475,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
           movementId: exercise.movementId,
           name: exercise.name,
           exerciseCategory: exercise.exerciseCategory,
-          workoutSessionId: newWorkoutSession.id, // 關聯到新的訓練卡
+          workoutSessionId: newWorkoutSession.id,
           sets: {
             create: exercise.sets.map((set) => ({
               movementId: exercise.movementId,
@@ -612,10 +612,10 @@ export const getFirstWorkoutSessionDay = async () => {
 
   if (!userId) {
     return null;
-  } 
+  }
 
   const firstTraining = await prismaDb.workoutSession.findFirst({
-    where: { 
+    where: {
       userId: userId
     },
     orderBy: {
@@ -640,7 +640,7 @@ export const getDaySessionByUserId = async (id: string) => {
   const endOfLocalDay = new Date(now.setHours(23, 59, 59, 999));
 
   // 資料庫是UTC時間, 要把本地時間轉為UTC
-  const startOfDayUTC = new Date(startOfLocalDay.getTime() - startOfLocalDay.getTimezoneOffset() * 60000); 
+  const startOfDayUTC = new Date(startOfLocalDay.getTime() - startOfLocalDay.getTimezoneOffset() * 60000);
   const endOfDayUTC = new Date(endOfLocalDay.getTime() - endOfLocalDay.getTimezoneOffset() * 60000);
 
   const getWorkoutSession = await prismaDb.workoutSession.findMany({
@@ -664,7 +664,7 @@ export const getDaySessionByUserId = async (id: string) => {
     const utcDate = new Date(session.createdAt);
     const localDate = utcDate.toISOString();
     // const localDate = formatDateString(utcDate.toISOString());
-    
+
     return {
       ...session,
       createdAt: localDate,
@@ -676,3 +676,200 @@ export const getDaySessionByUserId = async (id: string) => {
 }
 
 
+//TODO? 統計邏輯
+
+export const upsertWorkoutSummary = async (id: string) => {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  // 獲取當前訓練卡及相關數據
+  const workoutSession = await prismaDb.workoutSession.findUnique({
+    where: { id: id },
+    include: {
+      exercises: {
+        include: {
+          sets: true,
+        },
+      },
+    },
+  });
+
+  if (!workoutSession) {
+    throw new Error("Workout session not found");
+  }
+
+  // 統計訓練卡數據
+  let totalSessionSets = 0;
+  let totalSessionWeight = 0;
+  const exerciseSummaries = workoutSession.exercises.map((exercise) => {
+    const completedSets = exercise.sets.filter((set) => set.isCompleted);
+
+    const movementSets = completedSets.length;
+    const movementWeight = completedSets.reduce((total, set) => total + set.totalWeight, 0);
+
+    totalSessionSets += movementSets;
+    totalSessionWeight += movementWeight;
+
+    return {
+      movementId: exercise.movementId,
+      movementName: exercise.name,
+      movementSets,
+      movementWeight,
+    };
+  });
+
+  // 統計部位（category）數據
+  const categorySummaries: { [key: string]: { totalCategorySets: number, totalCategoryWeight: number } } = {};
+
+  workoutSession.exercises.forEach((exercise) => {
+    const completedSets = exercise.sets.filter((set) => set.isCompleted);
+    const category = exercise.exerciseCategory;
+
+    const movementSets = completedSets.length;
+    const movementWeight = completedSets.reduce((total, set) => total + set.totalWeight, 0);
+
+    if (!categorySummaries[category]) {
+      categorySummaries[category] = { totalCategorySets: 0, totalCategoryWeight: 0 };
+    }
+
+    categorySummaries[category].totalCategorySets += movementSets;
+    categorySummaries[category].totalCategoryWeight += movementWeight;
+  });
+
+  // TODO: 更新或創建 WorkoutSummary
+  const workoutSummary = await prismaDb.workoutSummary.upsert({
+    where: { workoutSessionId: id },
+    update: {
+      totalSessionSets,
+      totalSessionWeight,
+    },
+    create: {
+      userId,
+      workoutSessionId: id,
+      date: workoutSession.date,
+      totalSessionSets,
+      totalSessionWeight,
+    },
+  });
+
+  // 清理刪除的 ExerciseSummary
+  const currentMovementIds = workoutSession.exercises.map(e => e.movementId);
+  await prismaDb.exerciseSummary.deleteMany({
+    where: {
+      workoutSummaryId: workoutSummary.id,
+      NOT: { movementId: { in: currentMovementIds } },
+    },
+  });
+
+  // TODO: 更新或創建 ExerciseSummary
+  const exerciseSummaryPromises = exerciseSummaries.map(async (summary) => {
+    await prismaDb.exerciseSummary.upsert({
+      where: {
+        workoutSummaryId_movementId: {
+          movementId: summary.movementId,
+          workoutSummaryId: workoutSummary.id,
+        },
+      },
+      update: {
+        movementSets: summary.movementSets,
+        movementWeight: summary.movementWeight,
+      },
+      create: {
+        movementId: summary.movementId,
+        movementName: summary.movementName,
+        movementSets: summary.movementSets,
+        movementWeight: summary.movementWeight,
+        workoutSummaryId: workoutSummary.id,
+      },
+    });
+  })
+
+  // 清理刪除的 ExerciseCategorySummary
+  const currentCategories = workoutSession.exercises.map(e => e.exerciseCategory);
+  await prismaDb.exerciseCategorySummary.deleteMany({
+    where: {
+      workoutSummaryId: workoutSummary.id,
+      NOT: { exerciseCategory: { in: currentCategories } },
+    },
+  });
+
+  // 等待exerciseSummaryPromises創建完成
+  await Promise.all(exerciseSummaryPromises);
+
+  // TODO: 更新或創建 ExerciseCategorySummary
+  const exerciseCategorySummaryPromises = Object.keys(categorySummaries).map(async (category) => {
+    const { totalCategorySets, totalCategoryWeight } = categorySummaries[category];
+
+    await prismaDb.exerciseCategorySummary.upsert({
+      where: {
+        workoutSummaryId_exerciseCategory: {
+          exerciseCategory: category,
+          workoutSummaryId: workoutSummary.id,
+        },
+      },
+      update: {
+        totalCategorySets,
+        totalCategoryWeight,
+      },
+      create: {
+        exerciseCategory: category,
+        totalCategorySets,
+        totalCategoryWeight,
+        workoutSummaryId: workoutSummary.id,
+      },
+    });
+  });
+
+  // 等待exerciseCategorySummaryPromises創建完成
+  await Promise.all(exerciseCategorySummaryPromises);
+
+  return {
+    totalSessionSets,
+    totalSessionWeight,
+  };
+};
+
+
+export const getMovementSummaryByUserId = async (id: string, movementId: string) => {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const workoutSummaries = await prismaDb.workoutSummary.findMany({
+    where: {
+      userId: id,
+    },
+    include: {
+      exerciseSummaries: true,
+    }
+  });
+
+  if (!workoutSummaries.length) {
+    throw new Error("Workout summaries not found for the given user");
+  }
+
+  let totalSets = 0;
+  let totalWeight = 0;
+
+  workoutSummaries.forEach((workoutSummary) => {
+    const targetMovement = workoutSummary.exerciseSummaries.find((summary) => summary.movementId === movementId);
+
+    if (targetMovement) {
+      totalSets += targetMovement.movementSets;
+      totalWeight += targetMovement.movementWeight;
+    }
+  });
+
+  if (totalSets === 0 && totalWeight === 0) {
+    return { totalSets: 0, totalWeight: 0 };
+  }
+
+  return { totalSets, totalWeight };
+}

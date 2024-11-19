@@ -134,7 +134,7 @@ model WorkoutSession {
 
   user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   menu    Menu?     @relation(fields: [menuId], references: [id])
-  tempate Template? @relation(fields: [templateId], references: [id])
+  template Template? @relation(fields: [templateId], references: [id])
 
   @@index([userId])
   @@map("workout_session_cards")
@@ -175,12 +175,16 @@ model WorkoutSet {
 
 // TODO*統計
 // 範例說明
-// 假設昨天的訓練如下：
-// 啞鈴胸推: 5 組，每組 10 下，每下 5 公斤。總重量：250 公斤
-// 肩推: 3 組，每組 12 下，每下 4 公斤。總重量：144 公斤
+// 昨天的訓練如下：
+// 啞鈴胸推: 做2 組，每組 5 下，每下 5 公斤。當天組數: 2組, 重量:50 公斤
+// 肩推: 做3 組，每組 5 下，每下 5 公斤。當天組數: 3組, 重量:75 公斤
 
-// 當天總組數 5（啞鈴胸推） + 3（肩推） = 8 組
-// 當天總重量  250（啞鈴胸推） + 144（肩推） = 394 公斤
+// 今天的訓練如下：
+// 槓鈴臥推:  做2組，每組10 下，每下2公斤 。當天組數: 2組, 總重量:40 公斤
+// 飛鳥: 做3組，每組10 下，每下2公斤。當天組數: 3組, 總重量:60 公斤
+// 肩推: 做1 組，每組 10 下，每下 10 公斤。當天組數: 1組, 重量:100 公斤
+
+// 用戶會想知道, 以下資訊(日, 週, 年)：
 model WorkoutSummary {
   id                 String   @id @default(cuid())
   userId             String   @map("user_id")
@@ -189,7 +193,8 @@ model WorkoutSummary {
   totalSessionSets   Int
   totalSessionWeight Float
 
-  exerciseSummary ExerciseSummary[]
+  exerciseSummaries ExerciseSummary[]
+  categorySummaries ExerciseCategorySummary[]
 
   user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   workoutSession WorkoutSession @relation(fields: [workoutSessionId], references: [id], onDelete: Cascade)
@@ -198,9 +203,11 @@ model WorkoutSummary {
   @@map("workout_summaries")
 }
 
-// 顯示個別動作組數與重量 
-// 啞鈴胸推: 5 組。總重量：250 公斤
-// 肩推: 3 組。總重量：144 公斤
+// 1.根據動作累積
+// 啞鈴胸推2組/50公斤(昨天有記錄)
+// 槓鈴臥推2組/40公斤(昨天有記錄)
+// 肩推4組/175公斤(昨天與今天都有記錄)
+// 飛鳥3組/60公斤(昨天有記錄)
 model ExerciseSummary {
   id             String @id @default(cuid())
   movementId     String
@@ -211,7 +218,25 @@ model ExerciseSummary {
   workoutSummaryId String         @map("workout_summary_id")
   workoutSummary   WorkoutSummary @relation(fields: [workoutSummaryId], references: [id], onDelete: Cascade)
 
-  @@unique([movementId, workoutSummaryId])
+  @@unique([workoutSummaryId, movementId])
   @@index([movementId])
   @@map("exercise_summaries")
 }
+
+// 2.根據部位累積
+// 胸：累積4組/90公斤。(昨-啞鈴胸推2組/50公斤, 今-槓鈴臥推2組/40公斤)
+// 肩：累積7組/ 235公斤。(昨-肩推3組/75公斤, 今-飛鳥3組/60公斤、肩推1組/100公斤)
+model ExerciseCategorySummary {
+  id                  String  @id @default(cuid())
+  exerciseCategory    String  
+  totalCategorySets   Int   
+  totalCategoryWeight Float 
+
+  workoutSummaryId    String         @map("workout_summary_id")
+  workoutSummary      WorkoutSummary @relation(fields: [workoutSummaryId], references: [id], onDelete: Cascade)
+
+  @@unique([workoutSummaryId, exerciseCategory])
+  @@index([exerciseCategory])
+  @@map("exercise_category_summaries")
+}
+

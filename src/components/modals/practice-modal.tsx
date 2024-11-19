@@ -47,7 +47,7 @@ export const PracticeModal = () => {
 
   const addWorkoutSession = useWorkoutStore(state => state.addWorkoutSession);
 
-  // TODO* 測試方式2: 透過zustand 取得exercise, 加快圖片顯示速度
+  // Todo: 資料庫, 透過zustand 取得exercise, 加快彈出視窗圖片顯示
   const [exercise, setExercise] = useState<TemplateExerciseType[]>([])
 
   // 第一步, useMemo緩存 dataAllTemplate有變動才更新, 避免useEffect重複執行
@@ -55,20 +55,20 @@ export const PracticeModal = () => {
     return dataAllTemplate
   }, [dataAllTemplate]);
 
-  // 第二步, 依據 templateId 更新 exercise
+  // 第二步, 依據 templateId找尋, 彈出視窗顯示exercise
   useEffect(() => {
     if (userId) {
       const selectedTemplate = filteredData.find(item => item.id === templateId);
-      const exercisesToRender = selectedTemplate?.templateExercises || [];
+      const exercisesToRender = selectedTemplate?.templateExercises;
 
-      setExercise(exercisesToRender);
+      setExercise(exercisesToRender || []);
     } else {
       // 本地
       setExercise(localExercise || []);
     }
   }, [filteredData, localExercise, templateId, userId])
 
-  // 方式1: 透過資料庫
+  // 資料庫抓取, 彈出視窗顯示圖片較慢
   // useEffect(() => {
   //   const fetchExercises = async () => {
   //     if (userId && templateId) {
@@ -94,7 +94,6 @@ export const PracticeModal = () => {
   // }, [localExercise, userId, templateId])
 
 
-    // Todo: 建立訓練卡
   const handleToWorkoutSession = async () => {
     const existingSessionId = localStorage.getItem('currentSessionId');
     const newSessionId = existingSessionId || Date.now().toString();
@@ -117,7 +116,6 @@ export const PracticeModal = () => {
           notes: null,
           exercises: exercise.map(exercise => ({
             ...exercise,
-            workoutSessionId: newSessionId,
             sets: exercise.templateSets.map(set => ({ 
               ...set,
               isCompleted: false 
@@ -145,9 +143,8 @@ export const PracticeModal = () => {
               movementId: exercise.movementId,
               name: exercise.name,
               exerciseCategory: exercise.exerciseCategory,
-              workoutSessionId: newSessionId,
-              sets: exercise.templateSets.map(set => ({
-                id: '',
+              sets: exercise.templateSets.map((set, index) => ({
+                id: `${set.movementId}-${index+1}`,
                 movementId: set.movementId,
                 leftWeight: set.leftWeight,
                 rightWeight: set.rightWeight,

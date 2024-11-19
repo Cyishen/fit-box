@@ -60,12 +60,12 @@ type WorkoutSessionType = {
 
 type WorkoutExerciseType = {
   id?: string;
+  workoutSessionId?: string;
   movementId: string; // 動作ID，例如啞鈴胸推 "1"
   name: string; // 動作名稱，例如 "啞鈴胸推"
-  exerciseCategory: string; // 動作類別
+  exerciseCategory: string; // 動作類別，例如 "胸"
 
   sets: WorkoutSetType[];
-  workoutSessionId: string;
 };
 
 type WorkoutSetType = {
@@ -77,16 +77,3 @@ type WorkoutSetType = {
   totalWeight: number;
   isCompleted?: boolean;
 };
-
-
-// declare type UserModelType = {
-//   userId: string;                  
-//   email?: string;                               
-//   name?: string;
-//   image?: string;                    
-//   dateOfBirth?: string;            
-//   workoutSessions?: WorkoutSessionType[]; 
-//   createdAt?: string;
-//   updatedAt?: string;
-//   lastActiveDate?: string;
-// };
