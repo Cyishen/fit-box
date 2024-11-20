@@ -49,7 +49,7 @@ const Info = async ({ sessionData, userFirstSession }: Props) => {
           {session?.user ? (
             <div>
               <p>健身開始日 {firstDay as string}</p>
-              <p>健齡 {calculateDaysSinceStart(userFirstSession.createdAt) || 0} 日</p>
+              <p>健齡 {calculateDaysSinceStart(userFirstSession?.createdAt) || 0} 日</p>
               <p>已累積 {sessionData?.length || 0} 次訓練 🔥</p>
             </div>
           ) : ('')}

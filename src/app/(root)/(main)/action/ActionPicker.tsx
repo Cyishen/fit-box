@@ -90,13 +90,11 @@ const ActionPicker = () => {
     if (userId) {
       // 更新動作到資料庫
       await upsertWorkoutSession(updatedSession);
-      setIsLoading(false);
       router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);
     } else {
       // 更新動作到本地
       if (existingSessionId) {
         editWorkoutSession(existingSessionId, updatedSession);
-        setIsLoading(false);
         router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);
       }
     }
@@ -178,7 +176,7 @@ const ActionPicker = () => {
                       <div className="p-2">
                         <div className="flex flex-col items-center">
                           <Image
-                            src='/icons/dumbbell.svg'
+                            src={exercise.iconSrc as string}
                             alt={exercise.name}
                             width={36}
                             height={36}

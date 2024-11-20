@@ -219,7 +219,7 @@ function AnimatedTabsHover({ activeTab, onChange }: AnimatedTabsHoverProps) {
     <div className='flex space-x-2 p-1 bg-slate-200 rounded-lg'>
       <AnimatedBackground
         defaultValue={activeTab}
-        className='rounded-lg bg-white'
+        className='rounded-lg bg-white bg-opacity-80'
         transition={{
           type: 'spring',
           bounce: 0.2,
@@ -233,7 +233,7 @@ function AnimatedTabsHover({ activeTab, onChange }: AnimatedTabsHoverProps) {
             data-id={tab.label}
             type='button'
             onClick={() => onChange(tab.label as '週' | '月' | '年')}
-            className={`inline-flex h-8 w-full items-center justify-center transition-colors duration-100 ${activeTab === tab.label ? 'text-blue-500' : 'text-black'} px-2`}
+            className={`inline-flex h-8 w-full items-center justify-center transition-colors duration-100 z-10 ${activeTab === tab.label ? 'text-blue-500 bg-white rounded-lg' : 'text-black'} px-2`}
           >
             <p className='flex items-center justify-center gap-1'>
               <span className='hidden md:block'>{tab.icon}</span>

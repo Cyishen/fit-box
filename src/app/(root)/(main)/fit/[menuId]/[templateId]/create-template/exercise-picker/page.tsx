@@ -150,7 +150,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
                       <div className="p-2">
                         <div className="flex flex-col items-center">
                           <Image
-                            src='/icons/dumbbell.svg'
+                            src={exercise?.iconSrc || '/icons/dumbbell.svg'}
                             alt={exercise.name}
                             width={36}
                             height={36}

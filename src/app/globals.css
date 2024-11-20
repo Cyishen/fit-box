@@ -6,17 +6,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* input 類型為number, 取消上下調節器 */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none; /* Chrome and Safari */
-  margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield; /* Firefox */
-}
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -1,24 +1,83 @@
 "use client"
 
+
 import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 
+import { useSession } from "next-auth/react"
+
+
 const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"] as const;
 type Category = typeof categories[number];
 
-const LineChart = () => {
+export type CategoryType = {
+  userId: string,
+  workoutSessionId: string
+  date: string | Date,
+  totalSessionSets: number,
+  totalSessionWeight: number,
+  categorySummaries: {
+    exerciseCategory: string,
+    totalCategorySets: number,
+    totalCategoryWeight: number
+  }[];
+}
+
+type WorkoutRecord = {
+  date: string;
+  totalWeight: number;
+  category: string;
+};
+
+interface Props {
+  userYearSummary: CategoryType[]
+}
+
+const LineChart = ({ userYearSummary }: Props) => {
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
   const [activeCategory, setActiveCategory] = useState<Category>("胸");
   const [chartData, setChartData] = useState<WorkoutRecord[]>([]);
 
   useEffect(() => {
-    // 生成過去365天的模擬數據
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - 365);
+    if (userId) {
+      // TODO: 真實數據
+      const filteredData: WorkoutRecord[] = userYearSummary.flatMap((summary) =>
+        summary.categorySummaries
+          .filter((categorySummary) => categorySummary.exerciseCategory === activeCategory)
+          .map((categorySummary) => ({
+            date: new Date(summary.date).toLocaleDateString(),
+            totalWeight: categorySummary.totalCategoryWeight,
+            category: categorySummary.exerciseCategory
+          }))
+      );
 
-    const mockData = generateMockData(activeCategory, startDate, 180);
-    setChartData(mockData);
-  }, [activeCategory]);
+      const mergedData: WorkoutRecord[] = filteredData.reduce((acc: WorkoutRecord[], current: WorkoutRecord) => {
+        // 查找是否已經存在相同日期和類別的記錄
+        const existing = acc.find(item => item.date === current.date && item.category === current.category);
+        if (existing) {
+          // 如果存在，累加 totalWeight
+          existing.totalWeight += current.totalWeight;
+        } else {
+          // 如果不存在，將這條記錄加入陣列
+          acc.push({ ...current });
+        }
+        return acc;
+      }, []);
+
+      setChartData(mergedData);
+    } else {
+      // 本地
+      // 生成過去365天的模擬數據
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 365);
+
+      const mockData = generateMockData(activeCategory, startDate, 180);
+      setChartData(mockData);
+    }
+  }, [activeCategory, userId, userYearSummary]);
 
 
   const option: EChartsOption = {
@@ -27,8 +86,6 @@ const LineChart = () => {
       subtext: '重量 x 次數 x 組數 kg',
       itemGap: 5,
       top: 5,
-      // left: "center",
-      // textAlign: 'left',
       textStyle: {
         fontSize: 14
       },
@@ -83,7 +140,7 @@ const LineChart = () => {
       nameLocation: 'end',
       nameGap: 30,
       axisLabel: {
-        formatter: '{value}k',
+        formatter: '{value}kg',
         fontSize: 8,
       },
       nameTextStyle: {
@@ -98,7 +155,7 @@ const LineChart = () => {
         xAxisIndex: [0],
         start: 80,
         end: 100,
-        height: 30
+        height: 30,
       },
       {
         type: 'slider',
@@ -188,11 +245,17 @@ const LineChart = () => {
       </div>
 
       <div className="h-[300px]">
-        <ReactECharts
-          option={option}
-          style={{ height: '100%', width: '100%' }}
-          opts={{ renderer: 'svg' }}
-        />
+        {chartData.length === 0 ? (
+          <div className='flex justify-center items-center h-full border rounded-lg'>
+            無數據
+          </div>
+        ) : (
+          <ReactECharts
+            option={option}
+            style={{ height: '100%', width: '100%' }}
+            opts={{ renderer: 'svg' }}
+          />
+        )}
       </div>
     </div>
   );
@@ -201,11 +264,7 @@ const LineChart = () => {
 export default LineChart;
 
 
-type WorkoutRecord = {
-  date: string;
-  totalWeight: number;
-  category: string;
-};
+
 
 // 亂數產生測試資料
 const generateMockData = (category: string, startDate: Date, days: number): WorkoutRecord[] => {

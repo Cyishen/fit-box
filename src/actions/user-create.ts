@@ -702,43 +702,42 @@ export const upsertWorkoutSummary = async (id: string) => {
     throw new Error("Workout session not found");
   }
 
-  // 統計訓練卡數據
+  // 初始值
   let totalSessionSets = 0;
   let totalSessionWeight = 0;
-  const exerciseSummaries = workoutSession.exercises.map((exercise) => {
-    const completedSets = exercise.sets.filter((set) => set.isCompleted);
 
-    const movementSets = completedSets.length;
-    const movementWeight = completedSets.reduce((total, set) => total + set.totalWeight, 0);
+  // 計算每個動作的數據
+  const exerciseSummaries = workoutSession.exercises
+    .filter((exercise) =>
+      exercise.sets.some((set) => set.isCompleted)
+    )
+    .map((exercise) => {
+      const completedSets = exercise.sets.filter((set) => set.isCompleted);
+      const movementSets = completedSets.length;
+      const movementWeight = completedSets.reduce((total, set) => total + set.totalWeight, 0);
 
-    totalSessionSets += movementSets;
-    totalSessionWeight += movementWeight;
+      if (movementSets > 0) {
+        totalSessionSets += movementSets;
+        totalSessionWeight += movementWeight;
 
-    return {
-      movementId: exercise.movementId,
-      movementName: exercise.name,
-      movementSets,
-      movementWeight,
-    };
-  });
+        return {
+          movementId: exercise.movementId,
+          movementName: exercise.name,
+          movementSets,
+          movementWeight,
+        };
+      }
+      return null;
+    })
+    .filter((summary) => summary !== null);
 
-  // 統計部位（category）數據
-  const categorySummaries: { [key: string]: { totalCategorySets: number, totalCategoryWeight: number } } = {};
-
-  workoutSession.exercises.forEach((exercise) => {
-    const completedSets = exercise.sets.filter((set) => set.isCompleted);
-    const category = exercise.exerciseCategory;
-
-    const movementSets = completedSets.length;
-    const movementWeight = completedSets.reduce((total, set) => total + set.totalWeight, 0);
-
-    if (!categorySummaries[category]) {
-      categorySummaries[category] = { totalCategorySets: 0, totalCategoryWeight: 0 };
-    }
-
-    categorySummaries[category].totalCategorySets += movementSets;
-    categorySummaries[category].totalCategoryWeight += movementWeight;
-  });
+  // 檢查訓練卡是否有數據
+  if (totalSessionSets === 0) {
+    await prismaDb.workoutSummary.deleteMany({
+      where: { workoutSessionId: id },
+    });
+    return { totalSessionSets: 0, totalSessionWeight: 0 };
+  }
 
   // TODO: 更新或創建 WorkoutSummary
   const workoutSummary = await prismaDb.workoutSummary.upsert({
@@ -756,8 +755,9 @@ export const upsertWorkoutSummary = async (id: string) => {
     },
   });
 
-  // 清理刪除的 ExerciseSummary
-  const currentMovementIds = workoutSession.exercises.map(e => e.movementId);
+  // TODO: exercise數據
+  // 第二步: 用戶修改訓練卡, 篩選目前有的動作
+  const currentMovementIds = exerciseSummaries.map(e => e.movementId);
   await prismaDb.exerciseSummary.deleteMany({
     where: {
       workoutSummaryId: workoutSummary.id,
@@ -765,7 +765,7 @@ export const upsertWorkoutSummary = async (id: string) => {
     },
   });
 
-  // TODO: 更新或創建 ExerciseSummary
+  // 第三步: 更新或創建 ExerciseSummary
   const exerciseSummaryPromises = exerciseSummaries.map(async (summary) => {
     await prismaDb.exerciseSummary.upsert({
       where: {
@@ -787,9 +787,38 @@ export const upsertWorkoutSummary = async (id: string) => {
       },
     });
   })
+  // 等待exerciseSummaryPromises創建完成
+  await Promise.all(exerciseSummaryPromises);
 
-  // 清理刪除的 ExerciseCategorySummary
-  const currentCategories = workoutSession.exercises.map(e => e.exerciseCategory);
+
+  // TODO: category數據
+  // 第一步: 統計訓練卡中的每個類別
+  const categorySummaries: {
+    [key: string]: { totalCategorySets: number, totalCategoryWeight: number }
+  } = {};
+
+  workoutSession.exercises.forEach((exercise) => {
+    const completedSets = exercise.sets.filter((set) => set.isCompleted);
+    const movementSets = completedSets.length;
+    const movementWeight = completedSets.reduce((total, set) => total + set.totalWeight, 0);
+
+    const category = exercise.exerciseCategory;
+
+    if (movementSets > 0) {
+      if (!categorySummaries[category]) {
+        categorySummaries[category] = { totalCategorySets: 0, totalCategoryWeight: 0 };
+      }
+
+      categorySummaries[category].totalCategorySets += movementSets;
+      categorySummaries[category].totalCategoryWeight += movementWeight;
+    }
+  });
+
+  // 第二步: 用戶修改訓練卡, 篩選目前有的動作, 排除改 "未完成"
+  const currentCategories = workoutSession.exercises
+    .filter((exercise) => exercise.sets.some((set) => set.isCompleted))
+    .map((exercise) => exercise.exerciseCategory);
+  // 刪除不在currentCategories的數據
   await prismaDb.exerciseCategorySummary.deleteMany({
     where: {
       workoutSummaryId: workoutSummary.id,
@@ -797,31 +826,30 @@ export const upsertWorkoutSummary = async (id: string) => {
     },
   });
 
-  // 等待exerciseSummaryPromises創建完成
-  await Promise.all(exerciseSummaryPromises);
-
-  // TODO: 更新或創建 ExerciseCategorySummary
+  // 第三步: 更新或創建 ExerciseCategorySummary
   const exerciseCategorySummaryPromises = Object.keys(categorySummaries).map(async (category) => {
     const { totalCategorySets, totalCategoryWeight } = categorySummaries[category];
 
-    await prismaDb.exerciseCategorySummary.upsert({
-      where: {
-        workoutSummaryId_exerciseCategory: {
+    if (totalCategorySets > 0) {
+      await prismaDb.exerciseCategorySummary.upsert({
+        where: {
+          workoutSummaryId_exerciseCategory: {
+            exerciseCategory: category,
+            workoutSummaryId: workoutSummary.id,
+          },
+        },
+        update: {
+          totalCategorySets,
+          totalCategoryWeight,
+        },
+        create: {
           exerciseCategory: category,
+          totalCategorySets,
+          totalCategoryWeight,
           workoutSummaryId: workoutSummary.id,
         },
-      },
-      update: {
-        totalCategorySets,
-        totalCategoryWeight,
-      },
-      create: {
-        exerciseCategory: category,
-        totalCategorySets,
-        totalCategoryWeight,
-        workoutSummaryId: workoutSummary.id,
-      },
-    });
+      });
+    }
   });
 
   // 等待exerciseCategorySummaryPromises創建完成
@@ -833,43 +861,56 @@ export const upsertWorkoutSummary = async (id: string) => {
   };
 };
 
-
-export const getMovementSummaryByUserId = async (id: string, movementId: string) => {
+export const getCategorySummaryByUserIdForRange = async (id: string, range: 'week' | 'month' | 'year') => {
   const session = await auth();
   const userId = session?.user?.id;
 
   if (!userId) {
-    throw new Error("Unauthorized");
+    return [];
+  }
+
+  const startDate = new Date();
+  const endDate = new Date();
+
+  switch (range) {
+    case 'week':
+      // 計算本週的開始和結束日期（週一作為週的開始）
+      startDate.setDate(startDate.getDate() - (startDate.getDay() || 7) + 1);  // 本週的週一
+      endDate.setDate(startDate.getDate() + 6);  // 本週的週日
+      break;
+    case 'month':
+      startDate.setDate(1); // 當月的開始
+      endDate.setMonth(endDate.getMonth() + 1); // 設置為下個月的第一天
+      endDate.setDate(0); // 設置為當月的最後一天
+      break;
+    case 'year':
+      startDate.setMonth(0, 1); // 當年的開始（1月1日）
+      endDate.setMonth(11, 31); // 當年的結束（12月31日）
+      break;
   }
 
   const workoutSummaries = await prismaDb.workoutSummary.findMany({
     where: {
       userId: id,
+      date: {
+        gte: startDate,
+        lte: endDate
+      }
     },
     include: {
-      exerciseSummaries: true,
+      categorySummaries: true,
     }
   });
 
   if (!workoutSummaries.length) {
-    throw new Error("Workout summaries not found for the given user");
+    return [];
   }
 
-  let totalSets = 0;
-  let totalWeight = 0;
+  const formattedSessions = workoutSummaries.map(session => ({
+    ...session,
+    date: session.date.toISOString(),
+  }));
 
-  workoutSummaries.forEach((workoutSummary) => {
-    const targetMovement = workoutSummary.exerciseSummaries.find((summary) => summary.movementId === movementId);
+  return formattedSessions;
+};
 
-    if (targetMovement) {
-      totalSets += targetMovement.movementSets;
-      totalWeight += targetMovement.movementWeight;
-    }
-  });
-
-  if (totalSets === 0 && totalWeight === 0) {
-    return { totalSets: 0, totalWeight: 0 };
-  }
-
-  return { totalSets, totalWeight };
-}
