@@ -17,19 +17,19 @@ import { Loader } from 'lucide-react';
 
 
 const ExercisePicker = ({ params }: { params: { menuId: string, templateId: string } }) => {
-  const router = useRouter();
   const { templateId } = params;
-
-  const [isLoading, setIsLoading] = useState(false);
-
   const { data: session } = useSession()
   const userId = session?.user?.id
+
+  const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   // 本地存儲
   const templates = useTemplateStore(state => state.templates);
   const currentTemplate = templates.find(template => template.id === templateId);
 
-  // TODO* 測試透過 dataAllTemplate 取得exercise, 加快顯示速度
+  // TODO* data儲存本地, 用dataAllTemplate, 取得exercise, 加快顯示速度
   const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
 
   // 選中的動作管理
@@ -38,7 +38,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
   useEffect(() => {
     const fetchSelectedExercises = async () => {
       if (userId) {
-        // 資料庫
+        // 資料庫, 讀取已存在動作, 速度慢, 可用dataAllTemplate本地
         const existingExercises = await getTemplateExerciseByTemplateId(templateId);
         setSelectedExercises(existingExercises);
       } else {
@@ -61,7 +61,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
         // 更新動作到資料庫
         await upsertExercise(selectedExercises, templateId);
 
-        // TODO* 同時更新動作到 setDataAllTemplate
+        // TODO* data儲存本地, 更新動作到 setDataAllTemplate
         if (dataAllTemplate) {
           const updatedDataAllTemplate = dataAllTemplate.map(item => {
             if (item.id === templateId) {

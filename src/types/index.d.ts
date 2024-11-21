@@ -9,7 +9,6 @@ type TemplateType = {
   id: string;
   userId?: string;
   menuId: string;
-  // templateId?: string;
   templateCategory: string;
   templateTitle: string;
 

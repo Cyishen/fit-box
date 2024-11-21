@@ -23,7 +23,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // 本地訓練卡
+  // 無用戶, 本地訓練卡
   const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
@@ -53,7 +53,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
       await upsertWorkoutSession(updatedSession)
       setCurrentWorkout(updatedSession);
     } else {
-      // 本地更新
+      // 無用戶, 本地更新
       updateCurrentSession(updatedSession);
     }
   };
@@ -74,7 +74,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
         await upsertWorkoutSession(updatedSession)
         setCurrentWorkout(updatedSession);
       } else {
-        // 本地更新
+        // 無用戶, 本地更新
         updateCurrentSession(updatedSession);
       }
     }

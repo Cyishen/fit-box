@@ -10,6 +10,7 @@ import { usePracticeModal } from '@/lib/use-practice-modal';
 
 import { useSession } from "next-auth/react"
 
+
 interface Props {
   menusData: MenuType[];
   templatesData: TemplateType[]
@@ -76,11 +77,14 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
       .slice()
       .reverse();
 
-  // TODO* 測試把資料庫資料抓到zustand, 頁面透過 dataAllTemplate取得exercise改善顯示圖片速度
+  // TODO* data儲存本地, 第一步, 資料庫儲存到zustand, 頁面用 dataAllTemplate取資料
   const { setDataAllTemplate } = usePracticeModal()
+
   useEffect(() => {
     if (userId && templatesData.length > 0) {
       setDataAllTemplate(templatesData)
+    } else {
+      localStorage.removeItem('from-data-template-storage')
     }
   }, [setDataAllTemplate, templatesData, userId])
 

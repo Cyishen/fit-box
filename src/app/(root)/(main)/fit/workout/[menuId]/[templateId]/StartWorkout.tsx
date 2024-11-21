@@ -23,8 +23,8 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
 
   const { data: session } = useSession()
   const userId = session?.user?.id
- 
-  // 本地訓練卡更新
+
+  // 無用戶, 本地訓練卡更新
   const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
@@ -36,9 +36,10 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
     if(userId){
       // 資料庫
       await upsertWorkoutSession(workoutSession)
+      // 統計
       await upsertWorkoutSummary(workoutSession.id as string);
     } else {
-      // 本地
+      // 無用戶本地
       const updatedSession = { ...workoutSession };
       updateCurrentSession(updatedSession as WorkoutSessionType);
       setCurrentWorkout(updatedSession)

@@ -14,6 +14,7 @@ import { useWorkoutStore } from '@/lib/store';
 import { useSession } from 'next-auth/react'
 import { getWorkoutSessionByCardId, upsertWorkoutSession } from '@/actions/user-create';
 import { Loader, ChevronLeft} from 'lucide-react';
+import { useDayCardStore } from '@/lib/day-modal';
 
 
 const ActionPicker = () => {
@@ -33,6 +34,10 @@ const ActionPicker = () => {
   // 判斷 action頁面是從訓練卡點選, 還是bar點選
   const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
 
+  // todo? dayCard 編輯
+  const { editDayCard } = useDayCardStore();
+
+
   // 初始 UI狀態
   useEffect(() => {
     const currentSessionId = localStorage.getItem('currentSessionId');
@@ -43,7 +48,7 @@ const ActionPicker = () => {
     }
 
     if (userId) {
-      // 資料庫 exercise
+      // TODO? 資料庫讀取, 速度慢, 可用 dayCard讀取
       const fetchWorkout = async () => {
         try {
           const workoutCard = await getWorkoutSessionByCardId(currentSessionId)
@@ -59,7 +64,7 @@ const ActionPicker = () => {
       }
       fetchWorkout()
     } else {
-      // 本地
+      // 無用戶本地
       const findSession = workoutSessions.find(
         session => session.cardSessionId === currentSessionId
       );
@@ -90,6 +95,10 @@ const ActionPicker = () => {
     if (userId) {
       // 更新動作到資料庫
       await upsertWorkoutSession(updatedSession);
+
+      // TODO? dayCard 儲存本地: 更新 editDayCard, 訓練卡頁面才會得到新修改動作
+      editDayCard(sessionId, updatedSession);
+  
       router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);
     } else {
       // 更新動作到本地
@@ -145,7 +154,7 @@ const ActionPicker = () => {
                 ) : (
                   <div className='flex justify-center items-center gap-1'>
                     <p>選擇</p>
-                    <p>{selectedExercises.length}</p>
+                    <p>{selectedExercises?.length}</p>
                   </div>
                 )}
               </Button>

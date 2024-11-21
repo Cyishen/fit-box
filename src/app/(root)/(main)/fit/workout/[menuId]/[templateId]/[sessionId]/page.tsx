@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { useWorkoutStore } from '@/lib/store';
 import StartWorkout from '../StartWorkout';
 
 import { useSession } from 'next-auth/react'
-import { getWorkoutSessionByCardId } from '@/actions/user-create';
+// import { getWorkoutSessionByCardId } from '@/actions/user-create';
+
+import { useWorkoutStore } from '@/lib/store';
+import { useDayCardStore } from '@/lib/day-modal';
 
 
 
@@ -19,39 +21,49 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
 
   const [currentWorkout, setCurrentWorkout] = useState<WorkoutSessionType | null>(null);
 
-  // 本地
+  // 無用戶本地
   const workoutSessions = useWorkoutStore(state => state.workoutSessions);
+
+  // TODO? dayCard 儲存本地, 讀取儲存的訓練卡
+  const { dayCard } = useDayCardStore();
 
   useEffect(() => {
     if (userId) {
-      // 資料庫數據
-      const fetchWorkout = async () => {
-        try {
-          const workoutCard = await getWorkoutSessionByCardId(sessionId)
-
-          if (workoutCard) {
-            setCurrentWorkout(workoutCard as WorkoutSessionType);
-          }
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setFetchIsLoading(false);
-        }
+      // todo? dayCard 儲存本地, 找到符合cardSessionId的卡片
+      const findCardFromStore = dayCard.find(
+        session => session.cardSessionId === sessionId
+      )
+      if(findCardFromStore) {
+        setCurrentWorkout(findCardFromStore);
       }
-      fetchWorkout()
+      setFetchIsLoading(false);
+
+      // 資料庫讀取, 速度比較慢
+      // const fetchWorkout = async () => {
+      //   try {
+      //     const workoutCard = await getWorkoutSessionByCardId(sessionId)
+
+      //     if (workoutCard) {
+      //       setCurrentWorkout(workoutCard as WorkoutSessionType);
+      //     }
+      //   } catch (error) {
+      //     console.log(error);
+      //   } finally {
+      //     setFetchIsLoading(false);
+      //   }
+      // }
+      // fetchWorkout()
     } else {
       // 本地
       const findSession = workoutSessions.find(
         session => session.cardSessionId === sessionId
       );
-
       if (findSession) {
         setCurrentWorkout(findSession);
       }
-
       setFetchIsLoading(false);
     }
-  }, [menuId, sessionId, templateId, userId, workoutSessions]);
+  }, [dayCard, menuId, sessionId, templateId, userId, workoutSessions]);
 
 
   return (

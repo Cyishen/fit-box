@@ -80,6 +80,8 @@ const LineChart = ({ userYearSummary }: Props) => {
   }, [activeCategory, userId, userYearSummary]);
 
 
+  const dataCount = chartData.length > 20 ? 80 : 0;
+
   const option: EChartsOption = {
     title: {
       text: "訓練量 🏋️",
@@ -153,7 +155,7 @@ const LineChart = ({ userYearSummary }: Props) => {
         type: 'slider',
         show: true,
         xAxisIndex: [0],
-        start: 80,
+        start: dataCount,
         end: 100,
         height: 30,
       },

@@ -8,7 +8,9 @@ import ShowTrainingCard from './ShowTrainingCard';
 import { useSession } from "next-auth/react"
 
 import { deleteWorkoutSessionByCardId } from '@/actions/user-create';
+
 import { useWorkoutStore } from '@/lib/store';
+import { useDayCardStore } from '@/lib/day-modal';
 
 
 
@@ -22,8 +24,10 @@ const ShowDayTraining = ({ sessionData }: Props) => {
 
   const router = useRouter();
 
+  // 無用戶本地
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
+  // 卡片狀態管理
   const [workoutCards, setWorkoutCards] = useState<WorkoutSessionType[]>([]);
 
   useEffect(() => {
@@ -35,7 +39,17 @@ const ShowDayTraining = ({ sessionData }: Props) => {
     }
   }, [sessionData, workoutSessions, userId]);
 
+  // TODO? dayCard 儲存本地: 把當天訓練卡抓到zustand
+  const { setDayCard } = useDayCardStore();
+  useEffect(() => {
+    if (userId && sessionData.length > 0) {
+      setDayCard(sessionData)
+    } else {
+      localStorage.removeItem('day-card-storage')
+    }
+  }, [sessionData, setDayCard, userId])
 
+  // 點擊訓練卡到編輯頁面
   const handleEditWorkout = (cardSessionId: string) => {
     if(userId) {
       // 資料庫
@@ -48,7 +62,7 @@ const ShowDayTraining = ({ sessionData }: Props) => {
       }
       localStorage.setItem('currentSessionId', cardSessionId);
     } else {
-      // 本地
+      // 無用戶本地
       const sessionToEdit = workoutSessions.find(session => session.cardSessionId === cardSessionId);
     
       if (sessionToEdit) {

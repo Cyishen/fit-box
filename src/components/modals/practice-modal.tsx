@@ -22,6 +22,10 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react"
 import { upsertWorkoutSession } from "@/actions/user-create";
 
+import { useDayCardStore } from "@/lib/day-modal";
+
+
+
 // const fetchTemplateByTemplateId = async (templateId: string) => {
 //   const response = await fetch(`/api/template/${templateId}`, {
 //     method: 'GET',
@@ -38,16 +42,16 @@ export const PracticeModal = () => {
   const userId = session?.user?.id
 
   const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, menuId, templateId, dataAllTemplate } = usePracticeModal();
 
-  // 本地
+  // 無用戶本地
   const templates = useTemplateStore(state => state.templates);
   const openLocalTemplate = templates.find(template => template.id === templateId);
   const localExercise = openLocalTemplate?.templateExercises
 
   const addWorkoutSession = useWorkoutStore(state => state.addWorkoutSession);
 
-  // Todo: 資料庫, 透過zustand 取得exercise, 加快彈出視窗圖片顯示
+  // Todo* data儲存本地: 用dataAllTemplate 取得exercise, 彈出視窗加快顯示圖片
+  const { isOpen, close, menuId, templateId, dataAllTemplate } = usePracticeModal();
   const [exercise, setExercise] = useState<TemplateExerciseType[]>([])
 
   // 第一步, useMemo緩存 dataAllTemplate有變動才更新, 避免useEffect重複執行
@@ -58,41 +62,34 @@ export const PracticeModal = () => {
   // 第二步, 依據 templateId找尋, 彈出視窗顯示exercise
   useEffect(() => {
     if (userId) {
+      // data儲存本地,
       const selectedTemplate = filteredData.find(item => item.id === templateId);
       const exercisesToRender = selectedTemplate?.templateExercises;
 
       setExercise(exercisesToRender || []);
+
+      // 資料庫抓取, 彈出視窗顯示圖片較慢
+      // 伺服器運行
+      // const exerciseList = await getExerciseByTemplateId(templateId);
+      // setExercise(exerciseList as ExerciseType[]);
+
+      // 一般 api 請求
+      // await fetchTemplateByTemplateId(templateId)
+      //   .then((data) => {
+      //     setExercise(data);
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //   });
     } else {
       // 本地
       setExercise(localExercise || []);
     }
   }, [filteredData, localExercise, templateId, userId])
 
-  // 資料庫抓取, 彈出視窗顯示圖片較慢
-  // useEffect(() => {
-  //   const fetchExercises = async () => {
-  //     if (userId && templateId) {
-  //       // 伺服器運行
-  //       const exerciseList = await getExerciseByTemplateId(templateId);
-  //       setExercise(exerciseList as ExerciseType[]);
 
-  //       // 一般 api 請求
-  //       // await fetchTemplateByTemplateId(templateId)
-  //       //   .then((data) => {
-  //       //     setExercise(data);
-  //       //   })
-  //       //   .catch((error) => {
-  //       //     console.error(error);
-  //       //   });
-  //     } else {
-  //       // 本地
-  //       setExercise(localExercise || []);
-  //     }
-  //   };
-
-  //   fetchExercises();
-  // }, [localExercise, userId, templateId])
-
+  // Todo? dayCard儲存本地: 新建卡片儲存本地 
+  const { dayCard, setDayCard } = useDayCardStore();
 
   const handleToWorkoutSession = async () => {
     const existingSessionId = localStorage.getItem('currentSessionId');
@@ -102,9 +99,9 @@ export const PracticeModal = () => {
 
     try {
       if (userId) {
-        // 資料庫
-        const newCurrentSession = await upsertWorkoutSession({
-          cardSessionId: Date.now().toString(),
+        // 資料庫建立訓練卡
+        const newCurrentSession = {
+          cardSessionId: newSessionId,
           userId: userId,
           menuId: menuId ?? '',
           templateId: templateId ?? '',
@@ -116,12 +113,18 @@ export const PracticeModal = () => {
           notes: null,
           exercises: exercise.map(exercise => ({
             ...exercise,
-            sets: exercise.templateSets.map(set => ({ 
+            sets: exercise.templateSets.map(set => ({
               ...set,
-              isCompleted: false 
+              isCompleted: false
             })),
           })),
-        })
+        }
+        const savedSessionToData = await upsertWorkoutSession(newCurrentSession);
+
+        // 更新本地狀態 (包含資料庫返回的 id)
+        if (!dayCard.find((card) => card.cardSessionId === savedSessionToData.cardSessionId)) {
+          setDayCard([...dayCard, savedSessionToData as WorkoutSessionType]);
+        }
 
         localStorage.setItem('currentSessionId', newCurrentSession?.cardSessionId || '');
         router.push(`/fit/workout/${menuId}/${templateId}`);
@@ -144,7 +147,7 @@ export const PracticeModal = () => {
               name: exercise.name,
               exerciseCategory: exercise.exerciseCategory,
               sets: exercise.templateSets.map((set, index) => ({
-                id: `${set.movementId}-${index+1}`,
+                id: `${set.movementId}-${index + 1}`,
                 movementId: set.movementId,
                 leftWeight: set.leftWeight,
                 rightWeight: set.rightWeight,

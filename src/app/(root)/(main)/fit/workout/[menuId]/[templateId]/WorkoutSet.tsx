@@ -117,7 +117,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     setDynamicSets(updatedSets);
   };
 
-  // 保存組數據
+  // 組數添加刪除與數據修改, 按保存才會儲存
   const handleSaveSetsIcon = () => {
     onUpdateSets(movementId, dynamicSets);
 

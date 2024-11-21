@@ -16,7 +16,7 @@ export function formatDateString(dateString: string) {
   return `${formattedDate} ${time}`;
 }
 
-// TODO* 創立時間 UTC, 傳入ISO格式字串
+// TODO* 資料庫傳入UTC的ISO格式
 export const multiFormatDateString = (timestamp: string = ""): string => {
   const timestampNum = Math.round(new Date(timestamp).getTime() / 1000);
   const date: Date = new Date(timestampNum * 1000);
