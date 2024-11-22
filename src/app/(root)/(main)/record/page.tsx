@@ -15,14 +15,14 @@ const RecordPage = async () => {
   const userId = session?.user?.id
 
   const userYearSummaryData = await getCategorySummaryByUserIdForRange(userId as string, 'year');
-  const userWeekSummaryData = await getCategorySummaryByUserIdForRange(userId as string, 'week');
+  // const userWeekSummaryData = await getCategorySummaryByUserIdForRange(userId as string, 'week');
 
   const[ 
     userYearSummary,
-    userWeekSummary 
+    // userWeekSummary 
   ] = await Promise.all([ 
     userYearSummaryData,
-    userWeekSummaryData 
+    // userWeekSummaryData 
   ]) 
 
   return (
@@ -36,7 +36,7 @@ const RecordPage = async () => {
         </div>
 
         <div className='mt-5'>
-          <BarChart userWeekSummary={userWeekSummary}/>
+          <BarChart/>
         </div>
 
         <div className='mt-5'>
