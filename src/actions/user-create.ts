@@ -586,6 +586,7 @@ export const getWorkoutSessionByCardId = async (cardSessionId: string) => {
   return null;
 }
 
+//TODO! 抓所有訓練卡
 export const getAllWorkoutSessionByUserId = async (id: string) => {
   const session = await auth()
   const userId = session?.user?.id
@@ -667,12 +668,12 @@ export const getDaySessionByUserId = async (id: string) => {
     return []
   }
 
-  // 本地時間
+  // 本地時間範圍
   const now = new Date();
   const startOfLocalDay = new Date(now.setHours(0, 0, 0, 0));
   const endOfLocalDay = new Date(now.setHours(23, 59, 59, 999));
 
-  // 資料庫是UTC時間, 要把本地時間轉為UTC
+  // 資料庫是UTC時間, 要把本地時間範圍 >轉對應的UTC範圍
   const startOfDayUTC = new Date(startOfLocalDay.getTime() - startOfLocalDay.getTimezoneOffset() * 60000);
   const endOfDayUTC = new Date(endOfLocalDay.getTime() - endOfLocalDay.getTimezoneOffset() * 60000);
 
@@ -709,7 +710,6 @@ export const getDaySessionByUserId = async (id: string) => {
 
 
 //TODO? 統計邏輯
-
 export const upsertWorkoutSummary = async (id: string) => {
   const session = await auth();
   const userId = session?.user?.id;
@@ -903,6 +903,9 @@ export const getCategorySummaryByUserIdForRange = async (id: string, range: 'wee
 
   const startDate = new Date();
   const endDate = new Date();
+
+  // const startOfDayUTC = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000);
+  // const endOfDayUTC = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000);
 
   switch (range) {
     case 'week':

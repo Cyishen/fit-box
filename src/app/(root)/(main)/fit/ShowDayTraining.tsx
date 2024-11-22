@@ -15,10 +15,10 @@ import { useDayCardStore } from '@/lib/day-modal';
 
 
 interface Props {
-  sessionData: WorkoutSessionType[];
+  dayCardData: WorkoutSessionType[];
 }
 
-const ShowDayTraining = ({ sessionData }: Props) => {
+const ShowDayTraining = ({ dayCardData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
 
@@ -32,29 +32,29 @@ const ShowDayTraining = ({ sessionData }: Props) => {
 
   useEffect(() => {
     if (userId) {
-      setWorkoutCards(sessionData);
+      setWorkoutCards(dayCardData);
     } else {
       // 本地
       setWorkoutCards(workoutSessions);
     }
-  }, [sessionData, workoutSessions, userId]);
+  }, [dayCardData, workoutSessions, userId]);
 
   // TODO? dayCard 儲存本地: 把當天訓練卡抓到zustand
   const { setDayCard } = useDayCardStore();
   useEffect(() => {
-    if (userId && sessionData.length > 0) {
-      setDayCard(sessionData)
+    if (userId && dayCardData.length > 0) {
+      setDayCard(dayCardData)
     } else {
       localStorage.removeItem('day-card-storage')
     }
-  }, [sessionData, setDayCard, userId])
+  }, [dayCardData, setDayCard, userId])
 
   // 點擊訓練卡到編輯頁面
   const handleEditWorkout = (cardSessionId: string) => {
     if(userId) {
       // 資料庫
-      if (sessionData) {
-        const sessionCards = sessionData.find(session => session.cardSessionId === cardSessionId);
+      if (dayCardData) {
+        const sessionCards = dayCardData.find(session => session.cardSessionId === cardSessionId);
 
         if(sessionCards) {
           router.push(`/fit/workout/${sessionCards.menuId}/${sessionCards.templateId}/${cardSessionId}`);

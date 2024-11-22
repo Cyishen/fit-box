@@ -9,11 +9,11 @@ interface Props {
 }
 
 const ShowCard = ({ daySession, allSession }: Props) => {
-  console.log(daySession)
+
   return (
     <>
       <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
-        <ShowDayTraining sessionData={daySession} />
+        <ShowDayTraining dayCardData={daySession} />
       </div>
 
       <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>

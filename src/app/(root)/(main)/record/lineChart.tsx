@@ -37,10 +37,10 @@ interface Props {
 const LineChart = ({ userYearSummary }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-
+// console.log('userYearSummary',userYearSummary)
   const [activeCategory, setActiveCategory] = useState<Category>("胸");
   const [chartData, setChartData] = useState<WorkoutRecord[]>([]);
-
+// console.log('資料',chartData)
   useEffect(() => {
     if (userId) {
       // TODO: 真實數據
@@ -184,9 +184,9 @@ const LineChart = ({ userYearSummary }: Props) => {
             x2: 0,
             y2: 1,
             colorStops: [
-              { offset: 0, color: 'rgba(59, 130, 246, 0.5)' }, // 渐变起始颜色
+              { offset: 0, color: 'rgba(59, 130, 246, 0.5)' }, // 起始颜色
               { offset: 0.7, color: 'rgba(130, 180, 250, 0.7)' },
-              { offset: 1, color: 'rgba(255, 255, 255, 0.5)' }  // 渐变结束颜色
+              { offset: 1, color: 'rgba(255, 255, 255, 0.5)' }  // 结束颜色
             ],
             global: false
           }
@@ -206,20 +206,20 @@ const LineChart = ({ userYearSummary }: Props) => {
             fontSize: 8
           }
         },
-        markLine: {
-          data: [{ type: 'average', name: '平均' }],
-          symbol: 'none',
-          silent: true,
-          label: {
-            position: 'insideEndBottom',
-            fontWeight: 'bold',
-            fontSize: 8,
-          },
-          lineStyle: {
-            width: 0.5,
-            color: 'rgba(0, 0, 0, 0.6)'
-          }
-        }
+        // markLine: {
+        //   data: [{ type: 'average', name: '平均' }],
+        //   symbol: 'none',
+        //   silent: true,
+        //   label: {
+        //     position: 'insideEndBottom',
+        //     fontWeight: 'bold',
+        //     fontSize: 8,
+        //   },
+        //   lineStyle: {
+        //     width: 0.5,
+        //     color: 'rgba(0, 0, 0, 0.6)'
+        //   }
+        // }
       }
     ]
   };

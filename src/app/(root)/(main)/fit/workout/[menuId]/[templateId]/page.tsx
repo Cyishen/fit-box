@@ -33,39 +33,43 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
       return;
     }
 
-    if (userId) {
-      // todo? dayCard 儲存本地, 找到符合cardSessionId的卡片
+    const fetchWorkoutFromDatabase = async () => {
+      try {
+        const workoutCard = await getWorkoutSessionByCardId(currentSessionId);
+        if (workoutCard) {
+          setCurrentWorkout(workoutCard as WorkoutSessionType);
+        }
+      } catch (error) {
+        console.error("Error fetching workout session:", error);
+      } finally {
+        setFetchIsLoading(false);
+      }
+    };
+
+    if (userId && dayCard.length > 0) {
+      // 用戶登入, 本地檢索當天的訓練卡
       const findCardFromStore = dayCard.find(
         session => session.cardSessionId === currentSessionId
-      )
+      );
+  
       if (findCardFromStore) {
         setCurrentWorkout(findCardFromStore);
+        setFetchIsLoading(false);
+      } else {
+        // 如果本地找不到，嘗試從資料庫加載
+        fetchWorkoutFromDatabase();
       }
-      setFetchIsLoading(false);
-
-      // 資料庫
-      const fetchWorkout = async () => {
-        try {
-          const workoutCard = await getWorkoutSessionByCardId(currentSessionId)
-          if (workoutCard) {
-            setCurrentWorkout(workoutCard as WorkoutSessionType);
-          }
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setFetchIsLoading(false);
-        }
-      }
-      fetchWorkout()
     } else {
-      // 無用戶本地
+      // 用戶沒有登入
       const findSession = workoutSessions.find(
-        (session) => session.cardSessionId === currentSessionId
+        session => session.cardSessionId === currentSessionId
       );
-      setCurrentWorkout(findSession as WorkoutSessionType);
-      setFetchIsLoading(false);
+  
+      if (findSession) {
+        setCurrentWorkout(findSession);
+        setFetchIsLoading(false);
+      }
     }
-
   }, [dayCard, userId, workoutSessions]);
 
   return (
