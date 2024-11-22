@@ -6,6 +6,7 @@ import ReactECharts from 'echarts-for-react';
 import type { EChartsOption } from 'echarts';
 
 import { useSession } from "next-auth/react"
+import { useWorkoutStore } from '@/lib/store';
 
 
 const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"] as const;
@@ -37,10 +38,14 @@ interface Props {
 const LineChart = ({ userYearSummary }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-// console.log('userYearSummary',userYearSummary)
+
   const [activeCategory, setActiveCategory] = useState<Category>("胸");
   const [chartData, setChartData] = useState<WorkoutRecord[]>([]);
-// console.log('資料',chartData)
+
+  // 無登入本地訓練卡
+  const { workoutSessions } = useWorkoutStore();
+
+
   useEffect(() => {
     if (userId) {
       // TODO: 真實數據
@@ -69,17 +74,43 @@ const LineChart = ({ userYearSummary }: Props) => {
 
       setChartData(mergedData);
     } else {
-      // 本地
+      // 無用戶本地數據處理邏輯
+      const localData: WorkoutRecord[] = workoutSessions.flatMap((session) =>
+        session.exercises.flatMap((exercise) =>
+          exercise.sets
+            .filter(set => set.isCompleted && exercise.exerciseCategory === activeCategory)
+            .map(set => ({
+              date: new Date(session.date).toLocaleDateString(),
+              totalWeight: set.totalWeight,
+              category: exercise.exerciseCategory,
+            }))
+        )
+      );
+
+      // 按日期合併數據
+      const mergedLocalData: WorkoutRecord[] = localData.reduce((acc: WorkoutRecord[], current: WorkoutRecord) => {
+        const existing = acc.find(item => item.date === current.date && item.category === current.category);
+
+        if (existing) {
+          existing.totalWeight += current.totalWeight;
+        } else {
+          acc.push({ ...current });
+        }
+        return acc;
+      }, []);
+
+      setChartData(mergedLocalData);
+
       // 生成過去365天的模擬數據
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 365);
+      // const startDate = new Date();
+      // startDate.setDate(startDate.getDate() - 365);
 
-      const mockData = generateMockData(activeCategory, startDate, 180);
-      setChartData(mockData);
+      // const mockData = generateMockData(activeCategory, startDate, 180);
+      // setChartData(mockData);
     }
-  }, [activeCategory, userId, userYearSummary]);
+  }, [activeCategory, userId, userYearSummary, workoutSessions]);
 
-
+  // 區間滑動調整
   const dataCount = chartData.length > 20 ? 80 : 0;
 
   const option: EChartsOption = {
@@ -113,12 +144,6 @@ const LineChart = ({ userYearSummary }: Props) => {
         color: 'black',
         fontWeight: 'bold',
       },
-      // axisPointer: {
-      //   type: 'cross',
-      //   label: {
-      //     backgroundColor: 'black'
-      //   }
-      // },
     },
     grid: {
       left: '0%',
@@ -127,12 +152,16 @@ const LineChart = ({ userYearSummary }: Props) => {
       containLabel: true
     },
     xAxis: {
-      type: 'time',
+      type: 'category',
+      data: chartData.map(item => item.date),
       axisLabel: {
-        formatter: '{MM}/{dd}',
-        hideOverlap: true,
+        formatter: (value) => {
+          const parts = value.split('/');
+          return `${parts[1]}/${parts[2]}`;
+        },
         fontSize: 8,
       },
+      boundaryGap: false
     },
     yAxis: {
       type: 'value',
@@ -164,7 +193,7 @@ const LineChart = ({ userYearSummary }: Props) => {
         xAxisIndex: [0],
         start: 50,
         end: 100,
-        zoomOnMouseWheel: 'shift'
+        zoomOnMouseWheel: 'shift',
       }
     ],
     series: [
@@ -205,23 +234,9 @@ const LineChart = ({ userYearSummary }: Props) => {
             fontWeight: 'bold',
             fontSize: 8
           }
-        },
-        // markLine: {
-        //   data: [{ type: 'average', name: '平均' }],
-        //   symbol: 'none',
-        //   silent: true,
-        //   label: {
-        //     position: 'insideEndBottom',
-        //     fontWeight: 'bold',
-        //     fontSize: 8,
-        //   },
-        //   lineStyle: {
-        //     width: 0.5,
-        //     color: 'rgba(0, 0, 0, 0.6)'
-        //   }
-        // }
+        }
       }
-    ]
+    ],
   };
 
 
@@ -269,7 +284,7 @@ export default LineChart;
 
 
 // 亂數產生測試資料
-const generateMockData = (category: string, startDate: Date, days: number): WorkoutRecord[] => {
+export const generateMockData = (category: string, startDate: Date, days: number): WorkoutRecord[] => {
   const data: WorkoutRecord[] = [];
   const baseWeight = Math.floor(Math.random() * 100) + 150;
 
