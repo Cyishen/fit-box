@@ -264,7 +264,7 @@ const LineChart = ({ userYearSummary }: Props) => {
       <div className="h-[300px]">
         {chartData.length === 0 ? (
           <div className='flex justify-center items-center h-full border rounded-lg'>
-            無數據
+            <p>無數據</p>
           </div>
         ) : (
           <ReactECharts

@@ -15,8 +15,15 @@ const RecordPage = async () => {
   const userId = session?.user?.id
 
   const userYearSummaryData = await getCategorySummaryByUserIdForRange(userId as string, 'year');
+  const userWeekSummaryData = await getCategorySummaryByUserIdForRange(userId as string, 'week');
 
-  const[ userYearSummary ] = await Promise.all([ userYearSummaryData ]) 
+  const[ 
+    userYearSummary,
+    userWeekSummary 
+  ] = await Promise.all([ 
+    userYearSummaryData,
+    userWeekSummaryData 
+  ]) 
 
   return (
     <section className='flex flex-col bg-[#f3f2f8] h-full no-select'>
@@ -29,7 +36,7 @@ const RecordPage = async () => {
         </div>
 
         <div className='mt-5'>
-          <BarChart />
+          <BarChart userWeekSummary={userWeekSummary}/>
         </div>
 
         <div className='mt-5'>
