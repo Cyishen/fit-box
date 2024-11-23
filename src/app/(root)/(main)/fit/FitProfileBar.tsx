@@ -23,7 +23,7 @@ const FitProfileBar = () => {
   })
 
   return (
-    <div className='fixed top-1 sm:top-4 z-[90] w-full px-4'>
+    <div className='fixed top-1 sm:top-4 z-50 w-full px-4'>
       <div className="w-full flex justify-end">
         {scrolled && (
           <motion.div

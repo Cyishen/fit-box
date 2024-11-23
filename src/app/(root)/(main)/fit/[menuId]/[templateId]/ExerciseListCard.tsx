@@ -5,6 +5,8 @@ import { Trash2, ChevronLeft } from 'lucide-react';
 import RippleAni from '@/components/RippleAni';
 import { SkeletonCard } from './SkeletonCard';
 
+import { exerciseTemplates } from '@/constants/constants';
+
 
 
 interface ExerciseListCardProps {
@@ -23,7 +25,6 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
   const cardRef = useRef<HTMLDivElement>(null);
 
   const totalWeights = exercise.templateSets.reduce((sum, set) => sum + set.totalWeight, 0)
-
 
   // 手機觸摸事件處理
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -88,7 +89,20 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
           ${isSwiped ? '-translate-x-20' : 'translate-x-0'}`}
           >
             <div className='min-w-14 min-h-14 max-w-14 max-h-14 flex justify-center items-center rounded-full border'>
-              <Image src="/icons/dumbbell.svg" alt='dumbbell' width={50} height={50} className='w-full h-full' />
+              {exerciseTemplates.map((template, index) => {
+                if (template.name === exercise.name) {
+                  return (
+                    <div key={index}>
+                      <Image
+                        src={template?.iconSrc || '/icons/dumbbell.svg'}
+                        alt={exercise.name}
+                        width={32}
+                        height={32}
+                      />
+                    </div>
+                  );
+                }
+              })}
             </div>
 
             <RippleAni className='flex w-full'>

@@ -136,7 +136,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
               <FitSideBar />
             </div>
 
-            <div className='w-full'>
+            <div className='w-full no-select'>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {exerciseTemplates.map((exercise) => (
                   <div

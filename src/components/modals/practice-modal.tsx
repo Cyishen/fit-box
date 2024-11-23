@@ -24,6 +24,8 @@ import { upsertWorkoutSession } from "@/actions/user-create";
 
 import { useDayCardStore } from "@/lib/day-modal";
 
+import { exerciseTemplates } from "@/constants/constants";
+
 
 
 // const fetchTemplateByTemplateId = async (templateId: string) => {
@@ -200,12 +202,20 @@ export const PracticeModal = () => {
               <div key={exercise.movementId}>
                 <div className="p-2 bg-white rounded-md">
                   <div className="flex flex-col items-center">
-                    <Image
-                      src='/icons/dumbbell.svg'
-                      alt={exercise.name}
-                      width={36}
-                      height={36}
-                    />
+                    {exerciseTemplates.map((template, index) => {
+                      if (template.name === exercise.name) {
+                        return (
+                          <div key={index}>
+                            <Image
+                              src={template?.iconSrc || '/icons/dumbbell.svg'}
+                              alt={exercise.name}
+                              width={32}
+                              height={32}
+                            />
+                          </div>
+                        );
+                      }
+                    })}
                     <p className="text-sm mt-2">{exercise.name}</p>
                   </div>
                 </div>

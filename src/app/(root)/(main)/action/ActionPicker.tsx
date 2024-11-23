@@ -169,13 +169,13 @@ const ActionPicker = () => {
               <FitSideBar />
             </div>
 
-            <div className='w-full'>
+            <div className='w-full no-select'>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {exerciseWorkouts.map((exercise) => (
                   <div
                     key={exercise.movementId}
                     onClick={() => handleToggleExercise(exercise)}
-                    className={`p-2 rounded-md cursor-pointer 
+                    className={`p-2 rounded-md cursor-pointer
                     ${selectedExercises.some(select => select.movementId === exercise.movementId)
                         ? 'bg-[#66CCFF] ring-1 ring-offset-2 ring-blue-500'
                         : 'bg-white'
