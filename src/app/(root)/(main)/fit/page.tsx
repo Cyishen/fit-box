@@ -19,14 +19,14 @@ const FitPage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userMenuData = await getAllMenusByUserId(userId as string);
+  const userMenuData = getAllMenusByUserId(userId as string);
 
-  const userTemplateData = await getAllTemplatesByUserId();
+  const userTemplateData = getAllTemplatesByUserId();
 
   //TODO! 待刪除, 測試用, 抓所有訓練卡
-  const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
+  const userWorkSessionData = getAllWorkoutSessionByUserId(userId as string);
 
-  const userDaySessionData = await getDaySessionByUserId(userId as string);
+  const userDaySessionData = getDaySessionByUserId(userId as string);
 
   const [
     userMenu,

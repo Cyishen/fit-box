@@ -12,7 +12,8 @@ import { useWorkoutStore } from '@/lib/store';
 const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"] as const;
 type Category = typeof categories[number];
 
-export type CategoryType = {
+
+export type CategorySummaryType = {
   userId: string,
   workoutSessionId: string
   date: string | Date,
@@ -32,7 +33,7 @@ type WorkoutRecord = {
 };
 
 interface Props {
-  userYearSummary: CategoryType[]
+  userYearSummary: CategorySummaryType[]
 }
 
 const LineChart = ({ userYearSummary }: Props) => {
@@ -48,7 +49,7 @@ const LineChart = ({ userYearSummary }: Props) => {
 
   useEffect(() => {
     if (userId) {
-      // TODO: 真實數據
+      // 用戶資料庫
       const filteredData: WorkoutRecord[] = userYearSummary.flatMap((summary) =>
         summary.categorySummaries
           .filter((categorySummary) => categorySummary.exerciseCategory === activeCategory)
@@ -112,7 +113,6 @@ const LineChart = ({ userYearSummary }: Props) => {
 
   // 區間滑動調整
   const dataCount = chartData.length > 20 ? 80 : 0;
-
   const option: EChartsOption = {
     title: {
       text: "訓練量 🏋️",

@@ -8,8 +8,8 @@ const ProfilePage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userWorkSessionData = await getAllWorkoutSessionByUserId(userId as string);
-  const userFirstTrainingData = await getFirstWorkoutSessionDay()
+  const userWorkSessionData = getAllWorkoutSessionByUserId(userId as string);
+  const userFirstTrainingData = getFirstWorkoutSessionDay()
 
   const [ 
     userSessionCard,

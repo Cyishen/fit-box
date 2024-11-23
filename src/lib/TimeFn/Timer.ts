@@ -16,7 +16,7 @@ export function formatDateString(dateString: string) {
   return `${formattedDate} ${time}`;
 }
 
-// TODO* 資料庫傳入UTC的ISO格式
+// 資料庫傳入UTC的ISO格式
 export const multiFormatDateString = (timestamp: string = ""): string => {
   const timestampNum = Math.round(new Date(timestamp).getTime() / 1000);
   const date: Date = new Date(timestampNum * 1000);
@@ -55,3 +55,35 @@ export const calculateDaysSinceStart = (startDate: string | Date ): number => {
   
   return diffInDays;
 };
+
+// 篩人日期區間, isPrevious為true時, 是上個區間
+export function getDateRange(
+  timeFrame: string,
+  startDate: Date,
+  isPrevious: boolean = false
+): { start: Date; end: Date } {
+  const start = new Date(startDate);
+  const end = new Date(startDate);
+
+  if (timeFrame === '週') {
+    const offset = isPrevious ? -7 : 0;
+    start.setDate(start.getDate() - (start.getDay() || 7) + 1 + offset);
+    end.setDate(start.getDate() + 6);
+  } else if (timeFrame === '月') {
+    if (isPrevious) {
+      start.setMonth(start.getMonth() - 1);
+    }
+    start.setDate(1);
+    end.setMonth(start.getMonth() + 1);
+    end.setDate(0);
+  } else if (timeFrame === '年') {
+    if (isPrevious) {
+      start.setFullYear(start.getFullYear() - 1);
+    }
+    start.setMonth(0, 1);
+    end.setFullYear(start.getFullYear());
+    end.setMonth(11, 31);
+  }
+
+  return { start, end };
+}

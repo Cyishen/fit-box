@@ -5,38 +5,58 @@ import BarChart from './barChart'
 import PieChart from './pieChart'
 
 import { auth } from '@/auth'
-import { getCategorySummaryByUserIdForRange } from '@/actions/user-create'
-
-// import FetchSummary from './fetchSummary'
+import { getCategorySummaryByUserIdForRange, getCategorySummaryByUserIdForBarChart } from '@/actions/user-create'
 
 
 const RecordPage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userYearSummaryData = await getCategorySummaryByUserIdForRange(userId as string, 'year');
-  // const userWeekSummaryData = await getCategorySummaryByUserIdForRange(userId as string, 'week');
+  const userYearSummaryData = getCategorySummaryByUserIdForRange(userId as string, 'year');
 
-  const[ 
+  const userThisWeekSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '週', false);
+  const userLastWeekSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '週', true);
+  const userThisMonthSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '月', false);
+  const userLastMonthSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '月', true);
+  const userThisYearSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '年', false);
+  const userLastYearSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '年', true);
+
+  const [
     userYearSummary,
-    // userWeekSummary 
-  ] = await Promise.all([ 
+    userThisWeekSummary,
+    userLastWeekSummary,
+    userThisMonthSummary,
+    userLastMonthSummary,
+    userThisYearSummary,
+    userLastYearSummary
+  ] = await Promise.all([
     userYearSummaryData,
-    // userWeekSummaryData 
-  ]) 
+    userThisWeekSummaryData,
+    userLastWeekSummaryData,
+    userThisMonthSummaryData,
+    userLastMonthSummaryData,
+    userThisYearSummaryData,
+    userLastYearSummaryData
+  ])
 
   return (
     <section className='flex flex-col bg-[#f3f2f8] h-full no-select'>
       <Wrapper className='mb-48'>
         <h1 className='text-2xl font-bold mt-5'>紀錄</h1>
-        {/* <FetchSummary userWeekSummary={userYearSummary}/> */}
 
         <div className='mt-5'>
-          <LineChart userYearSummary={userYearSummary}/>
+          <LineChart userYearSummary={userYearSummary} />
         </div>
 
         <div className='mt-5'>
-          <BarChart/>
+          <BarChart
+            userThisWeekSummary={userThisWeekSummary}
+            userLastWeekSummary={userLastWeekSummary}
+            userThisMonthSummary={userThisMonthSummary}
+            userLastMonthSummary={userLastMonthSummary}
+            userThisYearSummary={userThisYearSummary}
+            userLastYearSummary={userLastYearSummary}
+          />
         </div>
 
         <div className='mt-5'>

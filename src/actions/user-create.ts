@@ -3,6 +3,7 @@
 import { prismaDb } from "@/lib/db"
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { getDateRange } from "@/lib/TimeFn/Timer";
 
 // import { Prisma } from "@prisma/client";
 
@@ -942,6 +943,41 @@ export const getCategorySummaryByUserIdForRange = async (id: string, range: 'wee
   }
 
   const formattedSessions = workoutSummaries.map(session => ({
+    ...session,
+    date: session.date.toISOString(),
+  }));
+
+  revalidatePath('/record');
+  return formattedSessions;
+};
+
+
+// BarChart
+export const getCategorySummaryByUserIdForBarChart = async (
+  id: string,
+  timeFrame: '週' | '月' | '年',
+  isPrevious: boolean = false
+) => {
+  const { start, end } = getDateRange(timeFrame, new Date(), isPrevious);
+
+  const workoutSummaries = await prismaDb.workoutSummary.findMany({
+    where: {
+      userId: id,
+      date: {
+        gte: start,
+        lte: end,
+      },
+    },
+    include: {
+      categorySummaries: true,
+    },
+  });
+
+  if (!workoutSummaries.length) {
+    return [];
+  }
+
+  const formattedSessions = workoutSummaries.map((session) => ({
     ...session,
     date: session.date.toISOString(),
   }));
