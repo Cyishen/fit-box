@@ -30,14 +30,20 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
 
-  const handleCompleteWorkout = async() => {
+  const handleCompleteWorkout = async () => {
     setIsLoading(true);
 
-    if(userId){
-      // 資料庫
-      await upsertWorkoutSession(workoutSession)
-      // 統計
-      await upsertWorkoutSummary(workoutSession.id as string);
+    if (userId) {
+      try {
+        await Promise.all([
+          upsertWorkoutSession(workoutSession),
+          upsertWorkoutSummary(workoutSession.id as string),
+        ]);
+        localStorage.removeItem('currentSessionId');
+        router.push('/fit');
+      } catch (error) {
+        console.error("Error completing workout", error);
+      }
     } else {
       // 無用戶本地
       const updatedSession = { ...workoutSession };
@@ -51,8 +57,8 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
 
   return (
     <div className="sm:pt-10 bg-gray-100 h-screen">
-      <StaticTitle 
-        isEditMode={isEditMode} 
+      <StaticTitle
+        isEditMode={isEditMode}
         handleCompleteWorkout={handleCompleteWorkout}
         isLoading={isLoading}
       />
