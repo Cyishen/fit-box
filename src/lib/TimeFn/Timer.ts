@@ -66,8 +66,10 @@ export function getDateRange(
   const end = new Date(startDate);
 
   if (timeFrame === '週') {
+    const currentDay = start.getDay(); // 0 (星期天) 至 6 (星期六)
     const offset = isPrevious ? -7 : 0;
-    start.setDate(start.getDate() - (start.getDay() || 7) + 1 + offset);
+    const diff = currentDay === 0 ? 6 : currentDay - 1; // 星期一為週的第一天
+    start.setDate(start.getDate() - diff + offset);
     end.setDate(start.getDate() + 6);
   } else if (timeFrame === '月') {
     if (isPrevious) {
@@ -84,6 +86,10 @@ export function getDateRange(
     end.setFullYear(start.getFullYear());
     end.setMonth(11, 31);
   }
+
+  // 確保時間為午夜 (避免時間錯誤)
+  start.setHours(0, 0, 0, 0);
+  end.setHours(23, 59, 59, 999);
 
   return { start, end };
 }

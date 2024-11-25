@@ -41,126 +41,6 @@ export interface Props {
   userLastYearSummary: CategoryType[]
 }
 
-// 模擬資料
-// const workoutSessions = [
-//   {
-//     sessionId: "1",
-//     date: "2024-11-19", // 當週（週二）胸2 背2
-//     exercises: [
-//       {
-//         exerciseCategory: "胸",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: true },
-//           { isCompleted: false },
-//         ],
-//       },
-//       {
-//         exerciseCategory: "背",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: true },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     sessionId: "2",
-//     date: "2024-11-18", // 當週（週一）腿1 (本週統計: 胸2 背2 腿1)
-//     exercises: [
-//       {
-//         exerciseCategory: "腿",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: false },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     sessionId: "3",
-//     date: "2024-11-17", //上週日 胸1 (本月統計: 胸3 背2 腿1)
-//     exercises: [
-//       {
-//         exerciseCategory: "胸",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: false },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     sessionId: "4",
-//     date: "2024-10-25", // 上個月 胸2 背1 
-//     exercises: [
-//       {
-//         exerciseCategory: "胸",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: true },
-//         ],
-//       },
-//       {
-//         exerciseCategory: "背",
-//         sets: [
-//           { isCompleted: false },
-//           { isCompleted: true },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     sessionId: "5",
-//     date: "2024-09-15", // 更早的月 腿2 (本年統計: 胸5 背3 腿3)
-//     exercises: [
-//       {
-//         exerciseCategory: "腿",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: true },
-//           { isCompleted: false },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     sessionId: "5",
-//     date: "2023-02-15", // 去年 腿2
-//     exercises: [
-//       {
-//         exerciseCategory: "腿",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: true },
-//           { isCompleted: false },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     sessionId: "6",
-//     date: "2023-06-14", // 去年 (本年統計: 腿2 背1 二頭2)
-//     exercises: [
-//       {
-//         exerciseCategory: "背",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: false },
-//         ],
-//       },
-//       {
-//         exerciseCategory: "二頭",
-//         sets: [
-//           { isCompleted: true },
-//           { isCompleted: true },
-//         ],
-//       },
-//     ],
-//   },
-
-// ];
-
 
 const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSummary, userLastMonthSummary, userThisYearSummary, userLastYearSummary }: Props) => {
   const { data: session } = useSession()
@@ -175,23 +55,7 @@ const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSumma
   // 無登入本地訓練卡
   const { workoutSessions } = useWorkoutStore();
 
-  const filterUserData = (userData: CategoryType[]) => {
-    const categoryCounts: { [key: string]: number } = {};
-
-    userData.forEach(item => {
-      item.categorySummaries.forEach(summary => {
-        const category = summary.exerciseCategory;
-        const setsCount = summary.totalCategorySets;
-        categoryCounts[category] = (categoryCounts[category] || 0) + setsCount;
-      });
-    });
-
-    return categories.map(category => ({
-      category,
-      count: categoryCounts[category] || 0,
-    }));
-  };
-
+  //本地分類
   const calculateChartData = (
     sessions: WorkoutSessionType[],
     timeFrame: string,
@@ -226,6 +90,25 @@ const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSumma
       count: categoryCounts[category] || 0,
     }));
   }
+
+  //資料庫分類
+  const filterUserData = (userData: CategoryType[]) => {
+    const categoryCounts: { [key: string]: number } = {};
+
+    userData.forEach(item => {
+      item.categorySummaries.forEach(summary => {
+        const category = summary.exerciseCategory;
+        const setsCount = summary.totalCategorySets;
+        categoryCounts[category] = (categoryCounts[category] || 0) + setsCount;
+      });
+    });
+
+    return categories.map(category => ({
+      category,
+      count: categoryCounts[category] || 0,
+    }));
+  };
+
 
   useEffect(() => {
     let thisPeriodData: { category: Category, count: number }[] = [];
@@ -400,7 +283,7 @@ const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSumma
       },
       axisPointer: {
         type: "shadow",
-      }
+      }, 
     },
     grid: {
       left: '0%',
@@ -483,6 +366,7 @@ const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSumma
           option={option}
           style={{ height: '100%', width: '100%' }}
           opts={{ renderer: 'svg' }}
+          className='z-10'
         />
       </div>
     </div>

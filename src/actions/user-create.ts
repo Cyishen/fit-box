@@ -609,7 +609,10 @@ export const getAllWorkoutSessionByUserId = async (id: string) => {
     }
   })
 
-  const formattedSessions = getWorkoutSession.map(session => ({
+  // 按照日期進行排序
+  const sortedSummaries = getWorkoutSession.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const formattedSessions = sortedSummaries.map(session => ({
     ...session,
     date: session.date.toISOString().slice(0, 10),
     startTime: session.startTime ? session.startTime.toISOString() : null,
@@ -695,7 +698,10 @@ export const getDaySessionByUserId = async (id: string) => {
     }
   });
 
-  const formattedSessions = getWorkoutSession.map(session => {
+  // 按照日期進行排序
+  const sortedSummaries = getWorkoutSession.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  const formattedSessions = sortedSummaries.map(session => {
     const utcDate = new Date(session.createdAt);
     const localDate = utcDate.toISOString();
 
@@ -941,8 +947,10 @@ export const getCategorySummaryByUserIdForRange = async (id: string, range: 'wee
   if (!workoutSummaries.length) {
     return [];
   }
+  // 按照日期進行排序
+  const sortedSummaries = workoutSummaries.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  const formattedSessions = workoutSummaries.map(session => ({
+  const formattedSessions = sortedSummaries.map(session => ({
     ...session,
     date: session.date.toISOString(),
   }));
@@ -950,7 +958,6 @@ export const getCategorySummaryByUserIdForRange = async (id: string, range: 'wee
   revalidatePath('/record');
   return formattedSessions;
 };
-
 
 // BarChart
 export const getCategorySummaryByUserIdForBarChart = async (
@@ -977,7 +984,10 @@ export const getCategorySummaryByUserIdForBarChart = async (
     return [];
   }
 
-  const formattedSessions = workoutSummaries.map((session) => ({
+  // 按照日期進行排序
+  const sortedSummaries = workoutSummaries.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  const formattedSessions = sortedSummaries.map((session) => ({
     ...session,
     date: session.date.toISOString(),
   }));

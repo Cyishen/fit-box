@@ -271,6 +271,7 @@ const LineChart = ({ userYearSummary }: Props) => {
             option={option}
             style={{ height: '100%', width: '100%' }}
             opts={{ renderer: 'svg' }}
+            className='z-10'
           />
         )}
       </div>
