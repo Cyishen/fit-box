@@ -31,6 +31,7 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
     const fetchWorkoutFromDatabase = async () => {
       try {
         const workoutCard = await getWorkoutSessionByCardId(sessionId);
+
         if (workoutCard) {
           setCurrentWorkout(workoutCard as WorkoutSessionType);
         }
@@ -46,24 +47,28 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
       const findCardFromStore = dayCard.find(
         session => session.cardSessionId === sessionId
       );
-  
+
       if (findCardFromStore) {
         setCurrentWorkout(findCardFromStore);
         setFetchIsLoading(false);
       } else {
-        // 如果本地找不到，嘗試從資料庫加載
         fetchWorkoutFromDatabase();
       }
-    } else {
+    } else if (userId && dayCard.length === 0) {
+      // 用戶登入但沒有本地訓練卡資料，從資料庫加載, 也代表這個是歷史訓練卡
+      fetchWorkoutFromDatabase();
+    } else if (!userId && workoutSessions.length > 0) {
       // 用戶沒有登入
       const findSession = workoutSessions.find(
         session => session.cardSessionId === sessionId
       );
-  
+
       if (findSession) {
         setCurrentWorkout(findSession);
         setFetchIsLoading(false);
       }
+    } else {
+      setFetchIsLoading(false);
     }
   }, [dayCard, menuId, sessionId, templateId, userId, workoutSessions]);
 

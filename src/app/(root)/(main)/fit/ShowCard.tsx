@@ -16,6 +16,7 @@ const ShowCard = ({ daySession, allSession }: Props) => {
         <ShowDayTraining dayCardData={daySession} />
       </div>
 
+      {/* // TODO! 測試用, 之後刪除 */}
       <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
         <ShowTraining sessionData={allSession} />
       </div>

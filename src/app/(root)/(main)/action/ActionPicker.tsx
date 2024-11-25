@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Loader, ChevronLeft} from 'lucide-react';
 
 import FitSideBar from '../fit/[menuId]/[templateId]/create-template/exercise-picker/FitSideBar';
 import { exerciseWorkouts } from '@/constants/constants';
@@ -12,8 +13,9 @@ import { exerciseWorkouts } from '@/constants/constants';
 import { useWorkoutStore } from '@/lib/store';
 
 import { useSession } from 'next-auth/react'
-import { getWorkoutSessionByCardId, upsertWorkoutSession } from '@/actions/user-create';
-import { Loader, ChevronLeft} from 'lucide-react';
+import { getWorkoutSessionByCardId } from '@/actions/user-create';
+// import { upsertWorkoutSession } from '@/actions/user-create';
+
 import { useDayCardStore } from '@/lib/day-modal';
 
 
@@ -94,9 +96,9 @@ const ActionPicker = () => {
 
     if (userId) {
       // 更新動作到資料庫
-      await upsertWorkoutSession(updatedSession);
+      // await upsertWorkoutSession(updatedSession);
 
-      // TODO? dayCard 儲存本地: 更新 editDayCard, 訓練卡頁面才會得到新修改動作
+      // TODO? dayCard 儲存本地: 更新 editDayCard, 頁面才會得到新修改動作
       editDayCard(sessionId, updatedSession);
   
       router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);

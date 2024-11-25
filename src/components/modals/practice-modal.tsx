@@ -122,6 +122,7 @@ export const PracticeModal = () => {
             })),
           })),
         }
+
         const savedSessionToData = await upsertWorkoutSession(newCurrentSession);
 
         // 更新本地狀態 (包含資料庫返回的 id)

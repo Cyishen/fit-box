@@ -8,6 +8,7 @@ import { useWorkoutStore } from "@/lib/store";
 import { useSession } from "next-auth/react"
 import { upsertWorkoutSession } from "@/actions/user-create";
 import { SkeletonCard } from "../../../[menuId]/[templateId]/SkeletonCard";
+import { useDayCardStore } from "@/lib/day-modal";
 
 
 type StartWorkoutProps = {
@@ -23,16 +24,13 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
   const { data: session } = useSession()
   const userId = session?.user?.id
 
+  // TODO? dayCard 儲存本地, 讀取儲存的訓練卡
+  const {editDayCard } = useDayCardStore();
+
   // 無用戶, 本地訓練卡
   const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
-  };
-
-  // 展開點選的動作, 顯示組數列表
-  const [openMovementId, setOpenMovementId] = useState<string | null>(null);
-  const handleToggleExercise = (movementId: string) => {
-    setOpenMovementId((prev) => (prev === movementId ? null : movementId));
   };
 
   // 修改動作組數
@@ -49,13 +47,22 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
     }
 
     if (userId) {
+      // TODO? dayCard 測試先本地後上傳
+      editDayCard(updatedSession.cardSessionId, updatedSession)
+
       // 資料庫更新
-      await upsertWorkoutSession(updatedSession)
+      // await upsertWorkoutSession(updatedSession)
       setCurrentWorkout(updatedSession);
     } else {
       // 無用戶, 本地更新
       updateCurrentSession(updatedSession);
     }
+  };
+
+  // 展開點選的動作, 顯示組數列表
+  const [openMovementId, setOpenMovementId] = useState<string | null>(null);
+  const handleToggleExercise = (movementId: string) => {
+    setOpenMovementId((prev) => (prev === movementId ? null : movementId));
   };
 
   // 左滑後, 點擊刪除

@@ -6,6 +6,7 @@ type DayCardStore = {
   dayCard: WorkoutSessionType[];
   setDayCard: (data: WorkoutSessionType[]) => void;
   editDayCard: (id: string, updatedCard: WorkoutSessionType) => void;
+  removeDayCard: (id: string) => void;
 };
 
 export const useDayCardStore = create<DayCardStore>()(
@@ -20,6 +21,10 @@ export const useDayCardStore = create<DayCardStore>()(
             ? updatedCard
             : card
           ),
+        })),
+      removeDayCard: (id) =>
+        set((state) => ({
+          dayCard: state.dayCard.filter(session => session.cardSessionId !== id),
         })),
     }),
     {
