@@ -46,6 +46,8 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
         if (dayCard.length > 0) {
           // dayCard存在，更新本地 dayCard, 還沒更新變更到資料庫
           editDayCard(updatedSession.cardSessionId, updatedSession);
+          localStorage.removeItem('currentSessionId');
+          router.push('/fit');
         } else {
           // 如果沒有 dayCard，代表點擊的是歷史訓練卡-更新資料庫
           await Promise.all([
