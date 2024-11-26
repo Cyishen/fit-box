@@ -1,13 +1,13 @@
 "use client";
 
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import ShowTrainingCard from './ShowTrainingCard';
 
 import { useSession } from "next-auth/react"
 
-import { deleteWorkoutSessionByCardId } from '@/actions/user-create';
+import { deleteWorkoutSessionByCardId, upsertWorkoutSession, upsertWorkoutSummary } from '@/actions/user-create';
 
 import { useWorkoutStore } from '@/lib/store';
 import { useDayCardStore } from '@/lib/day-modal';
@@ -33,35 +33,85 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
 
+  const isSyncingRef = useRef(false); 
+
   useEffect(() => {
-    if (userId) {
-      if (dayCard && dayCard.length > 0) {
-        setWorkoutCards(dayCard);
-      } else {
-        // 沒有dayCard, 搜尋資料庫訓練卡
-        setWorkoutCards(dayCardData);
+    if (isSyncingRef.current) return;
+    isSyncingRef.current = true;
+
+    const updateToDb = async () => {
+      try {
+        if (userId && dayCard && dayCard.length > 0) {
+          for (const session of dayCard) {
+            await Promise.all([
+              upsertWorkoutSession(session),
+              upsertWorkoutSummary(session.id as string),
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Error syncing DayCard:", error);
+      } finally {
+        isSyncingRef.current = false;
       }
-    } else {
-      // 用戶沒有登入-本地
-      setWorkoutCards(workoutSessions);
+    };
+
+    updateToDb();
+  }, [dayCard, userId]);
+
+  useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const storedDate = localStorage.getItem('lastSyncDate');
+  
+    if (storedDate !== today) {
+      localStorage.removeItem('day-card-storage');
+      localStorage.setItem('lastSyncDate', today); 
     }
-  }, [dayCardData, workoutSessions, userId, dayCard]);
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (userId) {
+        // 用戶登入
+        if (dayCard.length > 0) {
+          setWorkoutCards(dayCard);
+        } else {
+          // 用戶用不同設備查看, 新設備沒有dayCard存在, 也能抓資料庫看到今日訓練卡
+          setWorkoutCards(dayCardData);
+        }
+      } else {
+        // 用戶沒登入-本地找今日的訓練卡
+        const today = new Date().toISOString().slice(0, 10);
+        const findToday = workoutSessions.filter(session => session.date === today);
+
+        setWorkoutCards(findToday);
+      }
+    } catch (error) {
+      console.error("Can't find card", error);
+    }
+  }, [dayCard, dayCardData, userId, workoutSessions]);
 
 
   // 點擊訓練卡到編輯頁面
   const handleEditWorkout = (cardSessionId: string) => {
     if (userId) {
-      // 資料庫
-      if (dayCardData) {
+      if (dayCard && dayCard.length > 0) {
+        const findDayCard = dayCard.find(session => session.cardSessionId === cardSessionId);
+
+        if (findDayCard) {
+          router.push(`/fit/workout/${findDayCard.menuId}/${findDayCard.templateId}/${cardSessionId}`);
+        }
+        localStorage.setItem('currentSessionId', cardSessionId);
+      } else {
         const sessionCards = dayCardData.find(session => session.cardSessionId === cardSessionId);
 
         if (sessionCards) {
           router.push(`/fit/workout/${sessionCards.menuId}/${sessionCards.templateId}/${cardSessionId}`);
         }
+        localStorage.setItem('currentSessionId', cardSessionId);
       }
-      localStorage.setItem('currentSessionId', cardSessionId);
     } else {
-      // 無用戶本地
+      // 用戶沒有登入-本地
       const sessionToEdit = workoutSessions.find(session => session.cardSessionId === cardSessionId);
 
       if (sessionToEdit) {

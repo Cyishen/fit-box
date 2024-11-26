@@ -32,7 +32,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
 
-  // TODO? 用戶登入, 讀取儲存的 dayCard訓練卡
+  // 用戶登入, 讀取儲存的 dayCard訓練卡
   const { dayCard, editDayCard } = useDayCardStore();
 
 
@@ -40,13 +40,14 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
     setIsLoading(true);
 
     try {
+      const updatedSession = { ...workoutSession };
+
       if (userId) {
         if (dayCard.length > 0) {
-          // TODO? dayCard存在，則更新 dayCard
-          const updatedSession = { ...workoutSession };
+          // dayCard存在，更新本地 dayCard, 還沒更新變更到資料庫
           editDayCard(updatedSession.cardSessionId, updatedSession);
         } else {
-          // 如果沒有 dayCard，則調用 API 更新資料庫
+          // 如果沒有 dayCard，代表點擊的是歷史訓練卡-更新資料庫
           await Promise.all([
             upsertWorkoutSession(workoutSession),
             upsertWorkoutSummary(workoutSession.id as string),
@@ -54,7 +55,6 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
         }
       } else {
         // 用戶沒有登入-則更新本地資料
-        const updatedSession = { ...workoutSession };
         updateCurrentSession(updatedSession);
         setCurrentWorkout(updatedSession);
       }

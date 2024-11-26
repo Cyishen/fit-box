@@ -25,7 +25,7 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
   // 用戶沒有登入-本地
   const workoutSessions = useWorkoutStore(state => state.workoutSessions);
 
-  // TODO? 用戶登入, 儲存訓練卡dayCard到本地
+  // TODO? 用戶登入, 本地找dayCard當天的訓練卡
   const { dayCard } = useDayCardStore();
 
   useEffect(() => {
