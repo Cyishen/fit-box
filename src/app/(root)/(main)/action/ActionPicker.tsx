@@ -36,11 +36,11 @@ const ActionPicker = () => {
   // 判斷 action頁面是從訓練卡點選, 還是bar點選
   const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
 
-  // todo? dayCard 編輯
-  const { editDayCard } = useDayCardStore();
+  // todo? 用戶登入, dayCard資料
+  const { dayCard, editDayCard } = useDayCardStore();
 
 
-  // 初始 UI狀態
+  // 初始 UI顯示已存在動作
   useEffect(() => {
     const currentSessionId = localStorage.getItem('currentSessionId');
     setExistingSessionId(currentSessionId);
@@ -49,22 +49,33 @@ const ActionPicker = () => {
       return;
     }
 
-    if (userId) {
-      // TODO? 資料庫讀取, 速度慢, 可用 dayCard讀取
-      const fetchWorkout = async () => {
-        try {
-          const workoutCard = await getWorkoutSessionByCardId(currentSessionId)
-          const workoutCardExercises = workoutCard?.exercises || [];
+    const fetchDataExercise = async () => {
+      try {
+        const workoutCard = await getWorkoutSessionByCardId(currentSessionId)
+        const workoutCardExercises = workoutCard?.exercises || [];
 
-          if (workoutCard) {
-            setCurrentSession(workoutCard as WorkoutSessionType);
-            setSelectedExercises(workoutCardExercises);
-          }
-        } catch (error) {
-          console.log(error);
+        if (workoutCard) {
+          setCurrentSession(workoutCard as WorkoutSessionType);
+          setSelectedExercises(workoutCardExercises);
         }
+      } catch (error) {
+        console.log(error);
       }
-      fetchWorkout()
+    }
+
+    if (userId) {
+      const findCardFromStore = dayCard.find(
+        session => session.cardSessionId === currentSessionId
+      );
+      const findDayCardExercises = findCardFromStore?.exercises || [];
+
+      if (findCardFromStore) {
+        setCurrentSession(findCardFromStore);
+        setSelectedExercises(findDayCardExercises);
+      } else {
+        // 沒有dayCard, 代表用戶是點擊歷史訓練卡, 從資料庫加載
+        fetchDataExercise()
+      }
     } else {
       // 無用戶本地
       const findSession = workoutSessions.find(
@@ -73,10 +84,10 @@ const ActionPicker = () => {
 
       if (findSession) {
         setCurrentSession(findSession);
-        setSelectedExercises(findSession.exercises);
+        setSelectedExercises(findSession?.exercises);
       }
     }
-  }, [userId, workoutSessions]);
+  }, [dayCard, userId, workoutSessions]);
 
   const handleSaveExercises = async () => {
     setIsLoading(true);

@@ -24,36 +24,25 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   const router = useRouter();
 
-  // 無用戶本地
-  const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
-
   // 卡片狀態管理
   const [workoutCards, setWorkoutCards] = useState<WorkoutSessionType[]>([]);
 
-  // TODO? dayCard 儲存本地
-  const { dayCard, removeDayCard } = useDayCardStore();
+  // 用戶沒有登入-本地
+  const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
-  // 把資料庫當天訓練卡抓到 zustand
-  // useEffect(() => {
-  //   if (userId && dayCardData.length > 0) {
-  //     setDayCard(dayCardData)
-  //   } else {
-  //     localStorage.removeItem('day-card-storage')
-  //   }
-  // }, [dayCardData, setDayCard, userId])
+  // TODO? 用戶登入, dayCard資料
+  const { dayCard, removeDayCard } = useDayCardStore();
 
   useEffect(() => {
     if (userId) {
-      // TODO? dayCard 儲存本地
-      if (dayCard.length > 0) {
+      if (dayCard && dayCard.length > 0) {
         setWorkoutCards(dayCard);
       } else {
-        // 當天資料庫訓練卡
-        // setWorkoutCards(dayCardData);
+        // 沒有dayCard, 搜尋資料庫訓練卡
+        setWorkoutCards(dayCardData);
       }
-
     } else {
-      // 本地
+      // 用戶沒有登入-本地
       setWorkoutCards(workoutSessions);
     }
   }, [dayCardData, workoutSessions, userId, dayCard]);
@@ -102,7 +91,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     <>
       <h1 className='font-bold'>今日訓練 {showToday}</h1>
 
-      {dayCard.length === 0 ? (
+      {workoutCards.length === 0 ? (
         <p className='text-gray-500 text-sm p-2 border border-dashed rounded-lg '>沒有訓練</p>
       ) : (
         <>

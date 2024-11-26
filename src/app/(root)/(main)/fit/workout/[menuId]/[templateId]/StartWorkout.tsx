@@ -26,22 +26,23 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // TODO? dayCard 儲存本地, 讀取儲存的訓練卡
-  const { dayCard, editDayCard } = useDayCardStore();
-
-  // 無用戶, 本地訓練卡更新
+  // 用戶沒有登入-更新本地訓練卡
   const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
 
+  // TODO? 用戶登入, 讀取儲存的 dayCard訓練卡
+  const { dayCard, editDayCard } = useDayCardStore();
+
+
   const handleCompleteWorkout = async () => {
     setIsLoading(true);
-  
+
     try {
       if (userId) {
         if (dayCard.length > 0) {
-          // TODO?如果有本地 dayCard，則更新dayCard
+          // TODO? dayCard存在，則更新 dayCard
           const updatedSession = { ...workoutSession };
           editDayCard(updatedSession.cardSessionId, updatedSession);
         } else {
@@ -52,7 +53,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
           ]);
         }
       } else {
-        // 無用戶，則更新本地資料
+        // 用戶沒有登入-則更新本地資料
         const updatedSession = { ...workoutSession };
         updateCurrentSession(updatedSession);
         setCurrentWorkout(updatedSession);
@@ -60,13 +61,12 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
     } catch (error) {
       console.error("Error completing workout", error);
     } finally {
-      // 無論如何，都清除 sessionId 並跳轉頁面
+      // 清除 currentSessionId 並跳轉頁面
       localStorage.removeItem('currentSessionId');
       router.push('/fit');
-      setIsLoading(false);
     }
   };
-  
+
 
   return (
     <div className="sm:pt-10 bg-gray-100 h-screen">

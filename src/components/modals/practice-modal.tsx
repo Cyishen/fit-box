@@ -102,7 +102,7 @@ export const PracticeModal = () => {
 
     try {
       if (userId) {
-        // 資料庫建立訓練卡
+        // 用戶登入
         const newCurrentSession = {
           cardSessionId: newSessionId,
           userId: userId,
@@ -122,18 +122,30 @@ export const PracticeModal = () => {
             })),
           })),
         }
-
+        // 資料庫建立
         const savedSessionToData = await upsertWorkoutSession(newCurrentSession);
-
-        // 更新本地狀態 (包含資料庫返回的 id)
+        // 同時儲存到本地資料, 包含資料庫返回的 id
         if (!dayCard.find((card) => card.cardSessionId === savedSessionToData.cardSessionId)) {
-          setDayCard([...dayCard, savedSessionToData as WorkoutSessionType]);
+          setDayCard(savedSessionToData as WorkoutSessionType);
         }
 
+        // todo?資料庫操作和狀態更新並行
+        // await Promise.all([
+        //   upsertWorkoutSession(newCurrentSession),
+        //   new Promise(resolve => {
+        //     // 同時儲存到本地資料
+        //     if (!dayCard.find((card) => card.cardSessionId === newSessionId)) {
+        //       setDayCard(newCurrentSession as WorkoutSessionType);
+        //     }
+        //     resolve(true);  // 用來確認本地資料處理完成
+        //   })
+        // ]);
+
         localStorage.setItem('currentSessionId', newCurrentSession?.cardSessionId || '');
+
         router.push(`/fit/workout/${menuId}/${templateId}`);
       } else {
-        // 本地, 如果沒有currentSessionId && 但openTemplate存在，創建新訓練卡
+        // 用戶沒有登入-本地, 如果沒有currentSessionId && 但openTemplate存在，創建新訓練卡
         if (!existingSessionId && openLocalTemplate) {
           const newWorkoutSession: WorkoutSessionType = {
             cardSessionId: newSessionId,

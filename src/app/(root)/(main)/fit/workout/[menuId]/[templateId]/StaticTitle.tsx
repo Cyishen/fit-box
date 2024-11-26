@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { LoaderCircle } from 'lucide-react';
 import React from 'react'
 
 type Props = {
@@ -22,7 +23,15 @@ const StaticTitle = ({ isEditMode, handleCompleteWorkout, isLoading }: Props) =>
             className='font-bold'
             disabled={isLoading}
           >
-            完成
+            {isLoading ? (
+              <div className='flex justify-center items-center gap-1'>
+                <LoaderCircle size={20} className="animate-spin" />
+              </div>
+            ) : (
+              <div className='flex justify-center items-center gap-1'>
+                <p>完成</p>
+              </div>
+            )}
           </Button>
         </div>
       </div>

@@ -24,14 +24,14 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // TODO? dayCard 儲存本地, 讀取儲存的訓練卡
-  const {editDayCard } = useDayCardStore();
-
-  // 無用戶, 本地訓練卡
+  // 用戶沒有登入-更新本地訓練卡
   const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
+
+  // TODO? dayCard 讀取儲存的訓練卡
+  const { dayCard, editDayCard } = useDayCardStore();
 
   // 修改動作組數
   const handleUpdateSets = async (movementId: string, updatedSets: WorkoutSetType[]) => {
@@ -47,14 +47,15 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
     }
 
     if (userId) {
-      // TODO? dayCard 測試先本地後上傳
-      editDayCard(updatedSession.cardSessionId, updatedSession)
-
-      // 資料庫更新
-      // await upsertWorkoutSession(updatedSession)
-      setCurrentWorkout(updatedSession);
+      if (dayCard) {
+        editDayCard(updatedSession.cardSessionId, updatedSession)
+        setCurrentWorkout(updatedSession);
+      } else {
+        // 資料庫更新
+        await upsertWorkoutSession(updatedSession)
+      }
     } else {
-      // 無用戶, 本地更新
+      // 用戶沒有登入, 本地更新
       updateCurrentSession(updatedSession);
     }
   };

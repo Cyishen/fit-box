@@ -19,12 +19,13 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
 
   const [fetchLoading, setFetchIsLoading] = useState(true);
 
-  // 無用戶本地
-  const workoutSessions = useWorkoutStore(state => state.workoutSessions);
   // 卡片狀態管理
   const [currentWorkout, setCurrentWorkout] = useState<WorkoutSessionType | null>(null);
 
-  // TODO? dayCard 儲存本地, 讀取儲存的訓練卡
+  // 用戶沒有登入-本地
+  const workoutSessions = useWorkoutStore(state => state.workoutSessions);
+
+  // TODO? 用戶登入, 儲存訓練卡dayCard到本地
   const { dayCard } = useDayCardStore();
 
   useEffect(() => {
@@ -48,8 +49,8 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
       }
     };
 
-    // TODO? dayCard 用戶登入, 本地檢索當天的訓練卡
-    if (userId && dayCard.length > 0) {
+    if (userId) {
+      // 用戶登入, 本地找dayCard當天的訓練卡
       const findCardFromStore = dayCard.find(
         session => session.cardSessionId === currentSessionId
       );
@@ -58,10 +59,10 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
         setCurrentWorkout(findCardFromStore);
         setFetchIsLoading(false);
       } else {
-        // 如果本地找不到，嘗試從資料庫加載
+        // 沒有dayCard, 代表用戶是點擊歷史訓練卡, 從資料庫加載
         fetchWorkoutFromDatabase();
       }
-    } else if (!userId && workoutSessions.length > 0) {
+    } else {
       // 用戶沒有登入
       const findSession = workoutSessions.find(
         session => session.cardSessionId === currentSessionId
@@ -69,9 +70,7 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
 
       if (findSession) {
         setCurrentWorkout(findSession);
-        setFetchIsLoading(false);
       }
-    } else {
       setFetchIsLoading(false);
     }
   }, [dayCard, userId, workoutSessions]);
@@ -80,18 +79,18 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
 
   return (
     <div>
-      {!currentWorkout ? (
-        <div className='p-2'>
-          <p>Oops 找不到訓練卡</p>
-          <button onClick={() => router.back()}>返回</button>
-        </div>
-      ) : (
+      {currentWorkout || fetchLoading ? (
         <StartWorkout
-          isEditMode={false}
+          isEditMode={true}
           workoutSession={currentWorkout as WorkoutSessionType}
           setCurrentWorkout={setCurrentWorkout}
           fetchLoading={fetchLoading}
         />
+      ) : (
+        <div className="p-2">
+          <p>Oops 找不到訓練卡</p>
+          <button onClick={() => router.back()}>返回</button>
+        </div>
       )}
     </div>
   )
