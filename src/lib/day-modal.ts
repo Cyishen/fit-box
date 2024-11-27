@@ -13,13 +13,20 @@ export const useDayCardStore = create<DayCardStore>()(
   persist(
     (set) => ({
       dayCard: [],
-      // 傳遞整個陣列
+      // 1.傳遞整個陣列
       // setDayCard: (data) =>
       //   set({ dayCard: data }),
-      // 部分更新
+      // 2.傳遞單個
+      // setDayCard: (data) =>
+      //   set((state) => ({
+      //     dayCard: [...state.dayCard, data]
+      //   })),
+      // 3.篩選cardSessionId
       setDayCard: (data) =>
         set((state) => ({
-          dayCard: [...state.dayCard, data]
+          dayCard: state.dayCard.find(session => session.cardSessionId === data.cardSessionId)
+            ? state.dayCard
+            : [...state.dayCard, data],
         })),
       editDayCard: (id, updatedCard) =>
         set((state) => ({

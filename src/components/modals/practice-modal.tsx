@@ -122,12 +122,24 @@ export const PracticeModal = () => {
             })),
           })),
         }
-        // 資料庫建立
-        const savedSessionToData = await upsertWorkoutSession(newCurrentSession);
-        // 同時儲存到本地資料, 包含資料庫返回的 id
-        if (!dayCard.find((card) => card.cardSessionId === savedSessionToData.cardSessionId)) {
-          setDayCard(savedSessionToData as WorkoutSessionType);
-        }
+        // TODO: 資料庫建立
+        // 方式一 分開等待, 等待時間長, 會沒跳轉成功 (setDayCard可以拿到資料庫給的id)
+        // const savedSessionToData = await upsertWorkoutSession(newCurrentSession);
+        // if (!dayCard.find((card) => card.cardSessionId === savedSessionToData.cardSessionId)) {
+        //   setDayCard(savedSessionToData as WorkoutSessionType);
+        // }
+
+        // 方式二 並行, 跳轉速度快, 但setDayCard沒有拿到資料庫給的id
+        await Promise.all([
+          upsertWorkoutSession(newCurrentSession), 
+          new Promise(resolve => {
+            // 第一個api自動返回結果, 但第二個自定義的Promise需要手動標記resolve為true 
+            if (!dayCard.find((card) => card.cardSessionId === newSessionId)) {
+              setDayCard(newCurrentSession as WorkoutSessionType);
+            }
+            resolve(true);
+          })
+        ]);
 
         localStorage.setItem('currentSessionId', newCurrentSession?.cardSessionId);
 

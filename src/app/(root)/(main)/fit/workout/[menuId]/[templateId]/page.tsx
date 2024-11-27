@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import StartWorkout from './StartWorkout'
 
@@ -10,6 +10,7 @@ import { getWorkoutSessionByCardId } from '@/actions/user-create';
 import { useWorkoutStore } from '@/lib/store';
 import { useDayCardStore } from '@/lib/day-modal';
 import { useRouter } from 'next/navigation';
+
 
 
 const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) => {
@@ -26,8 +27,43 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
   const workoutSessions = useWorkoutStore(state => state.workoutSessions);
 
   // TODO? 用戶登入, 本地找dayCard當天的訓練卡
-  const { dayCard } = useDayCardStore();
+  const { dayCard, editDayCard } = useDayCardStore();
 
+
+  const currentSessionId = localStorage.getItem('currentSessionId');
+  const findCardFromStore = useMemo(() => {
+    return dayCard.find(session => session.cardSessionId === currentSessionId);
+  }, [dayCard, currentSessionId]);
+
+  // 第一個useEffect , 把資料庫id 更新給 dayCard
+  useEffect(() => {
+    if (!currentSessionId) {
+      setFetchIsLoading(false);
+      return;
+    }
+  
+    const catchDataCardId = async () => {
+      try {
+        const workoutCard = await getWorkoutSessionByCardId(currentSessionId);
+  
+        if (findCardFromStore && workoutCard?.id) {
+          if (findCardFromStore.id !== workoutCard.id) { 
+            const updatedCard = {
+              ...findCardFromStore,
+              id: workoutCard.id,
+            };
+            editDayCard(currentSessionId, updatedCard as WorkoutSessionType);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching workout session:", error);
+      }
+    };
+  
+    catchDataCardId();
+  }, [editDayCard, findCardFromStore, currentSessionId]); 
+
+  // 第二個useEffect, 顯示動作列表
   useEffect(() => {
     const currentSessionId = localStorage.getItem('currentSessionId');
 
@@ -74,7 +110,6 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
       setFetchIsLoading(false);
     }
   }, [dayCard, userId, workoutSessions]);
-
 
 
   return (
