@@ -81,14 +81,14 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
     <div>
       {currentWorkout || fetchLoading ? (
         <StartWorkout
-          isEditMode={true}
+          isEditMode={false}
           workoutSession={currentWorkout as WorkoutSessionType}
           setCurrentWorkout={setCurrentWorkout}
           fetchLoading={fetchLoading}
         />
       ) : (
         <div className="p-2">
-          <p>Oops 找不到訓練卡</p>
+          <p>Oops 訓練卡建立失敗</p>
           <button onClick={() => router.back()}>返回</button>
         </div>
       )}

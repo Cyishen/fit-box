@@ -21,7 +21,7 @@ interface Props {
 const ShowDayTraining = ({ dayCardData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-
+  // console.log('一開始',dayCardData)
   const router = useRouter();
 
   // 卡片狀態管理
@@ -33,8 +33,8 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
 
-  const isSyncingRef = useRef(false); 
-
+  // 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
+  const isSyncingRef = useRef(false);
   useEffect(() => {
     if (isSyncingRef.current) return;
     isSyncingRef.current = true;
@@ -58,17 +58,9 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
     updateToDb();
   }, [dayCard, userId]);
+  // console.log('列印放到上傳到資料庫的useEffect後面',dayCardData)
 
-  useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const storedDate = localStorage.getItem('lastSyncDate');
-  
-    if (storedDate !== today) {
-      localStorage.removeItem('day-card-storage');
-      localStorage.setItem('lastSyncDate', today); 
-    }
-  }, []);
-
+  // 第二個useEffect, 抓本地的dayCard顯示當天訓練卡
   useEffect(() => {
     try {
       if (userId) {
@@ -91,6 +83,17 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   }, [dayCard, dayCardData, userId, workoutSessions]);
 
+  // 第三個useEffect, 當dayCard內的訓練卡日期不等於今天日期, 就刪除dayCard
+  useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const storedDate = localStorage.getItem('lastSyncDate');
+
+    if (storedDate !== today) {
+      localStorage.removeItem('day-card-storage');
+      localStorage.setItem('lastSyncDate', today);
+    }
+  }, []);
+
 
   // 點擊訓練卡到編輯頁面
   const handleEditWorkout = (cardSessionId: string) => {
@@ -103,6 +106,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
         }
         localStorage.setItem('currentSessionId', cardSessionId);
       } else {
+        // 資料庫
         const sessionCards = dayCardData.find(session => session.cardSessionId === cardSessionId);
 
         if (sessionCards) {

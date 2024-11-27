@@ -122,19 +122,19 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
                   <Image src='/icons/dumbbell.svg' width={20} height={20} alt='dumbbell' />
                 </div>
                 <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>
-                  {sessionCards?.exercises.length} 動作
+                  {sessionCards?.exercises?.length} 動作
                 </p>
               </div>
 
               <div className='flex items-center gap-1'>
                 <ListOrdered width={16} className='group-hover:text-[#66CCFF]'/>
                 <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>
-                  共 {sessionCards?.exercises.reduce((total, e) => total + e.sets.length, 0)} 組
+                  共 {sessionCards?.exercises?.reduce((total, e) => total + e.sets.length, 0)} 組
                 </p>
               </div>
 
               <div className='text-muted-foreground line-clamp-1'>
-                <p>{multiFormatDateString(sessionCards.createdAt as string)}</p>
+                <p>{multiFormatDateString(sessionCards?.createdAt as string)}</p>
               </div>
             </div>
           </div>

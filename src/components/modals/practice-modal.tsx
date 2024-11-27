@@ -129,19 +129,7 @@ export const PracticeModal = () => {
           setDayCard(savedSessionToData as WorkoutSessionType);
         }
 
-        // todo?資料庫操作和狀態更新並行
-        // await Promise.all([
-        //   upsertWorkoutSession(newCurrentSession),
-        //   new Promise(resolve => {
-        //     // 同時儲存到本地資料
-        //     if (!dayCard.find((card) => card.cardSessionId === newSessionId)) {
-        //       setDayCard(newCurrentSession as WorkoutSessionType);
-        //     }
-        //     resolve(true);  // 用來確認本地資料處理完成
-        //   })
-        // ]);
-
-        localStorage.setItem('currentSessionId', newCurrentSession?.cardSessionId || '');
+        localStorage.setItem('currentSessionId', newCurrentSession?.cardSessionId);
 
         router.push(`/fit/workout/${menuId}/${templateId}`);
       } else {

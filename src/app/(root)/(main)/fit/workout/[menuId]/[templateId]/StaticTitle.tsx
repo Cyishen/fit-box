@@ -14,7 +14,7 @@ const StaticTitle = ({ isEditMode, handleCompleteWorkout, isLoading }: Props) =>
       <div className="px-4 pt-4">
         <div className='flex w-full justify-between items-center'>
           <h3 className="font-bold text-xl whitespace-nowrap">
-            {isEditMode ? "訓練中" : "開始訓練"}
+            {isEditMode ? "更新訓練" : "開始訓練"}
           </h3>
 
           <Button
