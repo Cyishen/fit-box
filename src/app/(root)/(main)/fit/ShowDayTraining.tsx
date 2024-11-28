@@ -32,7 +32,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
-  console.log('dayCard', dayCard)
+
   // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
   // const isSyncingRef = useRef(false);
   // useEffect(() => {
@@ -105,24 +105,22 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           // 檢查資料庫中的卡片
           const dbCardIds = dayCardData.map(card => card.cardSessionId);
           const localCardIds = dayCard.map(card => card.cardSessionId);
-
-          // 找出本地有但資料庫沒有的卡片
+          console.log('資料庫',dbCardIds)
+          console.log('本地',localCardIds)
           const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
-
-          // 刪除本地不再存在於資料庫的卡片
-          cardsToRemove.forEach(cardId => {
-            removeDayCard(cardId);  // 刪除本地卡片
-          });
+          console.log('要刪除的卡片',cardsToRemove)
+          if(dayCard.length !== localCardIds.length) {
+            cardsToRemove.forEach(cardId => {
+              removeDayCard(cardId);  // 刪除本地卡片
+            });
+          }
         } catch (error) {
           console.error("Sync local cards with database failed", error);
         }
       }
     };
+    syncLocalCardsWithDatabase();
 
-    // 只在特定條件下執行同步操作，而非每次頁面加載
-    if (dayCard.length > 0 && dayCardData.length > 0) {
-      syncLocalCardsWithDatabase();
-    }
   }, [dayCardData, dayCard, userId, removeDayCard]); 
   
   
