@@ -7,6 +7,7 @@ type DayCardStore = {
   setDayCard: (data: WorkoutSessionType) => void;
   editDayCard: (id: string, updatedCard: WorkoutSessionType) => void;
   removeDayCard: (id: string) => void;
+  // setAllDayCard: (data: WorkoutSessionType[]) => void;
 };
 
 export const useDayCardStore = create<DayCardStore>()(
@@ -14,7 +15,7 @@ export const useDayCardStore = create<DayCardStore>()(
     (set) => ({
       dayCard: [],
       // 1.傳遞整個陣列
-      // setDayCard: (data) =>
+      // setAllDayCard: (data) =>
       //   set({ dayCard: data }),
       // 2.傳遞單個
       // setDayCard: (data) =>
