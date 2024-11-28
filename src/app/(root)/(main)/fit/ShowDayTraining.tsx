@@ -31,7 +31,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
   // TODO? 用戶登入, dayCard資料
-  const { dayCard, removeDayCard } = useDayCardStore();
+  const { dayCard, removeDayCard, setDayCard } = useDayCardStore();
 
   // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
   // const isSyncingRef = useRef(false);
@@ -73,18 +73,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
         ];
 
         setWorkoutCards(combinedCards);
-
-        // 檢查本地卡片是否存在於資料庫中
-        const remainingLocalCards = dayCard.filter((localCard) =>
-          dayCardData.some((dbCard) => dbCard.cardSessionId === localCard.cardSessionId)
-        );
-
-        // 刪除本地已經不存在於資料庫的卡片
-        remainingLocalCards.forEach((localCard) => {
-          if (!dayCardData.some((dbCard) => dbCard.cardSessionId === localCard.cardSessionId)) {
-            removeDayCard(localCard.cardSessionId); // 刪除本地卡片
-          }
-        });
       } else {
         // 用戶沒登入-本地找今日的訓練卡
         const today = new Date().toISOString().slice(0, 10);
@@ -108,6 +96,39 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   }, []);
 
+
+  useEffect(() => {
+    if (userId && dayCardData) {
+      // 找出資料庫中存在、但本地dayCard中不存在的卡片
+      const databaseCardsNotInLocal = dayCardData.filter(
+        (dbCard) => 
+          !dayCard.some(
+            (localCard) => localCard.cardSessionId === dbCard.cardSessionId
+          )
+      );
+  
+      // 只有當有不在本地的資料庫卡片時才處理
+      if (databaseCardsNotInLocal.length > 0) {
+        console.log('資料庫中存在但本地不存在的卡片:', databaseCardsNotInLocal);
+        
+        // 可以在這裡添加額外的確認邏輯
+        // 例如檢查卡片是否真的被其他設備刪除，而不是因為其他原因
+        
+        // 如果確認需要更新，則加入本地 dayCard
+        const updatedDayCard = [
+          ...dayCard,
+          ...databaseCardsNotInLocal
+        ];
+        
+        // 根據您的需求，可以使用 setDayCard 或直接更新 Zustand store
+        // 這裡使用 Zustand 的方法示例
+        updatedDayCard.forEach((card) => {
+          // 使用 setDayCard 確保不會重複添加
+          setDayCard(card);
+        });
+      }
+    }
+  }, [dayCard, dayCardData, setDayCard, userId]);
 
   // 點擊訓練卡到編輯頁面
   const handleEditWorkout = (cardSessionId: string) => {
@@ -138,10 +159,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
       if (userId) {
         removeDayCard(cardSessionId);
         await deleteWorkoutSessionByCardId(cardSessionId);
-
-        const updatedDayCardData = dayCardData.filter(card => card.cardSessionId !== cardSessionId);
-        setWorkoutCards(updatedDayCardData);
-
       } else {
         removeWorkoutSession(cardSessionId);
       }
