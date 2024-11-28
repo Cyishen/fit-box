@@ -21,7 +21,7 @@ interface Props {
 const ShowDayTraining = ({ dayCardData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-console.log(dayCardData)
+
   const router = useRouter();
 
   // 卡片狀態管理
@@ -32,7 +32,7 @@ console.log(dayCardData)
 
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
-
+  console.log('本地所有卡片', dayCard)
   // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
   // const isSyncingRef = useRef(false);
   // useEffect(() => {
@@ -75,8 +75,6 @@ console.log(dayCardData)
         // const updatedCards = combinedCards.filter(
         //   (card) => dayCardData.some((dbCard) => dbCard.cardSessionId === card.cardSessionId)
         // );
-
-        // console.log('??',updatedCards)
 
         setWorkoutCards(combinedCards);
       } else {
