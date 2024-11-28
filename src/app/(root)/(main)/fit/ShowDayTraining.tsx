@@ -1,7 +1,7 @@
 "use client";
 
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import ShowTrainingCard from './ShowTrainingCard';
 
@@ -96,27 +96,40 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   }, []);
 
+
+  const isInitialSync = useRef(true);
   useEffect(() => {
     const syncLocalCardsWithDatabase = async () => {
       if (userId) {
         try {
+          // 確保只有在第一次同步後才會刪除
+          if (!isInitialSync.current) {
+            return;
+          }
+  
           // 檢查資料庫中的卡片
           const dbCardIds = dayCardData.map(card => card.cardSessionId);
           const localCardIds = dayCard.map(card => card.cardSessionId);
-;
+  
           const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
-
-          cardsToRemove.forEach(cardId => {
-            removeDayCard(cardId);  
-          });
+  
+          if (cardsToRemove.length > 0) {
+            // 刪除本地卡片
+            cardsToRemove.forEach(cardId => {
+              removeDayCard(cardId);
+            });
+          }
         } catch (error) {
           console.error("Sync local cards with database failed", error);
+        } finally {
+          isInitialSync.current = false; // 設置初始同步完成標誌
         }
       }
     };
-    syncLocalCardsWithDatabase();
 
-  }, [dayCardData, dayCard, userId, removeDayCard]); 
+    syncLocalCardsWithDatabase();
+  
+  }, [dayCardData, dayCard, userId, removeDayCard]);
 
 
   // 點擊訓練卡到編輯頁面
