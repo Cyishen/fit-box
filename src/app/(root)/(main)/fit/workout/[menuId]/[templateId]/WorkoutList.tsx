@@ -6,7 +6,7 @@ import WorkoutListCard from "./WorkoutListCard";
 import { useWorkoutStore } from "@/lib/store";
 
 import { useSession } from "next-auth/react"
-import { upsertWorkoutSession } from "@/actions/user-create";
+// import { upsertWorkoutSession } from "@/actions/user-create";
 import { SkeletonCard } from "../../../[menuId]/[templateId]/SkeletonCard";
 import { useDayCardStore } from "@/lib/day-modal";
 
@@ -31,7 +31,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
   };
 
   // TODO? dayCard 讀取儲存的訓練卡
-  const { dayCard, editDayCard } = useDayCardStore();
+  const { editDayCard } = useDayCardStore();
 
   // 修改動作組數
   const handleUpdateSets = async (movementId: string, updatedSets: WorkoutSetType[]) => {
@@ -47,15 +47,12 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
     }
 
     if (userId) {
-      if (dayCard) {
-        editDayCard(updatedSession.cardSessionId, updatedSession)
-        setCurrentWorkout(updatedSession);
-      } else {
-        // 資料庫更新
-        await upsertWorkoutSession(updatedSession)
-      }
+      // 資料庫更新
+      // await upsertWorkoutSession(updatedSession)
+      editDayCard(updatedSession.cardSessionId, updatedSession)
+      setCurrentWorkout(updatedSession);
     } else {
-      // 用戶沒有登入, 本地更新
+      // 無用戶, 本地更新
       updateCurrentSession(updatedSession);
     }
   };
@@ -79,7 +76,8 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
 
       if (userId) {
         // 資料庫更新
-        await upsertWorkoutSession(updatedSession)
+        // await upsertWorkoutSession(updatedSession)
+        editDayCard(updatedSession.cardSessionId, updatedSession)
         setCurrentWorkout(updatedSession);
       } else {
         // 無用戶, 本地更新

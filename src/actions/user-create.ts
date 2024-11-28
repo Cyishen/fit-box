@@ -552,6 +552,61 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
   }
 }
 
+export const updateDayCardToDb = async (data: WorkoutSessionType[]) => {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    const updatedWorkoutSessions = await Promise.all(
+      data.map(async (sessionData) => {
+        return prismaDb.workoutSession.update({
+          where: {
+            id: sessionData.id,
+          },
+          data: {
+            menuId: sessionData.menuId,
+            templateId: sessionData.templateId,
+            templateTitle: sessionData.templateTitle,
+            date: new Date(sessionData.date).toISOString(),
+            exercises: {
+              update: sessionData.exercises.map((exercise) => ({
+                where: { id: exercise.id ?? "" }, // 更新指定的 exercise
+                data: {
+                  name: exercise.name,
+                  exerciseCategory: exercise.exerciseCategory,
+                  sets: {
+                    update: exercise.sets.map((set) => ({
+                      where: { id: set.id ?? "" },
+                      data: {
+                        leftWeight: set.leftWeight,
+                        rightWeight: set.rightWeight,
+                        repetitions: set.repetitions,
+                        totalWeight: set.totalWeight,
+                        isCompleted: set.isCompleted,
+                      },
+                    })),
+                  },
+                },
+              })),
+            },
+          },
+        });
+      })
+    );
+
+    revalidatePath('/fit');
+    return updatedWorkoutSessions;
+  } catch (error) {
+    console.error("Error updating workout sessions:", error);
+    throw error;
+  }
+};
+
+
 export const getWorkoutSessionByCardId = async (cardSessionId: string) => {
   const session = await auth()
   const userId = session?.user?.id

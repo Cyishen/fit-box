@@ -33,14 +33,14 @@ const ActionPicker = () => {
   const [currentSession, setCurrentSession] = useState<WorkoutSessionType | null>(null);
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<WorkoutExerciseType[]>([]);
-  // 判斷 action頁面是從訓練卡點選, 還是bar點選
+  // 判斷 action頁面是從訓練卡點選, 還是mobile bar點選
   const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
 
   // todo? 用戶登入, dayCard資料
   const { dayCard, editDayCard } = useDayCardStore();
 
 
-  // 初始 UI顯示已存在動作
+  // UI顯示已存在動作
   useEffect(() => {
     const currentSessionId = localStorage.getItem('currentSessionId');
     setExistingSessionId(currentSessionId);

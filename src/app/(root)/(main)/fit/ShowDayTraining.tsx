@@ -1,13 +1,13 @@
 "use client";
 
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import ShowTrainingCard from './ShowTrainingCard';
 
 import { useSession } from "next-auth/react"
 
-import { deleteWorkoutSessionByCardId, upsertWorkoutSession, upsertWorkoutSummary } from '@/actions/user-create';
+import { deleteWorkoutSessionByCardId } from '@/actions/user-create';
 
 import { useWorkoutStore } from '@/lib/store';
 import { useDayCardStore } from '@/lib/day-modal';
@@ -21,7 +21,7 @@ interface Props {
 const ShowDayTraining = ({ dayCardData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-  // console.log('一開始',dayCardData)
+console.log(dayCardData)
   const router = useRouter();
 
   // 卡片狀態管理
@@ -33,44 +33,52 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
 
-  // 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
-  const isSyncingRef = useRef(false);
-  useEffect(() => {
-    if (isSyncingRef.current) return;
-    isSyncingRef.current = true;
+  // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
+  // const isSyncingRef = useRef(false);
+  // useEffect(() => {
+  //   if (isSyncingRef.current) return;
+  //   isSyncingRef.current = true;
 
-    const updateToDb = async () => {
-      try {
-        if (userId && dayCard && dayCard.length > 0) {
-          for (const session of dayCard) {
-            await Promise.all([
-              upsertWorkoutSession(session),
-              upsertWorkoutSummary(session.id as string),
-            ]);
-          }
-        }
-      } catch (error) {
-        console.error("Error syncing DayCard:", error);
-      } finally {
-        isSyncingRef.current = false;
-      }
-    };
+  //   const updateToDb = async () => {
+  //     try {
+  //       if (userId && dayCard && dayCard.length > 0) {
 
-    updateToDb();
-  }, [dayCard, userId]);
-  // console.log('列印放到上傳到資料庫的useEffect後面',dayCardData)
+  //         for (const session of dayCard) {
+  //           await Promise.all([
+  //             upsertWorkoutSession(session),
+  //             upsertWorkoutSummary(session.id as string),
+  //           ]);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error syncing DayCard:", error);
+  //     } finally {
+  //       isSyncingRef.current = false;
+  //     }
+  //   };
+  //   localStorage.removeItem('day-card-storage')
+  //   updateToDb();
+  // }, [dayCard, userId]);
 
   // 第二個useEffect, 抓本地的dayCard顯示當天訓練卡
   useEffect(() => {
     try {
       if (userId) {
-        // 用戶登入
-        if (dayCard.length > 0) {
-          setWorkoutCards(dayCard);
-        } else {
-          // 用戶用不同設備查看, 新設備沒有dayCard存在, 也能抓資料庫看到今日訓練卡
-          setWorkoutCards(dayCardData);
-        }
+        // 合併本地 dayCard 與資料庫 dayCardData
+        const combinedCards = [
+          ...dayCard,
+          ...dayCardData.filter(
+            (dbCard) => !dayCard.some((localCard) => localCard.cardSessionId === dbCard.cardSessionId)
+          ), // 資料庫中不在本地的卡片
+        ];
+
+        // const updatedCards = combinedCards.filter(
+        //   (card) => dayCardData.some((dbCard) => dbCard.cardSessionId === card.cardSessionId)
+        // );
+
+        // console.log('??',updatedCards)
+
+        setWorkoutCards(combinedCards);
       } else {
         // 用戶沒登入-本地找今日的訓練卡
         const today = new Date().toISOString().slice(0, 10);
@@ -98,22 +106,16 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   // 點擊訓練卡到編輯頁面
   const handleEditWorkout = (cardSessionId: string) => {
     if (userId) {
-      if (dayCard && dayCard.length > 0) {
-        const findDayCard = dayCard.find(session => session.cardSessionId === cardSessionId);
+      const findDayCard = dayCard.find(day => day.cardSessionId === cardSessionId);
+      const fromDbCard = dayCardData.find(db => db.cardSessionId === cardSessionId);
 
-        if (findDayCard) {
-          router.push(`/fit/workout/${findDayCard.menuId}/${findDayCard.templateId}/${cardSessionId}`);
-        }
-        localStorage.setItem('currentSessionId', cardSessionId);
-      } else {
-        // 資料庫
-        const sessionCards = dayCardData.find(session => session.cardSessionId === cardSessionId);
-
-        if (sessionCards) {
-          router.push(`/fit/workout/${sessionCards.menuId}/${sessionCards.templateId}/${cardSessionId}`);
-        }
-        localStorage.setItem('currentSessionId', cardSessionId);
+      if (findDayCard) {
+        router.push(`/fit/workout/${findDayCard.menuId}/${findDayCard.templateId}/${cardSessionId}`);
+      } else if (fromDbCard) {
+        router.push(`/fit/workout/${fromDbCard.menuId}/${fromDbCard.templateId}/${cardSessionId}`);
       }
+
+      localStorage.setItem('currentSessionId', cardSessionId);
     } else {
       // 用戶沒有登入-本地
       const sessionToEdit = workoutSessions.find(session => session.cardSessionId === cardSessionId);
@@ -126,16 +128,15 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   };
 
   const handleRemoveWorkoutSession = async (cardSessionId: string) => {
-    if (userId) {
-      if (dayCard.length > 0) {
+    try {
+      if (userId) {
         removeDayCard(cardSessionId);
         await deleteWorkoutSessionByCardId(cardSessionId);
       } else {
-        // 歷史訓練卡
-        await deleteWorkoutSessionByCardId(cardSessionId);
+        removeWorkoutSession(cardSessionId);
       }
-    } else {
-      removeWorkoutSession(cardSessionId);
+    } catch (error) {
+      console.error("Failed to Remove Card", error);
     }
   };
 
