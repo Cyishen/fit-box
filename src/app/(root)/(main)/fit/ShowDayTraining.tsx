@@ -32,7 +32,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
-  console.log('本地所有卡片', dayCard)
+
   // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
   // const isSyncingRef = useRef(false);
   // useEffect(() => {
@@ -72,11 +72,19 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           ), // 資料庫中不在本地的卡片
         ];
 
-        // const updatedCards = combinedCards.filter(
-        //   (card) => dayCardData.some((dbCard) => dbCard.cardSessionId === card.cardSessionId)
-        // );
-
         setWorkoutCards(combinedCards);
+
+        // 檢查本地卡片是否存在於資料庫中
+        const remainingLocalCards = dayCard.filter((localCard) =>
+          dayCardData.some((dbCard) => dbCard.cardSessionId === localCard.cardSessionId)
+        );
+
+        // 刪除本地已經不存在於資料庫的卡片
+        remainingLocalCards.forEach((localCard) => {
+          if (!dayCardData.some((dbCard) => dbCard.cardSessionId === localCard.cardSessionId)) {
+            removeDayCard(localCard.cardSessionId); // 刪除本地卡片
+          }
+        });
       } else {
         // 用戶沒登入-本地找今日的訓練卡
         const today = new Date().toISOString().slice(0, 10);
@@ -87,7 +95,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     } catch (error) {
       console.error("Can't find card", error);
     }
-  }, [dayCard, dayCardData, userId, workoutSessions]);
+  }, [dayCard, dayCardData, removeDayCard, userId, workoutSessions]);
 
   // 第三個useEffect, 當dayCard內的訓練卡日期不等於今天日期, 就刪除dayCard
   useEffect(() => {
@@ -130,6 +138,10 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
       if (userId) {
         removeDayCard(cardSessionId);
         await deleteWorkoutSessionByCardId(cardSessionId);
+
+        const updatedDayCardData = dayCardData.filter(card => card.cardSessionId !== cardSessionId);
+        setWorkoutCards(updatedDayCardData);
+
       } else {
         removeWorkoutSession(cardSessionId);
       }
