@@ -32,7 +32,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
-
+  console.log(dayCard)
   // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
   // const isSyncingRef = useRef(false);
   // useEffect(() => {
@@ -72,13 +72,15 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           ), // 資料庫中不在本地的卡片
         ];
 
-        // 新增：檢查本地是否有不存在於資料庫的卡片
         const localCardsNotInDatabase = dayCard.filter(
-          (localCard) =>
+          (localCard) => 
+            // 排除剛剛建立的卡片（例如建立時間在最近幾分鐘內）
+            localCard.createdAt && 
+            (new Date().getTime() - new Date(localCard.createdAt).getTime()) > (5 * 60 * 1000) && 
             !dayCardData.some((dbCard) => dbCard.cardSessionId === localCard.cardSessionId)
         );
-
-        // 如果有本地卡片不在資料庫，則移除這些卡片
+    
+        // 只有確定是其他設備刪除的卡片，才移除本地卡片
         if (localCardsNotInDatabase.length > 0) {
           localCardsNotInDatabase.forEach((cardToRemove) => {
             removeDayCard(cardToRemove.cardSessionId);
