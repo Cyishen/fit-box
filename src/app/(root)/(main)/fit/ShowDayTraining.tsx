@@ -72,6 +72,19 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           ), // 資料庫中不在本地的卡片
         ];
 
+        // 新增：檢查本地是否有不存在於資料庫的卡片
+        const localCardsNotInDatabase = dayCard.filter(
+          (localCard) =>
+            !dayCardData.some((dbCard) => dbCard.cardSessionId === localCard.cardSessionId)
+        );
+
+        // 如果有本地卡片不在資料庫，則移除這些卡片
+        if (localCardsNotInDatabase.length > 0) {
+          localCardsNotInDatabase.forEach((cardToRemove) => {
+            removeDayCard(cardToRemove.cardSessionId);
+          });
+        }
+
         setWorkoutCards(combinedCards);
       } else {
         // 用戶沒登入-本地找今日的訓練卡
@@ -96,35 +109,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   }, []);
 
-
-  useEffect(() => {
-    // 確保只有在用戶已登入，且同時有本地和資料庫卡片時才執行
-    if (userId && dayCardData && dayCard.length > 0) {
-      // 篩選出本地卡片中，不是由當前設備建立的卡片（即來自資料庫的卡片）
-      const externalCards = dayCard.filter(
-        (localCard) => 
-          // 來自資料庫，且不是當前設備建立的卡片
-          dayCardData.some(
-            (dbCard) => 
-              dbCard.cardSessionId === localCard.cardSessionId && 
-              dbCard.userId !== userId  // 確保是其他設備建立的卡片
-          )
-      );
-  
-      // 檢查這些外部卡片是否已從資料庫中刪除
-      const cardsToRemove = externalCards.filter(
-        (externalCard) => 
-          !dayCardData.some(
-            (dbCard) => dbCard.cardSessionId === externalCard.cardSessionId
-          )
-      );
-  
-      // 移除已從資料庫刪除的外部卡片
-      cardsToRemove.forEach((cardToRemove) => {
-        removeDayCard(cardToRemove.cardSessionId);
-      });
-    }
-  }, [dayCard, dayCardData, removeDayCard, userId]);
 
   // 點擊訓練卡到編輯頁面
   const handleEditWorkout = (cardSessionId: string) => {
