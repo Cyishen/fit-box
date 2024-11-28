@@ -32,7 +32,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard } = useDayCardStore();
-
+  console.log('dayCard', dayCard)
   // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
   // const isSyncingRef = useRef(false);
   // useEffect(() => {
@@ -97,19 +97,34 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (userId && dayCardData) {
-      // 比對資料庫與本地資料，刪除本地多餘卡片
-      const updatedDayCard = dayCard.filter(localCard => 
-        dayCardData.some(dbCard => dbCard.cardSessionId === localCard.cardSessionId)
-      );
-  
-      // 如果本地卡片與資料庫不同步，更新本地
-      if (updatedDayCard.length !== dayCard.length) {
-        setWorkoutCards(updatedDayCard); // 更新當前的訓練卡顯示
-        updatedDayCard.forEach(card => removeDayCard(card.cardSessionId)); // 清除本地多餘卡片
+    // 這裡不應該立刻進行刪除操作
+    // 只應該在某些觸發條件下執行資料同步與刪除操作
+    const syncLocalCardsWithDatabase = async () => {
+      if (userId) {
+        try {
+          // 檢查資料庫中的卡片
+          const dbCardIds = dayCardData.map(card => card.cardSessionId);
+          const localCardIds = dayCard.map(card => card.cardSessionId);
+
+          // 找出本地有但資料庫沒有的卡片
+          const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
+
+          // 刪除本地不再存在於資料庫的卡片
+          cardsToRemove.forEach(cardId => {
+            removeDayCard(cardId);  // 刪除本地卡片
+          });
+        } catch (error) {
+          console.error("Sync local cards with database failed", error);
+        }
       }
+    };
+
+    // 只在特定條件下執行同步操作，而非每次頁面加載
+    if (dayCard.length > 0 && dayCardData.length > 0) {
+      syncLocalCardsWithDatabase();
     }
-  }, [dayCard, dayCardData, userId]);
+  }, [dayCardData, dayCard, userId, removeDayCard]); 
+  
   
   
 
