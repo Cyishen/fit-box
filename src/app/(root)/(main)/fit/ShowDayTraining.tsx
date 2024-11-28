@@ -97,23 +97,18 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   }, []);
 
   useEffect(() => {
-    // 這裡不應該立刻進行刪除操作
-    // 只應該在某些觸發條件下執行資料同步與刪除操作
     const syncLocalCardsWithDatabase = async () => {
       if (userId) {
         try {
           // 檢查資料庫中的卡片
           const dbCardIds = dayCardData.map(card => card.cardSessionId);
           const localCardIds = dayCard.map(card => card.cardSessionId);
-          console.log('資料庫',dbCardIds)
-          console.log('本地',localCardIds)
+;
           const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
-          console.log('要刪除的卡片',cardsToRemove)
-          if(dayCard.length !== localCardIds.length) {
-            cardsToRemove.forEach(cardId => {
-              removeDayCard(cardId);  // 刪除本地卡片
-            });
-          }
+
+          cardsToRemove.forEach(cardId => {
+            removeDayCard(cardId);  
+          });
         } catch (error) {
           console.error("Sync local cards with database failed", error);
         }
@@ -122,9 +117,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     syncLocalCardsWithDatabase();
 
   }, [dayCardData, dayCard, userId, removeDayCard]); 
-  
-  
-  
 
 
   // 點擊訓練卡到編輯頁面
