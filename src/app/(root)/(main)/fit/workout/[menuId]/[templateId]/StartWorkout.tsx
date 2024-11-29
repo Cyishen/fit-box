@@ -26,13 +26,13 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // 用戶沒有登入-更新本地訓練卡
+  // 用戶沒有登入, 使用本地 useWorkoutStore
   const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
   const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
     updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
 
-  // 用戶登入, 讀取儲存的 dayCard訓練卡
+  // 用戶登入, 使用本地 dayCard
   const { dayCard, editDayCard } = useDayCardStore();
 
 
@@ -43,27 +43,47 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
       const updatedSession = { ...workoutSession };
 
       if (userId) {
-        if (dayCard.length > 0) {
-          // dayCard存在，更新本地 dayCard, 還沒更新變更到資料庫
+        const currentDayCard = dayCard.find(
+          (card) => card.cardSessionId === updatedSession.cardSessionId
+        );
+
+        if (currentDayCard && !isEditMode) {
+          // 初次建立, 更新 dayCard
           editDayCard(updatedSession.cardSessionId, updatedSession);
           localStorage.removeItem('currentSessionId');
           router.push('/fit');
+        } else if (isEditMode) {
+          // 編輯時
+          editDayCard(updatedSession.cardSessionId, updatedSession);
+
+          // 速度太慢, 改fit頁面背景處理上傳
+          // if (updatedSession.id) {
+          //   await Promise.all([
+          //     upsertWorkoutSession(updatedSession),
+          //     upsertWorkoutSummary(updatedSession.id),
+          //   ]);
+          // } else {
+          //   console.warn("Missing ID for session in edit mode");
+          // }
         } else {
           // 如果沒有 dayCard，代表點擊的是歷史訓練卡-更新資料庫
-          await Promise.all([
-            upsertWorkoutSession(workoutSession),
-            upsertWorkoutSummary(workoutSession.id as string),
-          ]);
+          if (workoutSession.id) {
+            await Promise.all([
+              upsertWorkoutSession(workoutSession),
+              upsertWorkoutSummary(workoutSession.id),
+            ]);
+          } else {
+            console.warn("Missing ID for historical session");
+          }
         }
       } else {
-        // 用戶沒有登入-則更新本地資料
+        // 用戶沒有登入- 更新本地 useWorkoutStore
         updateCurrentSession(updatedSession);
         setCurrentWorkout(updatedSession);
       }
     } catch (error) {
       console.error("Error completing workout", error);
     } finally {
-      // 清除 currentSessionId 並跳轉頁面
       localStorage.removeItem('currentSessionId');
       router.push('/fit');
     }

@@ -20,7 +20,6 @@ import { useRouter } from "next/navigation";
 // import { getExerciseByTemplateId } from "@/actions/user-create";
 
 import { useSession } from "next-auth/react"
-import { upsertWorkoutSession } from "@/actions/user-create";
 
 import { useDayCardStore } from "@/lib/day-modal";
 
@@ -92,7 +91,7 @@ export const PracticeModal = () => {
 
 
   // Todo? dayCard儲存本地: 新建卡片儲存本地 
-  const { dayCard, setDayCard } = useDayCardStore();
+  const { setDayCard } = useDayCardStore();
 
   const handleToWorkoutSession = async () => {
     const existingSessionId = localStorage.getItem('currentSessionId');
@@ -104,6 +103,7 @@ export const PracticeModal = () => {
       if (userId) {
         // 用戶登入
         const newCurrentSession = {
+          // isSynced: false,
           cardSessionId: newSessionId,
           userId: userId,
           menuId: menuId ?? '',
@@ -122,28 +122,33 @@ export const PracticeModal = () => {
             })),
           })),
         }
-        // TODO: 資料庫建立
-        // 方式一 分開等待, 等待時間長, 會沒跳轉成功 (setDayCard可以拿到資料庫給的id)
+
+        // 方式一, 不儲存到資料庫
+        setDayCard(newCurrentSession)
+
+        // TODO? 測試同時儲存到資料庫
+        // 1. 分開等待, 等待時間長, 會沒跳轉成功 (setDayCard可以拿到資料庫給的id)
         // const savedSessionToData = await upsertWorkoutSession(newCurrentSession);
         // if (!dayCard.find((card) => card.cardSessionId === savedSessionToData.cardSessionId)) {
         //   setDayCard(savedSessionToData as WorkoutSessionType);
         // }
 
-        // 方式二 並行, 跳轉速度快, 但setDayCard沒有拿到資料庫給的id
-        await Promise.all([
-          upsertWorkoutSession(newCurrentSession), 
-          new Promise(resolve => {
-            // 第一個api自動返回結果, 但第二個自定義的Promise需要手動標記resolve為true 
-            if (!dayCard.find((card) => card.cardSessionId === newSessionId)) {
-              setDayCard(newCurrentSession as WorkoutSessionType);
-            }
-            resolve(true);
-          })
-        ]);
+        // 2. 並行, 跳轉速度快, 但setDayCard沒有拿到資料庫給的id?
+        // await Promise.all([
+        //   upsertWorkoutSession(newCurrentSession), 
+        //   new Promise(resolve => {
+        //     // 第一個api自動返回結果, 但第二個自定義的Promise需要手動標記resolve為true 
+        //     if (!dayCard.find((card) => card.cardSessionId === newSessionId)) {
+        //       setDayCard(newCurrentSession as WorkoutSessionType);
+        //     }
+        //     resolve(true);
+        //   })
+        // ]);
+
 
         localStorage.setItem('currentSessionId', newCurrentSession?.cardSessionId);
 
-        router.push(`/fit/workout/${menuId}/${templateId}`);
+        router.push(`/fit/workout/${newCurrentSession.menuId}/${newCurrentSession.templateId}`);
       } else {
         // 用戶沒有登入-本地, 如果沒有currentSessionId && 但openTemplate存在，創建新訓練卡
         if (!existingSessionId && openLocalTemplate) {
@@ -174,21 +179,16 @@ export const PracticeModal = () => {
             })),
           };
 
-          // 添加新訓練卡到 store
           addWorkoutSession(newWorkoutSession as WorkoutSessionType);
 
-          // 儲存 currentSessionId 以便後續頁面操作
           localStorage.setItem('currentSessionId', newWorkoutSession.cardSessionId);
         }
 
-        // 導航到 WorkoutPage
         router.push(`/fit/workout/${menuId}/${templateId}`);
       }
     } catch (error) {
       console.log('找不到模板', error)
     }
-
-    close()
   };
 
   useEffect(() => setIsClient(true), []);

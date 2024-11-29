@@ -55,6 +55,8 @@ type WorkoutSessionType = {
   notes: string | null; 
 
   exercises: WorkoutExerciseType[];
+
+  isSynced?: boolean;
 };
 
 type WorkoutExerciseType = {

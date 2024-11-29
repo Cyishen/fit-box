@@ -427,9 +427,6 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
             movementId: exercise.movementId,
             name: exercise.name,
             exerciseCategory: exercise.exerciseCategory,
-            // template: { 
-            //   connect: { id: data.templateId } 
-            // },
             sets: {
               create: exercise.sets.map((set) => ({
                 movementId: exercise.movementId,
@@ -451,12 +448,13 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
         }
       }
     });
-    revalidatePath('/fit');
+    // revalidatePath('/fit');
     return updatedWorkoutSession;
   }
 
   // 2. 用upsert創建 WorkoutSession  
   try {
+    console.log('執行新建')
     const workoutSession = await prismaDb.workoutSession.upsert({
       where: {
         cardSessionId: data.cardSessionId,
@@ -511,7 +509,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
       create: {
         // 創建新資料
         cardSessionId: data.cardSessionId,
-        userId: userId,
+        userId: data.userId,
         menuId: data.menuId,
         templateId: data.templateId,
         templateTitle: data.templateTitle,
@@ -543,8 +541,6 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
       },
     });
 
-
-    revalidatePath('/fit');
     return workoutSession;
   } catch (error) {
     console.error("Error creating workout session:", error);

@@ -7,11 +7,10 @@ import ShowTrainingCard from './ShowTrainingCard';
 
 import { useSession } from "next-auth/react"
 
-import { deleteWorkoutSessionByCardId } from '@/actions/user-create';
+import { deleteWorkoutSessionByCardId, upsertWorkoutSession, upsertWorkoutSummary } from '@/actions/user-create';
 
 import { useWorkoutStore } from '@/lib/store';
 import { useDayCardStore } from '@/lib/day-modal';
-
 
 
 interface Props {
@@ -31,36 +30,48 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
   // TODO? 用戶登入, dayCard資料
-  const { dayCard, removeDayCard } = useDayCardStore();
+  const { dayCard, removeDayCard, editDayCard } = useDayCardStore();
 
-  // TODO 第一個useEffect, 把剛剛建立的訓練卡dayCard上傳到資料庫, 用戶不會感受到上傳
-  // const isSyncingRef = useRef(false);
-  // useEffect(() => {
-  //   if (isSyncingRef.current) return;
-  //   isSyncingRef.current = true;
 
-  //   const updateToDb = async () => {
-  //     try {
-  //       if (userId && dayCard && dayCard.length > 0) {
+  // 第一個useEffect, 把剛建立的訓練卡dayCard上傳到資料庫且拿回id給 dayCard(用戶不會感受到上傳)
+  const isSyncingRef = useRef(false);
 
-  //         for (const session of dayCard) {
-  //           await Promise.all([
-  //             upsertWorkoutSession(session),
-  //             upsertWorkoutSummary(session.id as string),
-  //           ]);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error syncing DayCard:", error);
-  //     } finally {
-  //       isSyncingRef.current = false;
-  //     }
-  //   };
-  //   localStorage.removeItem('day-card-storage')
-  //   updateToDb();
-  // }, [dayCard, userId]);
+  useEffect(() => {
+    if (isSyncingRef.current) return;
 
-  // 第二個useEffect, 抓本地的dayCard顯示當天訓練卡
+    isSyncingRef.current = true;
+
+    const updateToDb = async () => {
+      try {
+        if (userId && dayCard && dayCard.length > 0) {
+
+          for (const session of dayCard) {
+            // 上傳到資料庫，並取得返回的卡片資料（包含 ID）
+            const updatedSession = await upsertWorkoutSession(session);
+  
+            if (updatedSession?.id && session.id !== updatedSession.id) {
+              // 回填 ID 到本地 dayCard
+              const updatedLocalCard = { 
+                ...session, 
+                id: updatedSession.id 
+              };
+              editDayCard(session.cardSessionId, updatedLocalCard as WorkoutSessionType);
+            }
+
+            await upsertWorkoutSummary(updatedSession.id);
+          }
+        }
+      } catch (error) {
+        console.error("Error syncing DayCard:", error);
+      } finally {
+        isSyncingRef.current = false;
+      }
+    };
+
+    updateToDb();
+  }, [dayCard, userId, editDayCard]);
+
+  // 第二個useEffect, 本地dayCard顯示, 但不同設備建立, 會有沒dayCard, 因此合併顯示
   useEffect(() => {
     try {
       if (userId) {
@@ -85,7 +96,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   }, [dayCard, dayCardData, removeDayCard, userId, workoutSessions]);
 
-  // 第三個useEffect, 當dayCard內的訓練卡日期不等於今天日期, 就刪除dayCard
+  // 第三個useEffect, 當dayCard內的訓練卡日期 !== 今天日期, 就刪除整個 useDayCardStore
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
     const storedDate = localStorage.getItem('lastSyncDate');
@@ -96,14 +107,14 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   }, []);
 
-
-  const isInitialSync = useRef(true);
+  // 第四個useEffect, 不同設備同步
+  const isInitialSync = useRef(false);
   useEffect(() => {
     const syncLocalCardsWithDatabase = async () => {
       if (userId) {
         try {
-          // 確保只有在第一次同步後才會刪除
           if (!isInitialSync.current) {
+            isInitialSync.current = true;
             return;
           }
   
@@ -114,7 +125,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
   
           if (cardsToRemove.length > 0) {
-            // 刪除本地卡片
             cardsToRemove.forEach(cardId => {
               removeDayCard(cardId);
             });
@@ -122,7 +132,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
         } catch (error) {
           console.error("Sync local cards with database failed", error);
         } finally {
-          isInitialSync.current = false; // 設置初始同步完成標誌
+          isInitialSync.current = false;
         }
       }
     };

@@ -12,39 +12,32 @@ import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUse
 import { auth } from '@/auth'
 
 
-// import { format } from "date-fns"
-
 
 const FitPage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
   const userMenuData = getAllMenusByUserId(userId as string);
-
   const userTemplateData = getAllTemplatesByUserId();
 
-  //TODO! 待刪除, 測試用, 抓所有訓練卡
-  const userWorkSessionData = getAllWorkoutSessionByUserId(userId as string);
+  const userDayCardData = getDaySessionByUserId(userId as string);
 
-  const userDaySessionData = getDaySessionByUserId(userId as string);
+  //TODO! 待刪除, 測試用, 抓所有訓練卡
+  const userAllCardData = getAllWorkoutSessionByUserId(userId as string);
 
   const [
     userMenu,
     userTemplates,
-    userSessionCard,
-    userDayCard
+    userDayCard,
+    userAllCard,
   ] = await Promise.all([
     userMenuData,
     userTemplateData,
-    userWorkSessionData,
-    userDaySessionData
+    userDayCardData,
+    userAllCardData,
   ]);
 
   // console.log('Day?', JSON.stringify(userDayCard, null, 2));
-
-  // TODO: 篩選用戶當天紀錄
-  // const todayDate = format(new Date(), 'yyyy-MM-dd');
-  // const todayTrainingCard = workoutSessions.filter(session => session.date === todayDate);
 
 
   return (
@@ -58,7 +51,7 @@ const FitPage = async () => {
             {/* 訓練卡 */}
             <ShowCard 
               daySession={userDayCard as WorkoutSessionType[]} 
-              allSession={userSessionCard as WorkoutSessionType[]}
+              allSession={userAllCard as WorkoutSessionType[]}
             />
 
             {/* 模板列表 */}
