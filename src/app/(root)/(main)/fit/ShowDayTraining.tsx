@@ -30,7 +30,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
   // TODO? 用戶登入, dayCard資料
-  const { dayCard, removeDayCard, editDayCard } = useDayCardStore();
+  const { dayCard, removeDayCard, editDayCard, setAllDayCard } = useDayCardStore();
 
 
   // 第一個useEffect, 把剛建立的訓練卡dayCard上傳到資料庫且拿回id給 dayCard(用戶不會感受到上傳)
@@ -107,39 +107,55 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   }, []);
 
-  // 第四個useEffect, 不同設備同步
-  const isInitialSync = useRef(false);
   useEffect(() => {
-    const syncLocalCardsWithDatabase = async () => {
+    const fetchCardsAndUpdate = async () => {
       if (userId) {
         try {
-          if (!isInitialSync.current) {
-            isInitialSync.current = true;
-            return;
-          }
-  
-          // 檢查資料庫中的卡片
-          const dbCardIds = dayCardData.map(card => card.cardSessionId);
-          const localCardIds = dayCard.map(card => card.cardSessionId);
-  
-          const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
-  
-          if (cardsToRemove.length > 0) {
-            cardsToRemove.forEach(cardId => {
-              removeDayCard(cardId);
-            });
-          }
+          setAllDayCard(dayCardData);
         } catch (error) {
-          console.error("Sync local cards with database failed", error);
-        } finally {
-          isInitialSync.current = false;
+          console.error("Error fetching and updating cards:", error);
         }
       }
     };
-
-    syncLocalCardsWithDatabase();
   
-  }, [dayCardData, dayCard, userId, removeDayCard]);
+    fetchCardsAndUpdate();
+  }, [dayCardData, userId, setAllDayCard]);
+  
+
+  // 第四個useEffect, 不同設備同步
+  // const deviceSync = useRef(false);
+  // useEffect(() => {
+  //   const syncLocalCardsWithDatabase = async () => {
+  //     if (userId) {
+  //       try {
+  //         if (deviceSync.current) {
+  //           return;
+  //         }
+
+  //         deviceSync.current = true;
+  
+  //         // 檢查資料庫中的卡片
+  //         const dbCardIds = dayCardData.map(card => card.cardSessionId);
+  //         const localCardIds = dayCard.map(card => card.cardSessionId);
+  //         console.log('資料庫數量', dbCardIds.length)
+  //         console.log('本地數量', localCardIds.length)
+  //         const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
+  
+  //         if (cardsToRemove.length > 0) {
+  //           cardsToRemove.forEach(cardId => {
+  //             removeDayCard(cardId);
+  //           });
+  //         }
+  //       } catch (error) {
+  //         console.error("Sync local cards with database failed", error);
+  //       } finally {
+  //         deviceSync.current = false;
+  //       }
+  //     }
+  //   };
+  //   syncLocalCardsWithDatabase();
+  
+  // }, [dayCardData, dayCard, userId, removeDayCard]);
 
 
   // 點擊訓練卡到編輯頁面

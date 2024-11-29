@@ -7,7 +7,7 @@ type DayCardStore = {
   setDayCard: (data: WorkoutSessionType) => void;
   editDayCard: (id: string, updatedCard: WorkoutSessionType) => void;
   removeDayCard: (id: string) => void;
-  // setAllDayCard: (data: WorkoutSessionType[]) => void;
+  setAllDayCard: (data: WorkoutSessionType[]) => void;
 };
 
 export const useDayCardStore = create<DayCardStore>()(
@@ -15,8 +15,23 @@ export const useDayCardStore = create<DayCardStore>()(
     (set) => ({
       dayCard: [],
       // 1.傳遞整個陣列
-      // setAllDayCard: (data) =>
-      //   set({ dayCard: data }),
+      setAllDayCard: (data) =>
+        set((state) => {
+          const dbCardIds = data.map(card => card.cardSessionId);
+
+          // 檢查資料庫卡片列表中的每個卡片
+          const newCards = data.filter(
+            (newCard) => !state.dayCard.some((existingCard) => existingCard.cardSessionId === newCard.cardSessionId)
+          );
+
+          // 刪除本地中在資料庫中已經不存在的卡片
+          const updatedCards = state.dayCard.filter(
+            (existingCard) => dbCardIds.includes(existingCard.cardSessionId)
+          );
+          return {
+            dayCard: [...updatedCards, ...newCards],
+          };
+        }),
       // 2.傳遞單個
       // setDayCard: (data) =>
       //   set((state) => ({
