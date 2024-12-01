@@ -18,18 +18,32 @@ export const useDayCardStore = create<DayCardStore>()(
       setAllDayCard: (data) =>
         set((state) => {
           const dbCardIds = data.map(card => card.cardSessionId);
-
+          
+          // 找出本地不在数据库中的卡片，删除它们
+          const cardsToRemove = state.dayCard.filter(
+            (existingCard) => !dbCardIds.includes(existingCard.cardSessionId)
+          );
+      
+          // 筛选出新卡片（数据库中有，但本地没有）
           const newCards = data.filter(
             (newCard) => !state.dayCard.some((existingCard) => existingCard.cardSessionId === newCard.cardSessionId)
           );
-      
+          
+          // 更新本地卡片：保留数据库中已有的卡片并加入新的卡片
           const updatedCards = state.dayCard.filter(
             (existingCard) => dbCardIds.includes(existingCard.cardSessionId)
           );
+      
+          // 从本地删除已删除的卡片
+          cardsToRemove.forEach((card) => {
+            // 使用state中的removeDayCard方法
+            state.removeDayCard(card.cardSessionId);
+          });
+
           return {
             dayCard: [...updatedCards, ...newCards],
           };
-        }),
+        }),      
 
       // 2. 傳遞單個特定cardSessionId
       setDayCard: (data) =>
