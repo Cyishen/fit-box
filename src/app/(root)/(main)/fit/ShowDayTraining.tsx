@@ -20,7 +20,7 @@ interface Props {
 const ShowDayTraining = ({ dayCardData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-
+  // console.log('資料庫目前',dayCardData)
   const router = useRouter();
 
   // 卡片狀態管理
@@ -35,39 +35,40 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // 第一個useEffect, 把剛建立的訓練卡dayCard上傳到資料庫且拿回id給 dayCard(用戶不會感受到上傳)
   const isSyncingRef = useRef(false);
+
   useEffect(() => {
+    if (!dayCard || dayCard.length === 0 || !userId) return; 
     if (isSyncingRef.current) return;
-    isSyncingRef.current = false;
-
-    const updateToDb = async () => {
-      try {
-        if (userId && dayCard && dayCard.length > 0) {
-
+  
+    const debounceTimeout = setTimeout(() => {
+      isSyncingRef.current = true;
+  
+      const updateToDb = async () => {
+        try {
           for (const session of dayCard) {
-            // 上傳到資料庫，並取得返回的卡片資料（包含 ID）
             const updatedSession = await upsertWorkoutSession(session);
-
             if (updatedSession?.id && session.id !== updatedSession.id) {
-              // 回填 ID 到本地 dayCard
-              const updatedLocalCard = {
-                ...session,
-                id: updatedSession.id,
+              const updatedLocalCard = { 
+                ...session, 
+                id: updatedSession.id 
               };
-              editDayCard(session.cardSessionId, updatedLocalCard as WorkoutSessionType);
+              editDayCard(session.cardSessionId, updatedLocalCard);
             }
-
             await upsertWorkoutSummary(updatedSession.id);
           }
+        } catch (error) {
+          console.error("Error syncing DayCard:", error);
+        } finally {
+          isSyncingRef.current = false;
         }
-      } catch (error) {
-        console.error("Error syncing DayCard:", error);
-      } finally {
-        isSyncingRef.current = false;
-      }
-    };
-
-    updateToDb();
+      };
+  
+      updateToDb();
+    }, 2000); // 延遲 2 秒同步
+  
+    return () => clearTimeout(debounceTimeout);
   }, [dayCard, userId, editDayCard]);
+  
 
   // 第二個useEffect, 直接下載當天訓練卡到設備上
   useEffect(() => {
@@ -76,7 +77,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
         try {
           if (dayCardData && dayCardData.length > 0) {
             setAllDayCard(dayCardData);
-          } 
+          }
         } catch (error) {
           console.error("Error fetching and updating cards:", error);
         }
@@ -84,14 +85,14 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     };
 
     fetchCardsAndUpdate();
-  }, [dayCardData, userId, setAllDayCard]);
+  }, [dayCardData, setAllDayCard, userId]);
 
   // 第三個useEffect, dayCard顯示
   useEffect(() => {
     try {
       if (userId) {
         // 1. 因第二個useEffect下載整個dayCard, 能直接顯示dayCard
-        if(dayCard && dayCard.length > 0) {
+        if (dayCard && dayCard.length > 0) {
           setWorkoutCards(dayCard);
         } else {
           setWorkoutCards(dayCardData);

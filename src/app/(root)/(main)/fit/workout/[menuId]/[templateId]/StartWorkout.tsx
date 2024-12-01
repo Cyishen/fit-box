@@ -27,9 +27,9 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
   const userId = session?.user?.id
 
   // 用戶沒有登入, 使用本地 useWorkoutStore
-  const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
-  const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
-    updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
+  const editWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
+  const updateLocalCard = (updated: WorkoutSessionType) => {
+    editWorkoutSession(updated.cardSessionId, updated);
   };
 
   // 用戶登入, 使用本地 dayCard
@@ -47,15 +47,10 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
           (card) => card.cardSessionId === updatedSession.cardSessionId
         );
 
-        if (currentDayCard && !isEditMode) {
-          // 初次建立, 更新 dayCard
+        if (currentDayCard) {
+          // 更新 dayCard
           editDayCard(updatedSession.cardSessionId, updatedSession);
-          localStorage.removeItem('currentSessionId');
-          router.push('/fit');
-        } else if (isEditMode) {
-          // 編輯時
-          editDayCard(updatedSession.cardSessionId, updatedSession);
-
+          setCurrentWorkout(updatedSession)
         } else {
           // 如果沒有 dayCard，代表點擊的是歷史訓練卡-更新資料庫
           if (workoutSession.id) {
@@ -69,7 +64,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
         }
       } else {
         // 用戶沒有登入- 更新本地 useWorkoutStore
-        updateCurrentSession(updatedSession);
+        updateLocalCard(updatedSession);
         setCurrentWorkout(updatedSession);
       }
     } catch (error) {

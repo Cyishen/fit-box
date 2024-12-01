@@ -66,55 +66,20 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
       }
     } else {
       // 用戶沒有登入
-      const findSession = workoutSessions.find(
+      const findLocal = workoutSessions.find(
         session => session.cardSessionId === sessionId
       );
 
-      if (findSession) {
-        setCurrentWorkout(findSession);
+      if (findLocal) {
+        setCurrentWorkout(findLocal);
+        setFetchIsLoading(false);
       }
-      setFetchIsLoading(false);
     }
   }, [dayCard, sessionId, userId, workoutSessions]);
 
-
-  // useEffect 把資料庫的id 值給本地的 dayCard
-  // const currentSessionId = localStorage.getItem('currentSessionId');
-  // const findCardFromStore = useMemo(() => {
-  //   return dayCard.find(session => session.cardSessionId === currentSessionId);
-  // }, [dayCard, currentSessionId]);
-
-  // useEffect(() => {
-  //   if (!currentSessionId) {
-  //     setFetchIsLoading(false);
-  //     return;
-  //   }
-
-  //   if (findCardFromStore?.id) return;
-
-  //   const catchDataCardId = async () => {
-  //     try {
-  //       const workoutCard = await getWorkoutSessionByCardId(currentSessionId);
-
-  //       if (workoutCard?.id) {
-  //         const updatedCard = {
-  //           ...findCardFromStore,
-  //           id: workoutCard.id,
-  //         };
-  //         editDayCard(currentSessionId, updatedCard as WorkoutSessionType);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching workout session:", error);
-  //     }
-  //   };
-
-  //   catchDataCardId();
-  // }, [editDayCard, findCardFromStore, currentSessionId]);
-
-
   return (
     <div>
-      {currentWorkout || fetchLoading ? (
+      {currentWorkout ? (
         <StartWorkout
           isEditMode={true}
           workoutSession={currentWorkout as WorkoutSessionType}

@@ -78,7 +78,7 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
     }
 
     if (userId) {
-      // 用戶登入, 本地找dayCard當天的訓練卡
+      // 用戶登入, 找dayCard當天的訓練卡
       const findCardFromStore = dayCard.find(
         session => session.cardSessionId === currentSessionId
       );
@@ -89,21 +89,21 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
       } 
     } else {
       // 用戶沒有登入
-      const findSession = workoutSessions.find(
+      const findLocal = workoutSessions.find(
         session => session.cardSessionId === currentSessionId
       );
 
-      if (findSession) {
-        setCurrentWorkout(findSession);
+      if (findLocal) {
+        setCurrentWorkout(findLocal);
+        setFetchIsLoading(false);
       }
-      setFetchIsLoading(false);
     }
   }, [workoutSessions, dayCard, userId, close]);
 
 
   return (
     <div>
-      {currentWorkout || fetchLoading ? (
+      {currentWorkout ? (
         <StartWorkout
           isEditMode={false}
           workoutSession={currentWorkout as WorkoutSessionType}
