@@ -91,13 +91,12 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   useEffect(() => {
     try {
       if (userId) {
-        // 1. 因第二個useEffect下載整個dayCard, 能直接顯示dayCard
-        if (dayCard && dayCard.length > 0) {
-          setWorkoutCards(dayCard);
-        } else {
-          setWorkoutCards(dayCardData);
-        }
-
+        setWorkoutCards(dayCard || []);
+        // if (dayCard && dayCard.length > 0) {
+        //   setWorkoutCards(dayCard);
+        // } else {
+        //   setWorkoutCards(dayCardData);
+        // }
       } else {
         // 用戶沒登入-本地找今日的訓練卡
         const today = new Date().toISOString().slice(0, 10);
@@ -108,7 +107,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     } catch (error) {
       console.error("Can't find card", error);
     }
-  }, [dayCard, dayCardData, userId, workoutSessions]);
+  }, [dayCard, userId, workoutSessions]);
 
   // 第四個useEffect, 每天清空dayCard: 當dayCard內的訓練卡日期 !== 今天日期, 就刪除整個 useDayCardStore
   useEffect(() => {
