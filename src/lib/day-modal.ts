@@ -14,17 +14,15 @@ export const useDayCardStore = create<DayCardStore>()(
   persist(
     (set) => ({
       dayCard: [],
-      // 1.傳遞整個陣列
+      // 1. 篩選資料庫卡片, 但本地沒有的卡片
       setAllDayCard: (data) =>
         set((state) => {
           const dbCardIds = data.map(card => card.cardSessionId);
 
-          // 檢查資料庫卡片列表中的每個卡片
           const newCards = data.filter(
             (newCard) => !state.dayCard.some((existingCard) => existingCard.cardSessionId === newCard.cardSessionId)
           );
-
-          // 刪除本地中在資料庫中已經不存在的卡片
+      
           const updatedCards = state.dayCard.filter(
             (existingCard) => dbCardIds.includes(existingCard.cardSessionId)
           );
@@ -32,12 +30,8 @@ export const useDayCardStore = create<DayCardStore>()(
             dayCard: [...updatedCards, ...newCards],
           };
         }),
-      // 2.傳遞單個
-      // setDayCard: (data) =>
-      //   set((state) => ({
-      //     dayCard: [...state.dayCard, data]
-      //   })),
-      // 3.篩選cardSessionId
+
+      // 2. 傳遞單個特定cardSessionId
       setDayCard: (data) =>
         set((state) => ({
           dayCard: state.dayCard.find(session => session.cardSessionId === data.cardSessionId)

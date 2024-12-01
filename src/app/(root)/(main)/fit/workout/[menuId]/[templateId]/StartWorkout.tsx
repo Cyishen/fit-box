@@ -56,15 +56,6 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
           // 編輯時
           editDayCard(updatedSession.cardSessionId, updatedSession);
 
-          // 速度太慢, 改fit頁面背景處理上傳
-          // if (updatedSession.id) {
-          //   await Promise.all([
-          //     upsertWorkoutSession(updatedSession),
-          //     upsertWorkoutSummary(updatedSession.id),
-          //   ]);
-          // } else {
-          //   console.warn("Missing ID for session in edit mode");
-          // }
         } else {
           // 如果沒有 dayCard，代表點擊的是歷史訓練卡-更新資料庫
           if (workoutSession.id) {

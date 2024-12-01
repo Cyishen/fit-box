@@ -35,11 +35,9 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // 第一個useEffect, 把剛建立的訓練卡dayCard上傳到資料庫且拿回id給 dayCard(用戶不會感受到上傳)
   const isSyncingRef = useRef(false);
-
   useEffect(() => {
     if (isSyncingRef.current) return;
-
-    isSyncingRef.current = true;
+    isSyncingRef.current = false;
 
     const updateToDb = async () => {
       try {
@@ -48,12 +46,12 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           for (const session of dayCard) {
             // 上傳到資料庫，並取得返回的卡片資料（包含 ID）
             const updatedSession = await upsertWorkoutSession(session);
-  
+
             if (updatedSession?.id && session.id !== updatedSession.id) {
               // 回填 ID 到本地 dayCard
-              const updatedLocalCard = { 
-                ...session, 
-                id: updatedSession.id 
+              const updatedLocalCard = {
+                ...session,
+                id: updatedSession.id,
               };
               editDayCard(session.cardSessionId, updatedLocalCard as WorkoutSessionType);
             }
@@ -71,19 +69,34 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     updateToDb();
   }, [dayCard, userId, editDayCard]);
 
-  // 第二個useEffect, 本地dayCard顯示, 但不同設備建立, 會有沒dayCard, 因此合併顯示
+  // 第二個useEffect, 直接下載當天訓練卡到設備上
+  useEffect(() => {
+    const fetchCardsAndUpdate = async () => {
+      if (userId) {
+        try {
+          if (dayCardData && dayCardData.length > 0) {
+            setAllDayCard(dayCardData);
+          } 
+        } catch (error) {
+          console.error("Error fetching and updating cards:", error);
+        }
+      }
+    };
+
+    fetchCardsAndUpdate();
+  }, [dayCardData, userId, setAllDayCard]);
+
+  // 第三個useEffect, dayCard顯示
   useEffect(() => {
     try {
       if (userId) {
-        // 合併本地 dayCard 與資料庫 dayCardData
-        const combinedCards = [
-          ...dayCard,
-          ...dayCardData.filter(
-            (dbCard) => !dayCard.some((localCard) => localCard.cardSessionId === dbCard.cardSessionId)
-          ), // 資料庫中不在本地的卡片
-        ];
+        // 1. 因第二個useEffect下載整個dayCard, 能直接顯示dayCard
+        if(dayCard && dayCard.length > 0) {
+          setWorkoutCards(dayCard);
+        } else {
+          setWorkoutCards(dayCardData);
+        }
 
-        setWorkoutCards(combinedCards);
       } else {
         // 用戶沒登入-本地找今日的訓練卡
         const today = new Date().toISOString().slice(0, 10);
@@ -94,9 +107,9 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     } catch (error) {
       console.error("Can't find card", error);
     }
-  }, [dayCard, dayCardData, removeDayCard, userId, workoutSessions]);
+  }, [dayCard, dayCardData, userId, workoutSessions]);
 
-  // 第三個useEffect, 當dayCard內的訓練卡日期 !== 今天日期, 就刪除整個 useDayCardStore
+  // 第四個useEffect, 每天清空dayCard: 當dayCard內的訓練卡日期 !== 今天日期, 就刪除整個 useDayCardStore
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
     const storedDate = localStorage.getItem('lastSyncDate');
@@ -106,56 +119,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
       localStorage.setItem('lastSyncDate', today);
     }
   }, []);
-
-  useEffect(() => {
-    const fetchCardsAndUpdate = async () => {
-      if (userId) {
-        try {
-          setAllDayCard(dayCardData);
-        } catch (error) {
-          console.error("Error fetching and updating cards:", error);
-        }
-      }
-    };
-  
-    fetchCardsAndUpdate();
-  }, [dayCardData, userId, setAllDayCard]);
-  
-
-  // 第四個useEffect, 不同設備同步
-  // const deviceSync = useRef(false);
-  // useEffect(() => {
-  //   const syncLocalCardsWithDatabase = async () => {
-  //     if (userId) {
-  //       try {
-  //         if (deviceSync.current) {
-  //           return;
-  //         }
-
-  //         deviceSync.current = true;
-  
-  //         // 檢查資料庫中的卡片
-  //         const dbCardIds = dayCardData.map(card => card.cardSessionId);
-  //         const localCardIds = dayCard.map(card => card.cardSessionId);
-  //         console.log('資料庫數量', dbCardIds.length)
-  //         console.log('本地數量', localCardIds.length)
-  //         const cardsToRemove = localCardIds.filter(cardId => !dbCardIds.includes(cardId));
-  
-  //         if (cardsToRemove.length > 0) {
-  //           cardsToRemove.forEach(cardId => {
-  //             removeDayCard(cardId);
-  //           });
-  //         }
-  //       } catch (error) {
-  //         console.error("Sync local cards with database failed", error);
-  //       } finally {
-  //         deviceSync.current = false;
-  //       }
-  //     }
-  //   };
-  //   syncLocalCardsWithDatabase();
-  
-  // }, [dayCardData, dayCard, userId, removeDayCard]);
 
 
   // 點擊訓練卡到編輯頁面

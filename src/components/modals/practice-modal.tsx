@@ -123,7 +123,7 @@ export const PracticeModal = () => {
           })),
         }
 
-        // 方式一, 不儲存到資料庫
+        // 不儲存到資料庫
         setDayCard(newCurrentSession)
 
         // TODO? 測試同時儲存到資料庫

@@ -540,7 +540,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
         },
       },
     });
-
+    // revalidatePath('/fit');
     return workoutSession;
   } catch (error) {
     console.error("Error creating workout session:", error);
