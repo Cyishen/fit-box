@@ -30,27 +30,27 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
   // TODO? 用戶登入, dayCard資料
-  const { dayCard, removeDayCard, editDayCard, setAllDayCard } = useDayCardStore();
+  const { dayCard, removeDayCard, editDayCard } = useDayCardStore();
 
 
   // 第一個useEffect, 把剛建立的訓練卡dayCard上傳到資料庫且拿回id給 dayCard(用戶不會感受到上傳)
   const isSyncingRef = useRef(false);
 
   useEffect(() => {
-    if (!dayCard || dayCard.length === 0 || !userId) return; 
+    if (!dayCard || dayCard.length === 0 || !userId) return;
     if (isSyncingRef.current) return;
-  
+
     const debounceTimeout = setTimeout(() => {
       isSyncingRef.current = true;
-  
+
       const updateToDb = async () => {
         try {
           for (const session of dayCard) {
             const updatedSession = await upsertWorkoutSession(session);
             if (updatedSession?.id && session.id !== updatedSession.id) {
-              const updatedLocalCard = { 
-                ...session, 
-                id: updatedSession.id 
+              const updatedLocalCard = {
+                ...session,
+                id: updatedSession.id
               };
               editDayCard(session.cardSessionId, updatedLocalCard);
             }
@@ -62,41 +62,41 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           isSyncingRef.current = false;
         }
       };
-  
+
       updateToDb();
     }, 2000); // 延遲 2 秒同步
-  
+
     return () => clearTimeout(debounceTimeout);
   }, [dayCard, userId, editDayCard]);
-  
+
 
   // 第二個useEffect, 直接下載當天訓練卡到設備上
-  useEffect(() => {
-    const fetchCardsAndUpdate = async () => {
-      if (userId) {
-        try {
-          if (dayCardData && dayCardData.length > 0) {
-            setAllDayCard(dayCardData);
-          }
-        } catch (error) {
-          console.error("Error fetching and updating cards:", error);
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCardsAndUpdate = async () => {
+  //     if (userId) {
+  //       try {
+  //         if (dayCardData && dayCardData.length > 0) {
+  //           setAllDayCard(dayCardData);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching and updating cards:", error);
+  //       }
+  //     }
 
-    fetchCardsAndUpdate();
-  }, [dayCardData, setAllDayCard, userId]);
+  //   };
+
+  //   fetchCardsAndUpdate();
+  // }, [dayCardData, setAllDayCard, userId]);
 
   // 第三個useEffect, dayCard顯示
   useEffect(() => {
     try {
       if (userId) {
-        setWorkoutCards(dayCard || []);
-        // if (dayCard && dayCard.length > 0) {
-        //   setWorkoutCards(dayCard);
-        // } else {
-        //   setWorkoutCards(dayCardData);
-        // }
+        const mergedCards = [
+          ...dayCard,
+          ...dayCardData.filter(card => !dayCard.some(existingCard => existingCard.cardSessionId === card.cardSessionId))
+        ];
+        setWorkoutCards(mergedCards);
       } else {
         // 用戶沒登入-本地找今日的訓練卡
         const today = new Date().toISOString().slice(0, 10);
@@ -107,7 +107,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     } catch (error) {
       console.error("Can't find card", error);
     }
-  }, [dayCard, userId, workoutSessions]);
+  }, [dayCard, dayCardData, userId, workoutSessions]);
 
   // 第四個useEffect, 每天清空dayCard: 當dayCard內的訓練卡日期 !== 今天日期, 就刪除整個 useDayCardStore
   useEffect(() => {
