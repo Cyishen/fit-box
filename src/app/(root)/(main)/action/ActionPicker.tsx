@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Loader, ChevronLeft} from 'lucide-react';
+import { Loader, ChevronLeft } from 'lucide-react';
 
 import FitSideBar from '../fit/[menuId]/[templateId]/create-template/exercise-picker/FitSideBar';
 import { exerciseWorkouts } from '@/constants/constants';
@@ -14,7 +14,7 @@ import { useWorkoutStore } from '@/lib/store';
 
 import { useSession } from 'next-auth/react'
 import { getWorkoutSessionByCardId } from '@/actions/user-create';
-// import { upsertWorkoutSession } from '@/actions/user-create';
+import { upsertWorkoutSession } from '@/actions/user-create';
 
 import { useDayCardStore } from '@/lib/day-modal';
 
@@ -77,7 +77,7 @@ const ActionPicker = () => {
         fetchDataExercise()
       }
     } else {
-      // 無用戶本地
+      // 用戶沒有登入
       const findSession = workoutSessions.find(
         session => session.cardSessionId === currentSessionId
       );
@@ -105,16 +105,22 @@ const ActionPicker = () => {
       exercises: selectedExercises
     };
 
-    if (userId) {
-      // 更新動作到資料庫
-      // await upsertWorkoutSession(updatedSession);
+    const findCardFromStore = dayCard.find(
+      session => session.cardSessionId === sessionId
+    );
 
-      // TODO? dayCard 儲存本地: 更新 editDayCard, 頁面才會得到新修改動作
-      editDayCard(sessionId, updatedSession);
-  
+    if (userId) {
+      // 用戶登入, 更新 editDayCard, 頁面才會得到新修改動作
+      if (findCardFromStore) {
+        editDayCard(sessionId, updatedSession);
+      } else {
+        // 更新動作到資料庫
+        await upsertWorkoutSession(updatedSession);
+      }
+
       router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);
     } else {
-      // 更新動作到本地
+      // 用戶沒有登入, 更新動作到本地
       if (existingSessionId) {
         editWorkoutSession(existingSessionId, updatedSession);
         router.push(`/fit/workout/${menuId}/${templateId}/${sessionId}`);
@@ -138,11 +144,11 @@ const ActionPicker = () => {
         <div className="bg-gray-100 p-4 sm:rounded-2xl">
           {existingSessionId && (
             <div className='flex justify-between'>
-              <div 
-                onClick={() => router.back()} 
+              <div
+                onClick={() => router.back()}
                 className='p-2 rounded-full cursor-pointer bg-white hover:bg-gray-200'
               >
-                <ChevronLeft size={16}/>
+                <ChevronLeft size={16} />
               </div>
 
               <div className='w-full flex justify-start items-center gap-2 px-5'>

@@ -27,6 +27,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
   const [openDelSet, setOpenDelSet] = useState<number | null>(null);
   const [saveIcon, setSaveIcon] = useState(false);
 
+
   useEffect(() => {
     if (sets.length > 0) {
       setDynamicSets(sets);

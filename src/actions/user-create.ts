@@ -454,7 +454,6 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
 
   // 2. 用upsert創建 WorkoutSession  
   try {
-    console.log('執行新建')
     const workoutSession = await prismaDb.workoutSession.upsert({
       where: {
         cardSessionId: data.cardSessionId,

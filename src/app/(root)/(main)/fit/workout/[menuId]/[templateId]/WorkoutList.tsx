@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CopyPlus } from 'lucide-react';
+import { SkeletonCard } from "../../../[menuId]/[templateId]/SkeletonCard";
 
 import WorkoutListCard from "./WorkoutListCard";
-import { useWorkoutStore } from "@/lib/store";
 
 import { useSession } from "next-auth/react"
-// import { upsertWorkoutSession } from "@/actions/user-create";
-import { SkeletonCard } from "../../../[menuId]/[templateId]/SkeletonCard";
+
+import { useWorkoutStore } from "@/lib/store";
 import { useDayCardStore } from "@/lib/day-modal";
+import { upsertWorkoutSession, upsertWorkoutSummary } from "@/actions/user-create";
 
 
 type StartWorkoutProps = {
@@ -31,7 +32,12 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
   };
 
   // TODO? dayCard 讀取儲存的訓練卡
-  const { editDayCard } = useDayCardStore();
+  const { dayCard, editDayCard } = useDayCardStore();
+
+  const findCardFromStore = dayCard.find(
+    session => session.cardSessionId === workoutSession?.cardSessionId
+  );
+
 
   // 修改動作組數
   const handleUpdateSets = async (movementId: string, updatedSets: WorkoutSetType[]) => {
@@ -47,12 +53,19 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
     }
 
     if (userId) {
-      // 資料庫更新
-      // await upsertWorkoutSession(updatedSession)
-      editDayCard(updatedSession.cardSessionId, updatedSession)
-      setCurrentWorkout(updatedSession);
+      // 用戶登入(workoutSession有來自本地或資料庫)
+      if (findCardFromStore) {
+        editDayCard(updatedSession.cardSessionId, updatedSession)
+        setCurrentWorkout(updatedSession);
+      } else {
+        // 資料庫更新
+        await Promise.all([
+          upsertWorkoutSession(updatedSession),
+          upsertWorkoutSummary(updatedSession.id as string),
+        ]);
+      }
     } else {
-      // 無用戶, 本地更新
+      // 無用戶登入, 本地更新
       updateCurrentSession(updatedSession);
     }
   };
@@ -75,13 +88,22 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
       };
 
       if (userId) {
-        // 資料庫更新
-        // await upsertWorkoutSession(updatedSession)
-        editDayCard(updatedSession.cardSessionId, updatedSession)
-        setCurrentWorkout(updatedSession);
+        // 用戶登入
+        if (findCardFromStore) {
+          editDayCard(updatedSession.cardSessionId, updatedSession)
+          setCurrentWorkout(updatedSession);
+        } else {
+          // 資料庫更新
+          await Promise.all([
+            upsertWorkoutSession(updatedSession),
+            upsertWorkoutSummary(updatedSession.id as string),
+          ]);
+          setCurrentWorkout(updatedSession);
+        }
       } else {
-        // 無用戶, 本地更新
+        // 用戶沒登入
         updateCurrentSession(updatedSession);
+        setCurrentWorkout(updatedSession);
       }
     }
   };
@@ -115,6 +137,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
                     <WorkoutListCard
                       key={exercise.movementId}
                       exercise={exercise}
+
                       handleRemoveExercise={handleRemoveExercise}
                       onUpdateSets={handleUpdateSets}
                       isOpen={openMovementId === exercise.movementId}

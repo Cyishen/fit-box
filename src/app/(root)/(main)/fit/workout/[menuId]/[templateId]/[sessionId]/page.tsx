@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation';
 
 import StartWorkout from '../StartWorkout';
 
@@ -14,7 +13,6 @@ import { useDayCardStore } from '@/lib/day-modal';
 
 
 const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: string; sessionId: string } }) => {
-  const router = useRouter();
   const { sessionId } = params;
   const [fetchLoading, setFetchIsLoading] = useState(true);
 
@@ -79,19 +77,12 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
 
   return (
     <div>
-      {currentWorkout ? (
-        <StartWorkout
-          isEditMode={true}
-          workoutSession={currentWorkout as WorkoutSessionType}
-          setCurrentWorkout={setCurrentWorkout}
-          fetchLoading={fetchLoading}
-        />
-      ) : (
-        <div className="p-2">
-          <p>Oops 找不到訓練卡</p>
-          <button onClick={() => router.back()}>返回</button>
-        </div>
-      )}
+      <StartWorkout
+        isEditMode={true}
+        workoutSession={currentWorkout as WorkoutSessionType}
+        setCurrentWorkout={setCurrentWorkout}
+        fetchLoading={fetchLoading}
+      />
     </div>
   )
 }

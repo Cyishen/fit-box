@@ -70,7 +70,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   }, [dayCard, userId, editDayCard]);
 
 
-  // 第二個useEffect, 直接下載當天訓練卡到設備上
+  // 第二個useEffect, 下載當天訓練卡到設備上
   // useEffect(() => {
   //   const fetchCardsAndUpdate = async () => {
   //     if (userId) {
@@ -158,7 +158,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   };
 
-  const showToday = new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate();
+  const showToday = new Date().toLocaleString().slice(0, 17);
 
   return (
     <>

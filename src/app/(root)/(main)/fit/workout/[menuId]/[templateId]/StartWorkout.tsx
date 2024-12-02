@@ -1,14 +1,13 @@
 import { useRouter } from "next/navigation";
-
-import { useWorkoutStore } from "@/lib/store";
+import { useState } from "react";
 
 import WorkoutList from "./WorkoutList";
 
 import { useSession } from "next-auth/react"
-import { upsertWorkoutSession, upsertWorkoutSummary } from "@/actions/user-create";
-import { useState } from "react";
+
 import StaticTitle from "./StaticTitle";
 
+import { useWorkoutStore } from "@/lib/store";
 import { useDayCardStore } from "@/lib/day-modal";
 
 
@@ -35,7 +34,6 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
   // 用戶登入, 使用本地 dayCard
   const { dayCard, editDayCard } = useDayCardStore();
 
-
   const handleCompleteWorkout = async () => {
     setIsLoading(true);
 
@@ -43,6 +41,7 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
       const updatedSession = { ...workoutSession };
 
       if (userId) {
+        // 用戶登入(區分點擊的是本地dayCard或資料庫)
         const currentDayCard = dayCard.find(
           (card) => card.cardSessionId === updatedSession.cardSessionId
         );
@@ -51,16 +50,6 @@ const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoad
           // 更新 dayCard
           editDayCard(updatedSession.cardSessionId, updatedSession);
           setCurrentWorkout(updatedSession)
-        } else {
-          // 如果沒有 dayCard，代表點擊的是歷史訓練卡-更新資料庫
-          if (workoutSession.id) {
-            await Promise.all([
-              upsertWorkoutSession(workoutSession),
-              upsertWorkoutSummary(workoutSession.id),
-            ]);
-          } else {
-            console.warn("Missing ID for historical session");
-          }
         }
       } else {
         // 用戶沒有登入- 更新本地 useWorkoutStore
