@@ -52,7 +52,7 @@ const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSumma
   // 上個區間數據管理
   const [lastChartData, setLastChartData] = useState<{ category: Category, count: number }[]>([]);
 
-  // 無登入本地訓練卡
+  // 用戶沒有登入, 本地訓練卡
   const { workoutSessions } = useWorkoutStore();
 
   //本地分類
@@ -129,6 +129,7 @@ const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSumma
       setChartData(thisPeriodData);
       setLastChartData(lastPeriodData);
     } else {
+      // 用戶沒有登入
       const thisPeriodData = calculateChartData(workoutSessions, timeFrame, false);
       const lastPeriodData = calculateChartData(workoutSessions, timeFrame, true);
 

@@ -20,6 +20,7 @@ interface Props {
   userWeekSummary: CategoryType[]
 }
 
+// TODO! 測試用
 const FetchSummary = ({ userWeekSummary }: Props) => {
   const [weekSummary, setWeekSummary] = useState<CategoryType[]>([]);
 

@@ -68,7 +68,7 @@ const ShowTraining = ({ sessionData }: Props) => {
 
   return (
     <>
-      <h1 className='font-bold'>所有訓練</h1>
+      <h1 className='font-bold'>最近訓練</h1>
 
       {workoutCards.map((session) => (
         <ShowTrainingCard

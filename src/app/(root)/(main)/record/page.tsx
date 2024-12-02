@@ -60,7 +60,7 @@ const RecordPage = async () => {
         </div>
 
         <div className='mt-5'>
-          <PieChart />
+          <PieChart userThisYearSummary={userThisYearSummary}/>
         </div>
       </Wrapper>
     </section>
