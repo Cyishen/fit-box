@@ -56,7 +56,7 @@ const AuthForm = ({ type }: { type: string }) => {
       const result = await loginAuth(data);
       if (result.success) {
         await update();
-        alert(result.success)
+
         router.push('/fit');
       } else {
         alert(result.error);

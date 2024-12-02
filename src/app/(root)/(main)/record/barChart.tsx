@@ -45,10 +45,13 @@ export interface Props {
 const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSummary, userLastMonthSummary, userThisYearSummary, userLastYearSummary }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
+  console.log('本週數據',userThisWeekSummary )
+  console.log('上週數據',userLastWeekSummary )
 
   const [timeFrame, setTimeFrame] = useState<'週' | '月' | '年'>('週');
   // 本次區間數據管理
   const [chartData, setChartData] = useState<{ category: Category, count: number }[]>([]);
+ 
   // 上個區間數據管理
   const [lastChartData, setLastChartData] = useState<{ category: Category, count: number }[]>([]);
 
@@ -138,112 +141,6 @@ const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSumma
     }
   }, [timeFrame, userId, userLastMonthSummary, userLastWeekSummary, userLastYearSummary, userThisMonthSummary, userThisWeekSummary, userThisYearSummary, workoutSessions]);
 
-  // 寫法重複定義日期
-  // useEffect(() => {
-  //   if (userId) {
-
-
-  //   } else {
-  //     // 無用戶的本地數據
-  //     // TODO 本次區間定義 
-  //     // 第一步定義: 本週、本月、本年
-  //     const startDate = new Date();
-  //     const endDate = new Date();
-
-  //     if (timeFrame === '週') {
-  //       startDate.setDate(startDate.getDate() - (startDate.getDay() || 7) + 1);
-  //       endDate.setDate(startDate.getDate() + 6);  // 本週的週日
-  //     } else if (timeFrame === '月') {
-  //       startDate.setDate(1); // 當月的開始
-  //       endDate.setMonth(endDate.getMonth() + 1);
-  //       endDate.setDate(0); // 設置為當月的最後一天
-  //     } else if (timeFrame === '年') {
-  //       startDate.setMonth(0, 1); // 當年的開始（1月1日）
-  //       endDate.setMonth(11, 31); // 當年的結束（12月31日）
-  //     }
-  //     // 第二步: 篩選日期內的數據
-  //     const filteredSessions = workoutSessions.filter(session => {
-  //       const sessionDate = new Date(session.date);
-  //       const sessionDateOnly = new Date(sessionDate.getFullYear(), sessionDate.getMonth(), sessionDate.getDate());
-
-  //       const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-  //       const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-  //       return sessionDateOnly >= startDateOnly && sessionDateOnly <= endDateOnly;
-  //     });
-
-  //     // TODO 上個區間定義 
-  //     // 第一步定義:上週、上月、上年區間
-  //     const lastWeekStartDate = new Date(startDate);
-  //     lastWeekStartDate.setDate(lastWeekStartDate.getDate() - 7); // 上週開始日期
-  //     const lastWeekEndDate = new Date(lastWeekStartDate);
-  //     lastWeekEndDate.setDate(lastWeekStartDate.getDate() + 6); // 上週結束日期
-
-  //     const lastMonthStartDate = new Date(startDate);
-  //     lastMonthStartDate.setMonth(lastMonthStartDate.getMonth() - 1); // 上月
-  //     lastMonthStartDate.setDate(1); // 上月的開始日期
-  //     const lastMonthEndDate = new Date(lastMonthStartDate);
-  //     lastMonthEndDate.setMonth(lastMonthStartDate.getMonth() + 1);
-  //     lastMonthEndDate.setDate(0); // 上月的最後一天
-
-  //     const lastYearStartDate = new Date(startDate);
-  //     lastYearStartDate.setFullYear(lastYearStartDate.getFullYear() - 1); // 去年
-  //     lastYearStartDate.setMonth(0, 1); // 去年1月1日
-  //     const lastYearEndDate = new Date(lastYearStartDate);
-  //     lastYearEndDate.setMonth(11, 31); // 去年12月31日
-
-  //     let lastStartDate, lastEndDate;
-  //     if (timeFrame === '週') {
-  //       lastStartDate = lastWeekStartDate;
-  //       lastEndDate = lastWeekEndDate;
-  //     } else if (timeFrame === '月') {
-  //       lastStartDate = lastMonthStartDate;
-  //       lastEndDate = lastMonthEndDate;
-  //     } else if (timeFrame === '年') {
-  //       lastStartDate = lastYearStartDate;
-  //       lastEndDate = lastYearEndDate;
-  //     }
-  //     // 第二步: 篩選日期內的數據
-  //     const filteredLast = workoutSessions.filter(session => {
-  //       const sessionDate = new Date(session.date);
-  //       return sessionDate >= lastStartDate! && sessionDate <= lastEndDate!;
-  //     });
-
-  //     // todo 統計本次區間數據
-  //     const categoryCounts: { [key: string]: number } = {};
-  //     filteredSessions.forEach(session => {
-  //       session.exercises.forEach(exercise => {
-  //         const category = exercise.exerciseCategory;
-  //         const setsCount = exercise.sets.filter(set => set.isCompleted).length;
-  //         categoryCounts[category] = (categoryCounts[category] || 0) + setsCount;
-  //       });
-  //     });
-  //     const chartData = categories.map(category => ({
-  //       category,
-  //       count: categoryCounts[category] || 0,
-  //     }));
-  //     setChartData(chartData);
-
-  //     // todo 統計上次區間數據
-  //     const lastCategoryCounts: { [key: string]: number } = {};
-  //     filteredLast.forEach(session => {
-  //       session.exercises.forEach(exercise => {
-  //         const category = exercise.exerciseCategory;
-  //         const setsCount = exercise.sets.filter(set => set.isCompleted).length;
-  //         lastCategoryCounts[category] = (lastCategoryCounts[category] || 0) + setsCount;
-  //       });
-  //     });
-  //     const LastChartData = categories.map(category => ({
-  //       category,
-  //       count: lastCategoryCounts[category] || 0,
-  //     }));
-  //     setLastChartData(LastChartData);
-
-  //     // 模擬假數據
-  //     // const mockData = generateMockData(timeFrame);
-  //     // setChartData(mockData);
-  //   }
-  // }, [timeFrame, userId, workoutSessions]);
 
   const getSubtext = (timeFrame: string): string => {
     if (timeFrame === '週') {

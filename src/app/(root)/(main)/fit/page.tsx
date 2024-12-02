@@ -8,7 +8,7 @@ import FitDashboard from './FitDashboard'
 
 import CreateMenuButton from './CreateMenuButton'
 
-import { getAllMenusByUserId, getAllTemplatesByUserId, getAllWorkoutSessionByUserId, getDaySessionByUserId } from '@/actions/user-create'
+import { getAllMenusByUserId, getAllTemplatesByUserId, getDaySessionByUserId, getWeekSessionByUserId } from '@/actions/user-create'
 import { auth } from '@/auth'
 
 
@@ -22,19 +22,19 @@ const FitPage = async () => {
 
   const userDayCardData = getDaySessionByUserId(userId as string);
 
-  //TODO! 待刪除, 測試用, 抓所有訓練卡
-  const userAllCardData = getAllWorkoutSessionByUserId(userId as string);
+
+  const userWeekCardData = getWeekSessionByUserId(userId as string);
 
   const [
     userMenu,
     userTemplates,
     userDayCard,
-    userAllCard,
+    userWeekCard,
   ] = await Promise.all([
     userMenuData,
     userTemplateData,
     userDayCardData,
-    userAllCardData,
+    userWeekCardData
   ]);
 
   // console.log('Day?', JSON.stringify(userDayCard, null, 2));
@@ -51,7 +51,7 @@ const FitPage = async () => {
             {/* 訓練卡 */}
             <ShowCard 
               daySession={userDayCard as WorkoutSessionType[]} 
-              allSession={userAllCard as WorkoutSessionType[]}
+              weekSession={userWeekCard as WorkoutSessionType[]}
             />
 
             {/* 模板列表 */}

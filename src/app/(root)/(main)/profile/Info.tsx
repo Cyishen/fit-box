@@ -1,19 +1,30 @@
+"use client"
+
 import Image from 'next/image'
+import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { auth } from "@/auth";
+import { Button } from '@/components/ui/button';
+
 import { calculateDaysSinceStart } from '@/lib/TimeFn/Timer';
+import { useSession, signOut } from "next-auth/react"
 
 
 interface Props {
-  sessionData: WorkoutSessionType[];
-  userFirstSession: WorkoutSessionType;
+  cardsCount: WorkoutSessionType[];
+  userFirstDay: WorkoutSessionType;
 }
 
-const Info = async ({ sessionData, userFirstSession }: Props) => {
-  const session = await auth()
+const Info = ({ cardsCount, userFirstDay }: Props) => {
+  const { data: session, status } = useSession()
 
-  const firstDay = userFirstSession?.createdAt
-    ? new Date(userFirstSession.createdAt).toLocaleString().replace(/\//g, '-').slice(0, 10)
+  const handleLogout = async () => {
+    if (status === "authenticated") {
+      await signOut()
+    }
+  };
+
+  const firstDay = userFirstDay?.createdAt
+    ? new Date(userFirstDay.createdAt).toLocaleString().replace(/\//g, '-').slice(0, 10)
     : 'N/A';
 
   return (
@@ -49,11 +60,23 @@ const Info = async ({ sessionData, userFirstSession }: Props) => {
           {session?.user ? (
             <div>
               <p>健身開始日 {firstDay as string}</p>
-              <p>健齡 {calculateDaysSinceStart(userFirstSession?.createdAt) || 0} 日</p>
-              <p>已累積 {sessionData?.length || 0} 次訓練 🔥</p>
+              <p>健齡 {calculateDaysSinceStart(userFirstDay?.createdAt) || 0} 日</p>
+              <p>已累積 {cardsCount?.length || 0} 次訓練 🔥</p>
             </div>
           ) : ('')}
         </div>
+      </div>
+
+      <div>
+        {session?.user ? (
+          <div className='flex items-center'>
+            <Button onClick={handleLogout} variant='outline' size='sm'>登出</Button>
+          </div>
+        ) : (
+          <Link href="/sign-in">
+            <Button variant='outline' size='sm'>登入</Button>
+          </Link>
+        )}
       </div>
 
       <div className='text-gray-300'>

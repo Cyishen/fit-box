@@ -20,7 +20,7 @@ interface Props {
 const ShowDayTraining = ({ dayCardData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-  // console.log('資料庫目前',dayCardData)
+
   const router = useRouter();
 
   // 卡片狀態管理
@@ -31,7 +31,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // TODO? 用戶登入, dayCard資料
   const { dayCard, removeDayCard, editDayCard } = useDayCardStore();
-
 
   // 第一個useEffect, 把剛建立的訓練卡dayCard上傳到資料庫且拿回id給 dayCard(用戶不會感受到上傳)
   const isSyncingRef = useRef(false);
@@ -69,7 +68,6 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     return () => clearTimeout(debounceTimeout);
   }, [dayCard, userId, editDayCard]);
 
-
   // 第二個useEffect, 下載當天訓練卡到設備上
   // useEffect(() => {
   //   const fetchCardsAndUpdate = async () => {
@@ -92,9 +90,11 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   useEffect(() => {
     try {
       if (userId) {
+        const userDayCards = dayCard.filter(session => session.userId === userId);
+
         const mergedCards = [
-          ...dayCard,
-          ...dayCardData.filter(card => !dayCard.some(existingCard => existingCard.cardSessionId === card.cardSessionId))
+          ...userDayCards,
+          ...dayCardData.filter(card => !userDayCards.some(existingCard => existingCard.cardSessionId === card.cardSessionId)) // 合併不重複的資料庫卡片
         ];
         setWorkoutCards(mergedCards);
       } else {
@@ -158,11 +158,17 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   };
 
-  const showToday = new Date().toLocaleString().slice(0, 17);
+  const today = new Date().toLocaleDateString();
+  const now = new Date();
+  const userLanguage = navigator.language;
+  const weekday = now.toLocaleDateString(userLanguage, { weekday: 'long' });
 
   return (
     <>
-      <h1 className='font-bold'>今日訓練 {showToday}</h1>
+      <h1 className='font-bold'>
+        今日訓練
+        <span className='text-[12px] text-gray-500 pl-2'>{today} {weekday}</span>
+      </h1>
 
       {workoutCards.length === 0 ? (
         <p className='text-gray-500 text-sm p-2 border border-dashed rounded-lg '>沒有訓練</p>

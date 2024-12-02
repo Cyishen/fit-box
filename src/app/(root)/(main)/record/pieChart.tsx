@@ -3,6 +3,8 @@
 
 import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
+
+import { useSession } from "next-auth/react"
 import type { EChartsOption } from 'echarts';
 
 
@@ -41,6 +43,9 @@ export interface Props {
 
 
 const PieChart = ({ userThisYearSummary }: Props) => {
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
   const [data, setData] = useState<WorkoutCategory[]>([]);
 
   const filterUserData = (userData: CategoryType[]) => {
@@ -62,12 +67,16 @@ const PieChart = ({ userThisYearSummary }: Props) => {
   };
 
   useEffect(() => {
-    const thisPeriodData = filterUserData(userThisYearSummary);
 
-    const mockData = thisPeriodData;
-    setData(mockData);
+    if(userId){
+      const thisPeriodData = filterUserData(userThisYearSummary);
 
-  }, [userThisYearSummary]);
+      const mockData = thisPeriodData;
+      setData(mockData);
+    }
+
+
+  }, [userId, userThisYearSummary]);
 
 
   const currentYear = new Date().getFullYear();
@@ -176,7 +185,11 @@ const PieChart = ({ userThisYearSummary }: Props) => {
           <tbody>
             {data.map(item => {
               const totalSets = data.reduce((sum, curr) => sum + curr.count, 0);
-              const percentage = ((item.count / totalSets) * 100).toFixed(1);
+              let percentage = '0';
+          
+              if (totalSets > 0) {
+                percentage = ((item.count / totalSets) * 100).toFixed(1);
+              }
               
               return (
                 <tr key={item.category} className="border-b">

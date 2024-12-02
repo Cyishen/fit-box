@@ -12,10 +12,10 @@ import { useWorkoutStore } from '@/lib/store';
 
 
 interface Props {
-  sessionData: WorkoutSessionType[];
+  weekData: WorkoutSessionType[];
 }
 
-const ShowTraining = ({ sessionData }: Props) => {
+const ShowTraining = ({ weekData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
 
@@ -28,19 +28,19 @@ const ShowTraining = ({ sessionData }: Props) => {
 
   useEffect(() => {
     if (userId) {
-      setWorkoutCards(sessionData);
+      setWorkoutCards(weekData);
     } else {
-      // 本地
+      // 用戶未登入
       setWorkoutCards(workoutSessions);
     }
-  }, [sessionData, workoutSessions, userId]);
+  }, [weekData, workoutSessions, userId]);
 
 
   const handleEditWorkout = (cardSessionId: string) => {
     if (userId) {
       // 資料庫
-      if (sessionData) {
-        const sessionCards = sessionData.find(session => session.cardSessionId === cardSessionId);
+      if (weekData) {
+        const sessionCards = weekData.find(session => session.cardSessionId === cardSessionId);
 
         if (sessionCards) {
           router.push(`/fit/workout/${sessionCards.menuId}/${sessionCards.templateId}/${cardSessionId}`);
@@ -66,9 +66,18 @@ const ShowTraining = ({ sessionData }: Props) => {
     }
   };
 
+  const today = new Date();
+  const pastDate = new Date(today);
+  pastDate.setDate(today.getDate() - 7);
+  const lastWeek = pastDate.toLocaleDateString();
+  const todayDate = today.toLocaleDateString();
+
   return (
     <>
-      <h1 className='font-bold'>最近訓練</h1>
+      <h1 className='font-bold'>
+        最近訓練
+        <span className='text-[12px] text-gray-500 pl-2'>{lastWeek}~{todayDate}</span>
+      </h1>
 
       {workoutCards.map((session) => (
         <ShowTrainingCard

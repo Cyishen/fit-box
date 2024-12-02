@@ -29,9 +29,9 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
   const diffInDays: number = diffInHours / 24;
 
   switch (true) {
-    case Math.floor(diffInDays) >= 7:
+    case Math.floor(diffInDays) >= 6:
       return formatDateString(timestamp);
-    case Math.floor(diffInDays) >= 1 && diffInDays < 7:
+    case Math.floor(diffInDays) >= 1 && diffInDays < 6:
       return `${Math.floor(diffInDays)} 天前`;
     case Math.floor(diffInHours) >= 1:
       return `${Math.floor(diffInHours)} 小時前`;
@@ -56,7 +56,7 @@ export const calculateDaysSinceStart = (startDate: string | Date ): number => {
   return diffInDays;
 };
 
-// 篩人日期區間, isPrevious為true時, 是上個區間
+// 篩日期區間, isPrevious為true時, 是上個區間
 export function getDateRange(
   timeFrame: string,
   startDate: Date,

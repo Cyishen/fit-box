@@ -693,7 +693,8 @@ export const deleteWorkoutSessionByCardId = async (cardSessionId: string) => {
   return workSession
 }
 
-//TODO* 訓練卡其他調用邏輯
+//TODO? 訓練卡其他調用邏輯
+// 第一天
 export const getFirstWorkoutSessionDay = async () => {
   const session = await auth()
   const userId = session?.user?.id
@@ -752,6 +753,58 @@ export const getDaySessionByUserId = async (id: string) => {
   const sortedSummaries = getWorkoutSession.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   const formattedSessions = sortedSummaries.map(session => {
+    const utcDate = new Date(session.createdAt);
+    const localDate = utcDate.toISOString();
+
+    return {
+      ...session,
+      createdAt: localDate,
+    };
+  });
+
+  revalidatePath('/fit');
+  return formattedSessions;
+}
+// 一週訓練卡
+export const getWeekSessionByUserId = async (id: string) => {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (!userId) {
+    return []
+  }
+
+  const now = new Date();
+  
+  const oneWeekAgo = new Date(now);
+  oneWeekAgo.setDate(now.getDate() - 7); 
+
+  const startOfLocalWeek = new Date(oneWeekAgo.setHours(0, 0, 0, 0));
+  const endOfLocalDay = new Date(now.setHours(23, 59, 59, 999));
+
+  const startOfWeekUTC = new Date(startOfLocalWeek.getTime() - startOfLocalWeek.getTimezoneOffset() * 60000);
+  const endOfDayUTC = new Date(endOfLocalDay.getTime() - endOfLocalDay.getTimezoneOffset() * 60000);
+
+  const getWorkoutSession = await prismaDb.workoutSession.findMany({
+    where: {
+      userId: id,
+      createdAt: {
+        gte: startOfWeekUTC, 
+        lte: endOfDayUTC
+      }
+    },
+    include: {
+      exercises: {
+        include: {
+          sets: true
+        }
+      }
+    }
+  });
+
+  const sortedSessions = getWorkoutSession.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const formattedSessions = sortedSessions.map(session => {
     const utcDate = new Date(session.createdAt);
     const localDate = utcDate.toISOString();
 
@@ -1017,6 +1070,8 @@ export const getCategorySummaryByUserIdForBarChart = async (
 ) => {
   const { start, end } = getDateRange(timeFrame, new Date(), isPrevious);
 
+console.log('開始',start);
+console.log('結束',end);
   const workoutSummaries = await prismaDb.workoutSummary.findMany({
     where: {
       userId: id,
