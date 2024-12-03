@@ -8,7 +8,7 @@ import { deleteTemplateById } from '@/actions/user-create';
 
 
 const CategoryIcons: { [key: string]: string } = {
-  "胸": "",
+  "胸": "/icons/chest.svg",
   "背": "/icons/back.svg",
   "肩": "/icons/shoulder.svg",
   "腿": "/icons/leg.svg",
