@@ -1,3 +1,5 @@
+import { startOfWeek, endOfWeek, subWeeks, startOfMonth, endOfMonth, subMonths, startOfYear, endOfYear, subYears } from 'date-fns';
+
 export function formatDateString(dateString: string) {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -56,7 +58,7 @@ export const calculateDaysSinceStart = (startDate: string | Date ): number => {
   return diffInDays;
 };
 
-// 篩日期區間, isPrevious為true時, 是上個區間
+// 轉換區間日期
 export function getDateRange(
   timeFrame: string,
   startDate: Date,
@@ -66,11 +68,15 @@ export function getDateRange(
   const end = new Date(startDate);
 
   if (timeFrame === '週') {
-    const currentDay = start.getDay(); // 0 (星期天) 至 6 (星期六)
-    const offset = isPrevious ? -7 : 0;
-    const diff = currentDay === 0 ? 6 : currentDay - 1; // 星期一為週的第一天
-    start.setDate(start.getDate() - diff + offset);
-    end.setDate(start.getDate() + 6);
+    const currentDay = start.getDay(); // 標準一週區間是 0 (星期日)~6 (星期六), 重新定義一週區間: 星期一開始
+    const diff = currentDay === 0 ? 6 : currentDay - 1; // 星期天時, 把它改為6, 這樣星期一就會變成0
+    const offset = isPrevious ? -7 : 0; // 往前推算上週的天數
+
+    // 獨立計算開始和結束日期
+    const startDateAdjustment = start.getDate() - diff + offset;
+
+    start.setDate(startDateAdjustment);
+    end.setDate(startDateAdjustment + 6);
   } else if (timeFrame === '月') {
     if (isPrevious) {
       start.setMonth(start.getMonth() - 1);
@@ -92,4 +98,46 @@ export function getDateRange(
   end.setHours(23, 59, 59, 999);
 
   return { start, end };
+}
+
+// 利用fns轉換區間日期, 比較方便
+export function getFnsRange(
+  timeFrame: string, 
+  startDate: Date, 
+  isPrevious: boolean = false
+): { start: Date; end: Date } {
+  let startOfPeriod: Date | null = null;
+  let endOfPeriod: Date | null = null;
+
+  if (timeFrame === '週') {
+    startOfPeriod = startOfWeek(startDate, { weekStartsOn: 1 }); // 週一作為一週的第一天
+    endOfPeriod = endOfWeek(startDate, { weekStartsOn: 1 }); // 週一作為一週的第一天
+
+    if (isPrevious) {
+      startOfPeriod = subWeeks(startOfPeriod, 1);
+      endOfPeriod = subWeeks(endOfPeriod, 1);
+    }
+  } else if (timeFrame === '月') {
+    startOfPeriod = startOfMonth(startDate);
+    endOfPeriod = endOfMonth(startDate);
+
+    if (isPrevious) {
+      startOfPeriod = startOfMonth(subMonths(startDate, 1));
+      endOfPeriod = endOfMonth(subMonths(startDate, 1));
+    }
+  } else if (timeFrame === '年') {
+    startOfPeriod = startOfYear(startDate);
+    endOfPeriod = endOfYear(startDate);
+
+    if (isPrevious) {
+      startOfPeriod = startOfYear(subYears(startDate, 1));
+      endOfPeriod = endOfYear(subYears(startDate, 1));
+    }
+  }
+
+  if (startOfPeriod === null || endOfPeriod === null) {
+    throw new Error('日期範圍無法計算，請檢查輸入的時間範圍');
+  }
+
+  return { start: startOfPeriod, end: endOfPeriod };
 }

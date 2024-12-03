@@ -6,6 +6,7 @@ import ReactECharts from 'echarts-for-react';
 
 import { useSession } from "next-auth/react"
 import type { EChartsOption } from 'echarts';
+import { useWorkoutStore } from '@/lib/store';
 
 
 const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"] as const;
@@ -48,6 +49,31 @@ const PieChart = ({ userThisYearSummary }: Props) => {
 
   const [data, setData] = useState<WorkoutCategory[]>([]);
 
+  // 用戶沒有登入, 本地訓練卡
+  const { workoutSessions } = useWorkoutStore();
+
+  // 本地分類
+  const localFilter = (local: WorkoutSessionType[]) => {
+    const categoryCounts: { [key: string]: number } = {}
+
+    local.forEach(item => {
+      item.exercises.forEach(exercise => {
+        const isCompletedSets =  exercise.sets.filter(set => set.isCompleted === true);
+  
+        const category = exercise.exerciseCategory;
+        const setsCount = isCompletedSets.length;
+        categoryCounts[category] = (categoryCounts[category] || 0) + setsCount;
+      });
+    });
+
+    return categories.map(category => ({
+      category,
+      count: categoryCounts[category] || 0,
+      color: categoryColors[category as keyof typeof categoryColors]
+    }));
+  }
+
+  // 資料庫分類
   const filterUserData = (userData: CategoryType[]) => {
     const categoryCounts: { [key: string]: number } = {};
 
@@ -67,16 +93,16 @@ const PieChart = ({ userThisYearSummary }: Props) => {
   };
 
   useEffect(() => {
-
     if(userId){
       const thisPeriodData = filterUserData(userThisYearSummary);
-
-      const mockData = thisPeriodData;
-      setData(mockData);
+      setData(thisPeriodData);
+    } else {
+      // 用戶沒有登入
+      const localCard = localFilter(workoutSessions);
+      setData(localCard);
     }
 
-
-  }, [userId, userThisYearSummary]);
+  }, [userId, userThisYearSummary, workoutSessions]);
 
 
   const currentYear = new Date().getFullYear();
@@ -87,7 +113,6 @@ const PieChart = ({ userThisYearSummary }: Props) => {
     const b = bigint & 255;
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
-
   const option: EChartsOption = {
     title: {
       text: `${currentYear}年訓練分佈`,

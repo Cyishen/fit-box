@@ -21,8 +21,6 @@ const FitPage = async () => {
   const userTemplateData = getAllTemplatesByUserId();
 
   const userDayCardData = getDaySessionByUserId(userId as string);
-
-
   const userWeekCardData = getWeekSessionByUserId(userId as string);
 
   const [

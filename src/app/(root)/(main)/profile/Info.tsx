@@ -52,7 +52,7 @@ const Info = ({ cardsCount, userFirstDay }: Props) => {
           {session?.user ? (
             <p className='capitalize'>{session?.user.name}</p>
           ) : (
-            <p>Guest<span className='text-[10px] pl-3 text-gray-500'>註冊與登入預防資料遺失</span></p>
+            <p>Guest<span className='text-[10px] pl-3 text-gray-500 font-normal'>登入才能保存紀錄 😉</span></p>
           )}
         </div>
 

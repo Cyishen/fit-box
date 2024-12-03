@@ -67,16 +67,17 @@ const ShowTraining = ({ weekData }: Props) => {
   };
 
   const today = new Date();
+  const todayDate = today.toLocaleDateString();
+
   const pastDate = new Date(today);
   pastDate.setDate(today.getDate() - 7);
   const lastWeek = pastDate.toLocaleDateString();
-  const todayDate = today.toLocaleDateString();
 
   return (
     <>
       <h1 className='font-bold'>
         最近訓練
-        <span className='text-[12px] text-gray-500 pl-2'>{lastWeek}~{todayDate}</span>
+        <span className='text-[10px] text-gray-500 pl-2 font-normal'>{lastWeek}~{todayDate}</span>
       </h1>
 
       {workoutCards.map((session) => (

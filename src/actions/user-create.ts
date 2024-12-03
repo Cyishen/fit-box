@@ -723,21 +723,17 @@ export const getDaySessionByUserId = async (id: string) => {
     return []
   }
 
-  // 本地時間範圍
   const now = new Date();
+  // 本地時間範圍對應utc範圍
   const startOfLocalDay = new Date(now.setHours(0, 0, 0, 0));
   const endOfLocalDay = new Date(now.setHours(23, 59, 59, 999));
-
-  // 資料庫是UTC時間, 要把本地時間範圍 >轉對應的UTC範圍
-  const startOfDayUTC = new Date(startOfLocalDay.getTime() - startOfLocalDay.getTimezoneOffset() * 60000);
-  const endOfDayUTC = new Date(endOfLocalDay.getTime() - endOfLocalDay.getTimezoneOffset() * 60000);
 
   const getWorkoutSession = await prismaDb.workoutSession.findMany({
     where: {
       userId: id,
       createdAt: {
-        gte: startOfDayUTC,
-        lte: endOfDayUTC
+        gte: startOfLocalDay,
+        lte: endOfLocalDay
       }
     },
     include: {
@@ -746,13 +742,16 @@ export const getDaySessionByUserId = async (id: string) => {
           sets: true
         }
       }
+    },
+    orderBy: {
+      createdAt: 'asc'
     }
   });
 
   // 按照日期進行排序
-  const sortedSummaries = getWorkoutSession.sort((a, b) => a.date.getTime() - b.date.getTime());
+  // const sortedSummaries = getWorkoutSession.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-  const formattedSessions = sortedSummaries.map(session => {
+  const formattedSessions = getWorkoutSession.map(session => {
     const utcDate = new Date(session.createdAt);
     const localDate = utcDate.toISOString();
 
@@ -775,22 +774,18 @@ export const getWeekSessionByUserId = async (id: string) => {
   }
 
   const now = new Date();
-  
   const oneWeekAgo = new Date(now);
   oneWeekAgo.setDate(now.getDate() - 7); 
 
   const startOfLocalWeek = new Date(oneWeekAgo.setHours(0, 0, 0, 0));
   const endOfLocalDay = new Date(now.setHours(23, 59, 59, 999));
 
-  const startOfWeekUTC = new Date(startOfLocalWeek.getTime() - startOfLocalWeek.getTimezoneOffset() * 60000);
-  const endOfDayUTC = new Date(endOfLocalDay.getTime() - endOfLocalDay.getTimezoneOffset() * 60000);
-
   const getWorkoutSession = await prismaDb.workoutSession.findMany({
     where: {
       userId: id,
       createdAt: {
-        gte: startOfWeekUTC, 
-        lte: endOfDayUTC
+        gte: startOfLocalWeek, 
+        lte: endOfLocalDay
       }
     },
     include: {
@@ -799,12 +794,13 @@ export const getWeekSessionByUserId = async (id: string) => {
           sets: true
         }
       }
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 
-  const sortedSessions = getWorkoutSession.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  const formattedSessions = sortedSessions.map(session => {
+  const formattedSessions = getWorkoutSession.map(session => {
     const utcDate = new Date(session.createdAt);
     const localDate = utcDate.toISOString();
 
@@ -817,7 +813,6 @@ export const getWeekSessionByUserId = async (id: string) => {
   revalidatePath('/fit');
   return formattedSessions;
 }
-
 
 //TODO? 統計邏輯
 export const upsertWorkoutSummary = async (id: string) => {
@@ -1003,7 +998,7 @@ export const upsertWorkoutSummary = async (id: string) => {
   };
 };
 
-export const getCategorySummaryByUserIdForRange = async (id: string, range: 'week' | 'month' | 'year') => {
+export const getCategorySummaryByUserIdForLineChart = async (id: string, range: 'week' | 'month' | 'year') => {
   const session = await auth();
   const userId = session?.user?.id;
 
@@ -1014,8 +1009,6 @@ export const getCategorySummaryByUserIdForRange = async (id: string, range: 'wee
   const startDate = new Date();
   const endDate = new Date();
 
-  // const startOfDayUTC = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000);
-  // const endOfDayUTC = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000);
 
   switch (range) {
     case 'week':
@@ -1070,8 +1063,6 @@ export const getCategorySummaryByUserIdForBarChart = async (
 ) => {
   const { start, end } = getDateRange(timeFrame, new Date(), isPrevious);
 
-console.log('開始',start);
-console.log('結束',end);
   const workoutSummaries = await prismaDb.workoutSummary.findMany({
     where: {
       userId: id,

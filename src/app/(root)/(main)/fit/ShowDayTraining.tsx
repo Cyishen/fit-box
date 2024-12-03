@@ -158,16 +158,15 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
     }
   };
 
-  const today = new Date().toLocaleDateString();
   const now = new Date();
-  const userLanguage = navigator.language;
-  const weekday = now.toLocaleDateString(userLanguage, { weekday: 'long' });
+  const today = new Date().toLocaleDateString();
+  const weekday = now.toLocaleDateString(undefined, { weekday: 'long' });
 
   return (
     <>
       <h1 className='font-bold'>
         今日訓練
-        <span className='text-[12px] text-gray-500 pl-2'>{today} {weekday}</span>
+        <span className='text-[10px] text-gray-500 pl-2 font-normal'>{today} {weekday}</span>
       </h1>
 
       {workoutCards.length === 0 ? (

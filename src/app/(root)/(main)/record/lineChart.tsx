@@ -7,6 +7,7 @@ import type { EChartsOption } from 'echarts';
 
 import { useSession } from "next-auth/react"
 import { useWorkoutStore } from '@/lib/store';
+import Image from 'next/image';
 
 
 const categories = ["胸", "背", "腿", "肩", "二頭", "三頭"] as const;
@@ -263,8 +264,16 @@ const LineChart = ({ userYearSummary }: Props) => {
 
       <div className="h-[300px]">
         {chartData.length === 0 ? (
-          <div className='flex justify-center items-center h-full border rounded-lg'>
-            <p>無數據</p>
+          <div className='flex flex-col justify-center items-center h-full border rounded-lg'>
+            <Image
+              src="/imgs/empty.png"
+              alt='empty'
+              width={50}
+              height={50}
+              priority={false}
+              loading='lazy'
+              className='object-contain w-24' 
+            />
           </div>
         ) : (
           <ReactECharts

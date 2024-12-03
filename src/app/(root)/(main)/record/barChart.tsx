@@ -45,13 +45,11 @@ export interface Props {
 const BarChart = ({ userThisWeekSummary, userLastWeekSummary, userThisMonthSummary, userLastMonthSummary, userThisYearSummary, userLastYearSummary }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
-  console.log('本週數據',userThisWeekSummary )
-  console.log('上週數據',userLastWeekSummary )
 
   const [timeFrame, setTimeFrame] = useState<'週' | '月' | '年'>('週');
+
   // 本次區間數據管理
   const [chartData, setChartData] = useState<{ category: Category, count: number }[]>([]);
- 
   // 上個區間數據管理
   const [lastChartData, setLastChartData] = useState<{ category: Category, count: number }[]>([]);
 
@@ -275,37 +273,37 @@ export default BarChart;
 
 
 // 生成假資料的函式
-export const generateMockData = (timeFrame: '週' | '月' | '年') => {
-  const data: { category: Category, count: number }[] = [];
-  const randomCounts = {
-    胸: [10, 20],
-    背: [8, 20],
-    腿: [8, 20],
-    肩: [6, 20],
-    二頭: [5, 12],
-    三頭: [5, 12],
-  };
+// export const generateMockData = (timeFrame: '週' | '月' | '年') => {
+//   const data: { category: Category, count: number }[] = [];
+//   const randomCounts = {
+//     胸: [10, 20],
+//     背: [8, 20],
+//     腿: [8, 20],
+//     肩: [6, 20],
+//     二頭: [5, 12],
+//     三頭: [5, 12],
+//   };
 
-  categories.forEach(category => {
-    let count;
-    switch (timeFrame) {
-      case '週':
-        count = randomCounts[category][0] + Math.floor(Math.random() * (randomCounts[category][1] - randomCounts[category][0] + 1));
-        break;
-      case '月':
-        count = Math.floor((randomCounts[category][0] + randomCounts[category][1]) / 2) * 4; // 每月
-        break;
-      case '年':
-        count = Math.floor((randomCounts[category][0] + randomCounts[category][1]) / 2) * 52; // 每年
-        break;
-      default:
-        count = 0;
-    }
-    data.push({ category, count });
-  });
+//   categories.forEach(category => {
+//     let count;
+//     switch (timeFrame) {
+//       case '週':
+//         count = randomCounts[category][0] + Math.floor(Math.random() * (randomCounts[category][1] - randomCounts[category][0] + 1));
+//         break;
+//       case '月':
+//         count = Math.floor((randomCounts[category][0] + randomCounts[category][1]) / 2) * 4; // 每月
+//         break;
+//       case '年':
+//         count = Math.floor((randomCounts[category][0] + randomCounts[category][1]) / 2) * 52; // 每年
+//         break;
+//       default:
+//         count = 0;
+//     }
+//     data.push({ category, count });
+//   });
 
-  return data;
-};
+//   return data;
+// };
 
 // 動態選單
 interface AnimatedTabsHoverProps {

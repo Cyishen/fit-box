@@ -5,14 +5,15 @@ import BarChart from './barChart'
 import PieChart from './pieChart'
 
 import { auth } from '@/auth'
-import { getCategorySummaryByUserIdForRange, getCategorySummaryByUserIdForBarChart } from '@/actions/user-create'
+import { getCategorySummaryByUserIdForLineChart, getCategorySummaryByUserIdForBarChart } from '@/actions/user-create'
+
 
 
 const RecordPage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userYearSummaryData = getCategorySummaryByUserIdForRange(userId as string, 'year');
+  const userYearSummaryData = getCategorySummaryByUserIdForLineChart(userId as string, 'year');
 
   const userThisWeekSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '週', false);
   const userLastWeekSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '週', true);
