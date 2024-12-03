@@ -797,7 +797,8 @@ export const getWeekSessionByUserId = async (id: string) => {
     },
     orderBy: {
       createdAt: 'desc'
-    }
+    },
+    take: 5
   });
 
   const formattedSessions = getWorkoutSession.map(session => {
