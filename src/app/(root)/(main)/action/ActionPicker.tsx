@@ -181,7 +181,7 @@ const ActionPicker = () => {
           )}
 
           <div className='flex mt-5 gap-3'>
-            <div className='w-32'>
+            <div className='w-28'>
               <h3 className="font-bold">選擇動作</h3>
               <hr className='my-2' />
 
