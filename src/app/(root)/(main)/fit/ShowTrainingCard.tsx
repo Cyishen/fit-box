@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
-import { ListOrdered, Trash2 } from 'lucide-react';
+
+import { Trash2 } from 'lucide-react';
 
 import RippleAni from '@/components/RippleAni';
 import { multiFormatDateString } from '@/lib/TimeFn/Timer';
@@ -28,6 +28,13 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
 
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
+
+  const totalSets = sessionCards?.exercises?.reduce((total, e) => total + e.sets.length, 0) || 0;
+
+  const finishSets = sessionCards?.exercises?.map(e => e.sets.filter(s => s.isCompleted === true).length);
+  const finishSetsTotal = finishSets?.reduce((total, e) => total + e, 0) || 0;
+
+  const completionPercentage = totalSets > 0 ? (finishSetsTotal / totalSets) * 100 : 0;
 
   // 手機觸摸事件處理
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -114,26 +121,30 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
           <div className='flex w-[70%] flex-col px-2 rounded-xl bg-white py-1 overflow-hidden'
             onClick={() => handleEditWorkout(sessionCards?.cardSessionId)}
           >
-            <p className='font-bold line-clamp-1'>{sessionCards?.templateTitle}</p>
+            <div className='flex gap-3'>
+              <p className='font-bold line-clamp-1 py-1'>{sessionCards?.templateTitle}</p>
+
+              <p className='flex items-center ml-auto text-[12px] whitespace-nowrap'>
+                完成&nbsp;
+                <span className={`font-bold text-sm ${completionPercentage === 100 ? 'text-green-500' : ''}`}>{completionPercentage}%&nbsp;</span>
+                {completionPercentage === 100 ? '🎉' : ''}
+              </p>
+            </div>
 
             <div className='flex items-center gap-1 text-[10px]'>
               <div className='flex items-center'>
-                <div className='w-5 h-5'>
-                  <Image src='/icons/dumbbell.svg' width={20} height={20} alt='dumbbell' />
-                </div>
                 <p className='flex items-center justify-center border px-1 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>
                   {sessionCards?.exercises?.length} 動作
                 </p>
               </div>
 
               <div className='flex items-center gap-1'>
-                <ListOrdered width={16} className='group-hover:text-[#66CCFF]'/>
                 <p className='flex items-center justify-center border px-2 min-h-5 rounded-full bg-black text-white group-hover:text-[#66CCFF] whitespace-nowrap'>
-                  {sessionCards?.exercises?.reduce((total, e) => total + e.sets.length, 0)} 組
+                  {finishSetsTotal} / {totalSets} 組
                 </p>
               </div>
 
-              <div className='text-muted-foreground line-clamp-1'>
+              <div className='text-muted-foreground line-clamp-1 ml-auto'>
                 <p>{multiFormatDateString(sessionCards?.createdAt as string)}</p>
               </div>
             </div>

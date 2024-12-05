@@ -32,7 +32,7 @@ const FitPage = async () => {
     userMenuData,
     userTemplateData,
     userDayCardData,
-    userWeekCardData
+    userWeekCardData,
   ]);
 
   // console.log('Day?', JSON.stringify(userDayCard, null, 2));

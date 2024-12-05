@@ -2,36 +2,35 @@
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
 
 
 const CreateMenuButton = () => {
-  const [randomBoxImage, setRandomBoxImage] = useState<string>('');
+  // const [randomBoxImage, setRandomBoxImage] = useState<string>('');
 
-  useEffect(() => {
-    const images = [
-      '/imgs/cap.png',
-      '/imgs/hulk.png',
-      '/imgs/iron.png',
-      '/imgs/thor.png',
-      '/imgs/girl.png',
-    ];
-    const randomIndex = Math.floor(Math.random() * images.length);
-    const randomImage = images[randomIndex];
-    setRandomBoxImage(randomImage);
-  }, []);
+  // useEffect(() => {
+  //   const images = [
+  //     '/imgs/cap.png',
+  //     '/imgs/hulk.png',
+  //     '/imgs/iron.png',
+  //     '/imgs/thor.png',
+  //     '/imgs/girl.png',
+  //   ];
+  //   const randomIndex = Math.floor(Math.random() * images.length);
+  //   const randomImage = images[randomIndex];
+  //   setRandomBoxImage(randomImage);
+  // }, []);
 
   return (
     <div
       className='flex items-center justify-between w-full py-3'
-      style={{
-        backgroundImage: `url(${randomBoxImage})`,
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'repeat',
-        backgroundBlendMode: 'overlay',
-        backgroundColor: '#f3f4f6',
-      }}
+      // style={{
+      //   backgroundImage: `url(${randomBoxImage})`,
+      //   backgroundSize: 'contain',
+      //   backgroundPosition: 'center',
+      //   backgroundRepeat: 'repeat',
+      //   backgroundBlendMode: 'overlay',
+      //   backgroundColor: '#f3f4f6',
+      // }}
     >
       <h1 className='font-bold'>訓練盒</h1>
 
