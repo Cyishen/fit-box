@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { usePracticeModal } from "@/lib/use-practice-modal";
 import Link from "next/link";
 import { useTemplateStore, useWorkoutStore } from "@/lib/store";
-import Image from "next/image";
+
 import { useRouter } from "next/navigation";
 // import { getExerciseByTemplateId } from "@/actions/user-create";
 
@@ -219,7 +219,7 @@ export const PracticeModal = () => {
                       if (template.name === exercise.name) {
                         return (
                           <div key={index}>
-                            <Image
+                            <img
                               src={template?.iconSrc || '/icons/dumbbell.svg'}
                               alt={exercise.name}
                               width={32}

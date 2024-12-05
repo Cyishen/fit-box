@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Loader, ChevronLeft } from 'lucide-react';
 
@@ -180,7 +180,7 @@ const ActionPicker = () => {
             </div>
           )}
 
-          <div className='flex mt-5 gap-3'>
+          <div className='flex mt-5 gap-3 mb-20'>
             <div className='w-28'>
               <h3 className="font-bold">選擇動作</h3>
               <hr className='my-2' />
@@ -196,20 +196,27 @@ const ActionPicker = () => {
                     onClick={() => handleToggleExercise(exercise)}
                     className={`p-2 rounded-md cursor-pointer
                     ${selectedExercises.some(select => select.movementId === exercise.movementId)
-                        ? 'bg-[#66CCFF] ring-1 ring-offset-2 ring-blue-500'
+                        ? 'bg-white ring-1 ring-offset-2 ring-blue-500'
                         : 'bg-white'
                       }`}
                   >
                     <div key={exercise.movementId}>
-                      <div className="p-2">
+                      <div>
                         <div className="flex flex-col items-center">
-                          <Image
+                          <img
                             src={exercise.iconSrc as string}
                             alt={exercise.name}
                             width={36}
                             height={36}
+                            className='object-contain w-16'
                           />
-                          <p className={`text-sm mt-2 ${selectedExercises.some(select => select.movementId === exercise.movementId) ? 'text-black' : 'text-muted-foreground'}`}>
+                          <p
+                            className={`text-sm mt-2 
+                            ${selectedExercises.some(select => select.movementId === exercise.movementId)
+                                ? 'text-black'
+                                : 'text-muted-foreground'
+                              }`}
+                          >
                             {exercise.name}
                           </p>
                         </div>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useTemplateStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+
 import FitSideBar from './FitSideBar';
 import { exerciseTemplates } from '@/constants/constants';
 
@@ -128,7 +128,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
             </Button>
           </div>
 
-          <div className='flex mt-5 gap-3'>
+          <div className='flex mt-5 gap-3 mb-20'>
             <div className='w-32'>
               <h3 className="font-bold">選擇動作</h3>
               <hr className='my-2' />
@@ -149,7 +149,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
                     <div key={exercise.movementId}>
                       <div className="p-2">
                         <div className="flex flex-col items-center">
-                          <Image
+                          <img
                             src={exercise?.iconSrc || '/icons/dumbbell.svg'}
                             alt={exercise.name}
                             width={36}

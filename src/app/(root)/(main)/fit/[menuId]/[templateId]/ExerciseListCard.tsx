@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import ExerciseSet from './ExerciseSet';
 import { Trash2, ChevronLeft } from 'lucide-react';
 import RippleAni from '@/components/RippleAni';
@@ -93,7 +92,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
                 if (template.name === exercise.name) {
                   return (
                     <div key={index}>
-                      <Image
+                      <img
                         src={template?.iconSrc || '/icons/dumbbell.svg'}
                         alt={exercise.name}
                         width={32}
