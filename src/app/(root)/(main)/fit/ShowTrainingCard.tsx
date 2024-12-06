@@ -126,7 +126,7 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
 
               <p className='flex items-center ml-auto text-[12px] whitespace-nowrap'>
                 完成&nbsp;
-                <span className={`font-bold text-sm ${completionPercentage === 100 ? 'text-green-500' : ''}`}>{completionPercentage}%&nbsp;</span>
+                <span className={`font-bold text-sm ${completionPercentage === 100 ? 'text-green-500' : ''}`}>{completionPercentage.toFixed(0)}%&nbsp;</span>
                 {completionPercentage === 100 ? '🎉' : ''}
               </p>
             </div>

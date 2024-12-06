@@ -45,11 +45,13 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
       const updateToDb = async () => {
         try {
           for (const session of dayCard) {
+
             const updatedSession = await upsertWorkoutSession(session);
             if (updatedSession?.id && session.id !== updatedSession.id) {
+
               const updatedLocalCard = {
                 ...session,
-                id: updatedSession.id
+                id: updatedSession.id,
               };
               editDayCard(session.cardSessionId, updatedLocalCard);
             }
