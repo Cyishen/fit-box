@@ -15,7 +15,7 @@ interface Props {
   weekData: WorkoutSessionType[];
 }
 
-const ShowTraining = ({ weekData }: Props) => {
+const ShowRecentTraining = ({ weekData }: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
 
@@ -80,6 +80,7 @@ const ShowTraining = ({ weekData }: Props) => {
         {/* <span className='text-[10px] text-gray-500 pl-2 font-normal'>{lastWeek}~{todayDate}</span> */}
       </h1>
 
+      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2'>
       {workoutCards.map((session) => (
         <ShowTrainingCard
           key={session?.cardSessionId}
@@ -88,8 +89,9 @@ const ShowTraining = ({ weekData }: Props) => {
           handleEditWorkout={handleEditWorkout}
         />
       ))}
+      </div>
     </>
   )
 }
 
-export default ShowTraining
+export default ShowRecentTraining

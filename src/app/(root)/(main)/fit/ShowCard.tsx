@@ -1,6 +1,6 @@
 import React from 'react'
 import ShowDayTraining from './ShowDayTraining';
-import ShowTraining from './ShowTraining';
+import ShowRecentTraining from './ShowRecentTraining';
 
 
 interface Props {
@@ -16,8 +16,8 @@ const ShowCard = ({ daySession, weekSession }: Props) => {
         <ShowDayTraining dayCardData={daySession} />
       </div>
 
-      <div className='flex flex-col w-full gap-2 overflow-hidden mt-2'>
-        <ShowTraining weekData={weekSession} />
+      <div className='flex flex-col w-full overflow-hidden'>
+        <ShowRecentTraining weekData={weekSession} />
       </div>
     </>
   )
