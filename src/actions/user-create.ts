@@ -796,7 +796,7 @@ export const getWeekSessionByUserId = async (id: string) => {
       }
     },
     orderBy: {
-      createdAt: 'desc'
+      createdAt: 'asc'
     },
     take: 5
   });

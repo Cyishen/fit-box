@@ -3,7 +3,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-// import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Loader, ChevronLeft } from 'lucide-react';
 
@@ -26,21 +25,32 @@ const ActionPicker = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // 本地存儲
+  // 用戶沒登入, 本地
   const { workoutSessions, editWorkoutSession } = useWorkoutStore();
 
   // 初始動作狀態
   const [currentSession, setCurrentSession] = useState<WorkoutSessionType | null>(null);
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<WorkoutExerciseType[]>([]);
-  // 判斷 action頁面是從訓練卡點選, 還是mobile bar點選
+  // 判斷用戶是點選訓練卡, 還是點選mobile bar路由, 決定是否顯示
   const [existingSessionId, setExistingSessionId] = useState<string | null>(null);
 
-  // todo? 用戶登入, dayCard資料
+  // 用戶登入, dayCard資料
   const { dayCard, editDayCard } = useDayCardStore();
 
+  // 左邊選單分類
+  const [category, setCategory] = useState<string>('胸');
+  const filteredWorkouts = exerciseWorkouts.filter(
+    (exercise) => exercise.exerciseCategory === category
+  );
+  // 動作分類
+  const categoryCounts = selectedExercises.reduce((acc, exercise) => {
+    const category = exercise.exerciseCategory;
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
-  // UI顯示已存在動作
+
   useEffect(() => {
     const currentSessionId = localStorage.getItem('currentSessionId');
     setExistingSessionId(currentSessionId);
@@ -185,12 +195,12 @@ const ActionPicker = () => {
               <h3 className="font-bold">選擇動作</h3>
               <hr className='my-2' />
 
-              <FitSideBar />
+              <FitSideBar setCategoryState={setCategory} categoryCounts={categoryCounts} />
             </div>
 
             <div className='w-full no-select'>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {exerciseWorkouts.map((exercise) => (
+                {filteredWorkouts.map((exercise) => (
                   <div
                     key={exercise.movementId}
                     onClick={() => handleToggleExercise(exercise)}
@@ -200,27 +210,23 @@ const ActionPicker = () => {
                         : 'bg-white'
                       }`}
                   >
-                    <div key={exercise.movementId}>
-                      <div>
-                        <div className="flex flex-col items-center">
-                          <img
-                            src={exercise.iconSrc as string}
-                            alt={exercise.name}
-                            width={36}
-                            height={36}
-                            className='object-contain w-16'
-                          />
-                          <p
-                            className={`text-sm mt-2 
+                    <div className="flex flex-col items-center">
+                      <img
+                        src={exercise.iconSrc as string}
+                        alt={exercise.name}
+                        width={36}
+                        height={36}
+                        className='object-contain w-16'
+                      />
+                      <p
+                        className={`text-sm mt-2 
                             ${selectedExercises.some(select => select.movementId === exercise.movementId)
-                                ? 'text-black'
-                                : 'text-muted-foreground'
-                              }`}
-                          >
-                            {exercise.name}
-                          </p>
-                        </div>
-                      </div>
+                            ? 'text-black'
+                            : 'text-muted-foreground'
+                          }`}
+                      >
+                        {exercise.name}
+                      </p>
                     </div>
                   </div>
                 ))}

@@ -25,15 +25,27 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // 本地存儲
+  // 用戶沒登入, 本地
   const templates = useTemplateStore(state => state.templates);
   const currentTemplate = templates.find(template => template.id === templateId);
 
-  // TODO* data儲存本地, 用dataAllTemplate, 取得exercise, 加快顯示速度
+  // data儲存本地, 用dataAllTemplate, 取得exercise, 加快顯示速度
   const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
-
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<TemplateExerciseType[]>([]);
+
+  // 左邊選單分類
+  const [category, setCategory] = useState<string>('胸');
+  const filteredWorkouts = exerciseTemplates.filter(
+    (exercise) => exercise.exerciseCategory === category
+  );
+  // 動作分類
+  const categoryCounts = selectedExercises.reduce((acc, exercise) => {
+    const category = exercise.exerciseCategory;
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
 
   useEffect(() => {
     const fetchSelectedExercises = async () => {
@@ -133,12 +145,12 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
               <h3 className="font-bold">選擇動作</h3>
               <hr className='my-2' />
 
-              <FitSideBar />
+              <FitSideBar setCategoryState={setCategory} categoryCounts={categoryCounts}/>
             </div>
 
             <div className='w-full no-select'>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {exerciseTemplates.map((exercise) => (
+                {filteredWorkouts.map((exercise) => (
                   <div
                     key={exercise.movementId}
                     onClick={() => handleToggleExercise(exercise)}

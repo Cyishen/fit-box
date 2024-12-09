@@ -21,10 +21,13 @@ const ShowRecentTraining = ({ weekData }: Props) => {
 
   const router = useRouter();
 
-  // 本地
+  // 用戶未登入
   const { workoutSessions, removeWorkoutSession } = useWorkoutStore();
 
   const [workoutCards, setWorkoutCards] = useState<WorkoutSessionType[]>([]);
+
+  const [showAll, setShowAll] = useState(false);
+  const visibleCards = showAll ? workoutCards : workoutCards.slice(0, 3);
 
   useEffect(() => {
     if (userId) {
@@ -66,22 +69,15 @@ const ShowRecentTraining = ({ weekData }: Props) => {
     }
   };
 
-  // const today = new Date();
-  // const todayDate = today.toLocaleDateString();
-
-  // const pastDate = new Date(today);
-  // pastDate.setDate(today.getDate() - 7);
-  // const lastWeek = pastDate.toLocaleDateString();
 
   return (
     <>
       <h1 className='font-bold'>
         最近訓練
-        {/* <span className='text-[10px] text-gray-500 pl-2 font-normal'>{lastWeek}~{todayDate}</span> */}
       </h1>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2'>
-      {workoutCards.map((session) => (
+      {visibleCards.map((session) => (
         <ShowTrainingCard
           key={session?.cardSessionId}
           sessionCards={session}
@@ -90,6 +86,17 @@ const ShowRecentTraining = ({ weekData }: Props) => {
         />
       ))}
       </div>
+
+      {workoutCards.length > 3 && !showAll && (
+        <div className="my-4 text-center text-sm">
+          <button
+            onClick={() => setShowAll(true)}
+            className='hover:bg-slate-100 px-2 py-1 rounded-sm'
+          >
+            顯示更多
+          </button>
+        </div>
+      )}
     </>
   )
 }
