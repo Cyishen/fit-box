@@ -23,6 +23,8 @@ const AuthForm = ({ type }: { type: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+
+
   const searchParams = useSearchParams();
   const urlError = searchParams.get('error') === 'OAuthAccountNotLinked' ? "Email already in use" : "";
 
@@ -84,13 +86,22 @@ const AuthForm = ({ type }: { type: string }) => {
   }
 
   return (
-    <div className="flex justify-center size-full">
-      <div className="flex min-h-screen w-full px-4 sm:max-w-[490px] flex-col justify-center gap-3 md:gap-8">
-        <header>
+    <div className="flex justify-center size-full h-dvh">
+      <div className="flex flex-col w-full px-4 sm:max-w-[490px] gap-3 md:gap-8">
+        <header className='mt-10 md:mt-20'>
           <Link href="/" className="flex items-center cursor-pointer hover:text-blue-500">
             <ChevronLeft size={20} />
             <h1 className="text-2xl sm:text-3xl font-extrabold">FitBox 運動盒子</h1>
           </Link>
+
+          <div className='flex w-full mt-1'>
+            <AnimatedTabsHover
+              onChange={(tab) => {
+                router.push(tab === '登入' ? '/sign-in' : '/sign-up');
+              }}
+              activeTab={type === 'sign-in' ? '登入' : '註冊'}
+            />
+          </div>
         </header>
 
         <Form {...form}>
@@ -140,23 +151,9 @@ const AuthForm = ({ type }: { type: string }) => {
             </div>
           </form>
         </Form>
+        {urlError && <p className="text-sm text-red-500">{urlError}</p>}
 
-        {urlError && <p className="text-sm text-red-500">{urlError}</p>} 
-
-        <footer className="flex justify-center gap-2 mt-3">
-          <p className="text-base font-normal text-gray-600">
-            {type === 'sign-in'
-              ? "還沒有帳號?"
-              : "已經有帳號?"}
-          </p>
-          <Link
-            href={type === 'sign-in' ? '/sign-up' : '/sign-in'}
-            className="text-base cursor-pointer font-medium text-blue-500"
-          >
-            {type === 'sign-in' ? 'Sign up' : 'Sign in'}
-          </Link>
-        </footer>
-
+        {/* 其他方式登入 */}
         <OAuth />
       </div>
     </div>
@@ -164,3 +161,39 @@ const AuthForm = ({ type }: { type: string }) => {
 }
 
 export default AuthForm
+
+
+interface AnimatedTabsHoverProps {
+  activeTab: '登入' | '註冊'
+  onChange: (tab: '登入' | '註冊') => void;
+}
+
+function AnimatedTabsHover({ activeTab, onChange }: AnimatedTabsHoverProps) {
+  const TABS = [
+    { label: '登入' },
+    { label: '註冊' },
+  ];
+
+  return (
+    <div className='flex space-x-2 p-1 bg-slate-200 rounded-lg w-full'>
+      <div
+        defaultValue={activeTab}
+        className='flex rounded-lg bg-opacity-80 w-full'
+      >
+        {TABS.map((tab) => (
+          <Link
+            href={tab.label === '登入' ? '/sign-in' : '/sign-up'}
+            key={tab.label}
+            data-id={tab.label}
+            onClick={() => onChange(tab.label as '登入' | '註冊')}
+            className={`inline-flex h-8 w-full items-center justify-center transition-colors duration-100 z-10 ${activeTab === tab.label ? 'text-black bg-white rounded-lg' : 'text-gray-500'}`}
+          >
+            <p className='flex items-center justify-center text-sm'>
+              <span>{tab.label}</span>
+            </p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
