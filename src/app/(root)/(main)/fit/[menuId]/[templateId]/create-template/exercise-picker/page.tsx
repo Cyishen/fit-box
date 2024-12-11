@@ -146,7 +146,11 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
               <h3 className="font-bold">選擇動作</h3>
               <hr className='my-2' />
 
-              <FitSideBar setCategoryState={setCategory} categoryCounts={categoryCounts}/>
+              <FitSideBar
+                category={category} 
+                setCategoryState={setCategory} 
+                categoryCounts={categoryCounts}
+              />
             </div>
 
             <div className='w-full no-select'>

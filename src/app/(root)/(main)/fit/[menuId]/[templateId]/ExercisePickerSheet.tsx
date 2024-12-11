@@ -139,7 +139,7 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
         </button>
       </div>
 
-      <div className='flex justify-end mt-2'>
+      <div className='flex justify-end mt-4'>
         <Button
           size='sm'
           type="button"
@@ -157,12 +157,16 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
         </Button>
       </div>
 
-      <div className='flex mt-5 gap-3 mb-20'>
+      <div className='flex mt-3 gap-3 mb-20'>
         <div className='w-28'>
           <h3 className="font-bold">選擇動作</h3>
           <hr className='my-2' />
 
-          <FitSideBar setCategoryState={setCategory} categoryCounts={categoryCounts} />
+          <FitSideBar 
+            category={category} 
+            setCategoryState={setCategory} 
+            categoryCounts={categoryCounts} 
+          />
         </div>
 
         <div className='w-full no-select'>

@@ -1,7 +1,7 @@
 "use client"
 
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { CopyPlus } from 'lucide-react';
 
@@ -14,6 +14,22 @@ type Props = {
 }
 const TemplateExerciseButton = ({ templateId, setTemplateState }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      // 禁用背景滾動
+      document.body.style.overflow = 'hidden';
+    } else {
+      // 恢復背景滾動
+      document.body.style.overflow = 'auto';
+    }
+  
+    return () => {
+      // 清理
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
+
 
   return (
     <div>
