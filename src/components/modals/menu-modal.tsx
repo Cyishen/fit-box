@@ -19,6 +19,7 @@ import { useMenuStore, useTemplateStore } from "@/lib/store";
 
 import { useSession } from 'next-auth/react'
 import { upsertTemplate } from "@/actions/user-create";
+import { usePracticeModal } from "@/lib/use-practice-modal";
 
 
 
@@ -43,14 +44,16 @@ export const MenuModal = () => {
   const { isOpen, close, id } = useMenuModal();
   const { openDelete } = useDeleteMenuModal();
 
-  // 本地 menus 資料
+  // 用戶沒登入, 本地 menus 資料
   const menus = useMenuStore((state) => state.menus);
-  // 本地 templates 資料
+  // 用戶沒登入, 本地 templates 資料
   const addTemplate = useTemplateStore((state) => state.addTemplate);
   const templates = useTemplateStore((state) => state.templates);
   const countTemplate = templates.filter(template => template.menuId === id);
 
   // 用戶登入, 抓取資料庫用戶menu id
+  const { dataAllTemplate } = usePracticeModal()
+
   const [dateMenuId, setDateMenuId] = useState<MenuType | null>(null);
 
   useEffect(() => {
@@ -66,13 +69,17 @@ export const MenuModal = () => {
     ? dateMenuId
     : menus.find((menu) => menu.id === id);
 
+  const openMenuCountTemplate = userId
+    ? dataAllTemplate.length
+    : countTemplate.length;
+
   // 刪除時, 打開另一個小視窗
   const handleDeleteOpen = (id: string) => {
     openDelete(id);
   };
 
 
-  // Todo: 建立模板
+  // 建立模板
   const generateTemplateId = () => {
     return Math.random().toString(36).substring(2, 6);
   };
@@ -85,7 +92,6 @@ export const MenuModal = () => {
       templateCategory: "胸",
       templateTitle: "新模板",
       templateExercises: [],
-      // templateId: '',
     };
 
     if (userId) {
@@ -125,7 +131,7 @@ export const MenuModal = () => {
             {openMenu?.title}
           </DialogTitle>
           <DialogDescription className="text-center text-sm">
-            模板數量 {countTemplate.length}
+            模板數量 {openMenuCountTemplate}
           </DialogDescription>
         </DialogHeader>
 

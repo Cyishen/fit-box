@@ -44,12 +44,12 @@ export const PracticeModal = () => {
 
   const [isClient, setIsClient] = useState(false);
 
-  // Todo* data儲存本地: 用dataAllTemplate 取得exercise, 彈出視窗加快顯示圖片
+  // 下載模板到本地: 用dataAllTemplate 取得exercise, 彈出視窗加快顯示圖片
   const { isOpen, close, menuId, templateId, dataAllTemplate } = usePracticeModal();
 
-  // 無用戶本地
+  // 用戶沒登入
   const templates = useTemplateStore(state => state.templates);
-  const openLocalTemplate = templates.find(template => template?.id === templateId);
+  const openLocalTemplate = templates?.find(template => template?.id === templateId);
   const localExercise = openLocalTemplate?.templateExercises
 
   const addWorkoutSession = useWorkoutStore(state => state.addWorkoutSession);

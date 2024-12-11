@@ -7,6 +7,7 @@ import ExerciseList from "./ExerciseList";
 import { useRouter } from "next/navigation";
 import { Loader } from "lucide-react";
 
+
 export const categories = ["胸", "背", "腿", "肩", "二頭", "三頭",];
 
 
@@ -47,7 +48,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
         <form onSubmit={handleSubmit} className="bg-gray-100 sm:rounded-2xl">
           <div className="p-4">
             <div className="flex justify-between">
-              <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
+              <Button size='sm' disabled={isLoading} onClick={() => router.back()} className='font-bold'>返回</Button>
 
               <h3 className="font-bold">{type}</h3>
 
@@ -88,6 +89,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
 
               <div className="flex gap-3 py-1">
                 <input
+                  disabled={isLoading}
                   type="text"
                   placeholder="來取名吧 🤔"
                   onChange={handleChange}
@@ -100,8 +102,8 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
               </div>
             </div>
           </div>
-
-          {/* TODO: 添加動作 */}
+          
+          {/* 添加動作 */}
           <div className="h-full">
             <ExerciseList
               exercises={template?.templateExercises || []}

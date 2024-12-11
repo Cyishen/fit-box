@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTemplateStore } from '@/lib/store';
-import { CopyPlus } from 'lucide-react';
+
 import ExerciseListCard from './ExerciseListCard';
+import TemplateExerciseButton from './TemplateExerciseButton';
 
 
 
@@ -14,10 +14,8 @@ type ExerciseListProps = {
 };
 
 const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: ExerciseListProps) => {
-  const router = useRouter();
-
   const updateTemplate = useTemplateStore(state => state.editTemplate);
-
+  
   // 打開動作的組數設定
   const [openMovementId, setOpenMovementId] = useState<string | null>(null);
   const handleToggleExercise = (movementId: string) => {
@@ -64,15 +62,19 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
       <div className='flex justify-end items-center gap-3 px-4'>
         <h3 className="font-bold">添加動作</h3>
 
-        <button
+        {/* <Button
           type="button"
+          disabled={isLoading}
           onClick={() => router.push(`/fit/${template.menuId}/${template.id}/create-template/exercise-picker`)}
-          className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
+          className='w-8 h-8 flex justify-center items-center duration-300 rounded-full'
         >
-          <div className='w-full h-full rounded-full flex justify-center items-center hover:invert'>
-            <CopyPlus className='w-5' />
+          <div className='min-w-8 min-h-8 rounded-full flex justify-center items-center'>
+            <CopyPlus size={14} />
           </div>
-        </button>
+        </Button> */}
+
+        {/* BottomSheet */}
+        <TemplateExerciseButton templateId={template?.id} setTemplateState={setTemplateState} />
       </div>
 
       <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200'>

@@ -41,7 +41,7 @@ const MenuList: React.FC<MenuListProps> = ({
 
         setTemplateCounts(counts);
       } else {
-        // 本地
+        // 用戶沒登入
         const counts: { [key: string]: number } = {};
         menus.forEach((menu) => {
           const localTemplates = templates.filter((template) => template.menuId === menu.id);
@@ -68,7 +68,8 @@ const MenuList: React.FC<MenuListProps> = ({
         menus.map((menu) => (
           <div
             key={menu.id}
-            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 w-40 ${selectedMenuId === menu.id ? "bg-black text-white" : "bg-slate-200"}`}
+            className={`flex items-center p-2 rounded-lg cursor-pointer gap-3 duration-300 w-40 
+              ${selectedMenuId === menu.id ? "bg-black text-white" : "bg-slate-200"}`}
           >
             <div
               className='flex items-center gap-1'

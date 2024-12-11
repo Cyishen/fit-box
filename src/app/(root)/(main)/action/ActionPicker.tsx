@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader, ChevronLeft } from 'lucide-react';
 
-import FitSideBar from '../fit/[menuId]/[templateId]/create-template/exercise-picker/FitSideBar';
+import FitSideBar from '@/components/FitSideBar';
 import { exerciseWorkouts } from '@/constants/constants';
 
 import { useWorkoutStore } from '@/lib/store';

@@ -23,7 +23,7 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState<{ [key: string]: boolean }>({});
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
 
-  // 本地端
+  // 用戶未登入
   const menus = useMenuStore((state) => state.menus);
   const templates = useTemplateStore((state) => state.templates);
 
@@ -44,12 +44,12 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
   useEffect(() => {
     const lastSelectedMenuId = localStorage.getItem('selectedMenuId');
 
-    if (!userId) {
-      // 資料庫
-      selectMenu(lastSelectedMenuId, menus);
-    } else {
-      // 本地
+    if (userId) {
+      // 用戶登入
       selectMenu(lastSelectedMenuId, menusData);
+    } else {
+      // 用戶未登入
+      selectMenu(lastSelectedMenuId, menus);
     }
   }, [menus, menusData, userId]);
 
@@ -77,7 +77,7 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
       .slice()
       .reverse();
 
-  // TODO* data儲存本地, 第一步, 資料庫儲存到zustand, 頁面用 dataAllTemplate取資料
+  // 下載模板到本地: 第一步, 資料庫儲存到zustand, 頁面用 dataAllTemplate取資料
   const { setDataAllTemplate } = usePracticeModal()
 
   useEffect(() => {

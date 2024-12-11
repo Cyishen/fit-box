@@ -1,5 +1,6 @@
 "use client"
 
+
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import TemplateForm from '../TemplateForm'
@@ -7,6 +8,7 @@ import { useTemplateStore } from '@/lib/store'
 
 import { useSession } from 'next-auth/react'
 import { getTemplateExerciseByTemplateId, upsertTemplate } from '@/actions/user-create'
+
 
 
 const CreateTemplate = ({ params }: { params: { menuId: string; templateId: string } }) => {
@@ -18,10 +20,13 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // 本地
+  // 用戶未登入
   const { templates, addTemplate, editTemplate } = useTemplateStore(state => state);
-  const existingTemplate = templates.find(template => template.id === templateId);
+  const localTemplate = templates.find(template => template.id === templateId);
 
+  // 下載模板到本地: 透過 dataAllTemplate 取得exercise
+  // const { dataAllTemplate, setNewDataTemplate } = usePracticeModal();
+  // const findTemplate = dataAllTemplate.find(item => item.id === templateId)
 
   const [template, setTemplate] = useState<TemplateType>({
     id: templateId,
@@ -36,16 +41,26 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
     const fetchExercises = async () => {
       try {
         if (userId && templateId) {
-          // 資料庫
-          const exercises = await getTemplateExerciseByTemplateId(templateId);
+          // 原本方式, 讀取資料庫(路由跳轉, 所以會自動更新 UI), 改成bottomSheet後: 添加動作後, 需要手動刷新頁面。 
+          // const exercises = await getTemplateExerciseByTemplateId(templateId);
+          // setTemplate(prevTemplate => ({
+          //   ...prevTemplate,
+          //   templateExercises: exercises,
+          // }));
 
-          setTemplate(prevTemplate => ({
-            ...prevTemplate,
-            templateExercises: exercises,
-          }));
-        } else if (existingTemplate) {
-          // 本地
-          setTemplate(existingTemplate);
+          // 方式二, 傳遞setTemplate到 bottomSheet, 直接更新狀態
+          await getTemplateExerciseByTemplateId(templateId);
+
+          // 方式三, 添加到本地, 再把資料給setTemplate
+          // // 第一步: 先把建立的模板給本地dataAllTemplate
+          // setNewDataTemplate(template)
+          // // 第二步: 找到新建的模板, 然後把資料給setTemplate
+          // if (findTemplate) {
+          //   setTemplate(findTemplate)
+          // }
+        } else if (localTemplate) {
+          // 用戶沒登入
+          setTemplate(localTemplate);
         }
       } catch (error) {
         console.error("Failed to fetch template", error);
@@ -53,7 +68,7 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
     };
 
     fetchExercises();
-  }, [existingTemplate, templateId, userId]);
+  }, [localTemplate, templateId, userId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,12 +84,12 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
         })
 
       } else {
-        // 本地
+        // 用戶未登入
         const updatedTemplate: TemplateType = {
           ...template,
         };
 
-        if (existingTemplate) {
+        if (localTemplate) {
           editTemplate(templateId, updatedTemplate);
         } else {
           addTemplate(updatedTemplate);

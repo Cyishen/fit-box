@@ -307,7 +307,10 @@ export const getAllTemplatesByUserId = async () => {
 
   const templates = await prismaDb.template.findMany({
     where: {
-      isDeleted: false
+      isDeleted: false,
+      menu: {
+        userId: userId
+      }
     },
     include: {
       menu: true,
@@ -346,6 +349,7 @@ export const getTemplateById = async (id: string) => {
     }
   })
 
+  revalidatePath('/fit')
   return template
 }
 
@@ -383,6 +387,7 @@ export const getTemplateExerciseByTemplateId = async (templateId: string) => {
     }
   });
 
+  revalidatePath('/fit');
   return exercises
 }
 

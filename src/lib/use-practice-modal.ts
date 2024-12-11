@@ -11,7 +11,8 @@ type PracticeModalState = {
 
   dataAllTemplate: TemplateType[];
   setDataAllTemplate: (data: TemplateType[]) => void;
-  clearStoredData: () => void;
+  setNewDataTemplate: (data: TemplateType) => void;
+  // clearStoredData: () => void;
 };
 
 
@@ -27,13 +28,20 @@ export const usePracticeModal = create<PracticeModalState>()(
         set({ isOpen: false, menuId: null, templateId: null }),
 
       dataAllTemplate: [],
+      setNewDataTemplate: (data) => 
+        set((state) => ({
+          dataAllTemplate: state.dataAllTemplate.find(item => item.id === data.id)
+            ? state.dataAllTemplate
+            : [...state.dataAllTemplate, data],
+        })),
+
       setDataAllTemplate: (data) =>
         set({ dataAllTemplate: data }),
 
-      clearStoredData: () => {
-        set({ dataAllTemplate: [] });
-        localStorage.removeItem('from-data-template-storage');
-      },
+      // clearStoredData: () => {
+      //   set({ dataAllTemplate: [] });
+      //   localStorage.removeItem('from-data-template-storage');
+      // },
     }),
     {
       name: 'from-data-template-storage',

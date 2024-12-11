@@ -8,7 +8,6 @@ import TemplateForm from '../TemplateForm'
 
 import { useSession } from 'next-auth/react'
 import { upsertTemplate } from '@/actions/user-create'
-// import { getTemplateById } from '@/actions/user-create'
 
 import { usePracticeModal } from '@/lib/use-practice-modal';
 
@@ -22,12 +21,12 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-  // 本地
+  // 用戶沒登入
   const templates = useTemplateStore((state) => state.templates);
-  const existingTemplate = templates.find(template => template.id === templateId);
+  const localTemplate = templates.find(template => template.id === templateId);
   const editTemplate = useTemplateStore((state) => state.editTemplate);
 
-  // TODO*方式二,測試透過 dataAllTemplate 取得exercise, 加快圖片顯示速度
+  // 下載模板到本地: 透過 dataAllTemplate 取得exercise, 加快圖片顯示速度
   const { dataAllTemplate } = usePracticeModal();
   const findTemplate = dataAllTemplate.find(item => item.id === templateId);
 
@@ -46,11 +45,11 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
       setIsLoading(true);
       try {
         if (userId) {
-          // TODO:方式二, 測試dataAllTemplate
+          // 方式二, dataAllTemplate 加快顯示圖片
           if (findTemplate) {
             setTemplate(findTemplate)
           }
-          // 方式一抓資料庫資料, 刷新網頁正常
+          // 原本方式, 抓資料庫資料, 刷新網頁正常
           // const fetchedTemplate = await getTemplateById(templateId);
           // if (fetchedTemplate) {
           //   setTemplate(fetchedTemplate);
@@ -58,9 +57,9 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
           //   console.log("Template not found");
           // }
         } else {
-          // 本地
-          if (existingTemplate) {
-            setTemplate(existingTemplate);
+          // 用戶沒登入
+          if (localTemplate) {
+            setTemplate(localTemplate);
           }
         }
       } catch (error) {
@@ -71,7 +70,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     };
 
     fetchExercises();
-  }, [existingTemplate, findTemplate, templateId, userId]);
+  }, [localTemplate, findTemplate, templateId, userId]);
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,7 +83,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
         // 資料庫
         await upsertTemplate(template as TemplateType);
       } else {
-        // 本地
+        // 用戶沒登入
         if (template) {
           const editTemplateData: TemplateType = {
             ...template,

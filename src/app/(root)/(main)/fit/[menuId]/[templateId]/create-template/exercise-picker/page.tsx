@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useTemplateStore } from '@/lib/store';
 import { Button } from '@/components/ui/button';
 
-import FitSideBar from './FitSideBar';
+import FitSideBar from '@/components/FitSideBar';
 import { exerciseTemplates } from '@/constants/constants';
 
 import { useSession } from 'next-auth/react'
@@ -31,6 +31,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
 
   // data儲存本地, 用dataAllTemplate, 取得exercise, 加快顯示速度
   const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
+
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<TemplateExerciseType[]>([]);
 
@@ -54,7 +55,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
         const existingExercises = await getTemplateExerciseByTemplateId(templateId);
         setSelectedExercises(existingExercises);
       } else {
-        // 本地
+        // 用戶沒登入
         if (currentTemplate) {
           setSelectedExercises(currentTemplate.templateExercises);
         }
@@ -73,7 +74,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
         // 更新動作到資料庫
         await upsertExercise(selectedExercises, templateId);
 
-        // TODO* data儲存本地, 更新動作到 setDataAllTemplate
+        // 下載模板到本地: setDataAllTemplate更新動作
         if (dataAllTemplate) {
           const updatedDataAllTemplate = dataAllTemplate.map(item => {
             if (item.id === templateId) {
@@ -87,7 +88,7 @@ const ExercisePicker = ({ params }: { params: { menuId: string, templateId: stri
           setDataAllTemplate(updatedDataAllTemplate as TemplateType[]);
         }
       } else {
-        // 本地
+        // 用戶沒登入
         if (currentTemplate) {
           const updatedTemplate: TemplateType = {
             ...currentTemplate,

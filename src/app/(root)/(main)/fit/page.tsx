@@ -35,7 +35,7 @@ const FitPage = async () => {
     userWeekCardData,
   ]);
 
-  // console.log('Day?', JSON.stringify(userDayCard, null, 2));
+  // console.log('Day?', JSON.stringify(userTemplates, null, 2));
 
 
   return (

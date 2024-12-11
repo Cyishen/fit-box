@@ -3,7 +3,7 @@ import { MobileItem } from "./MobileItem"
 
 const MobileFooter = () => {
   return (
-    <nav className="w-full fixed bottom-0 z-50 bg-transparent sm:bg-transparent sm:py-2">
+    <nav className="w-full fixed bottom-0 z-40 bg-transparent sm:bg-transparent sm:py-2">
       <div className="flex items-center justify-center px-3">
         <div className="flex justify-between w-full md:w-fit rounded-full sm:border bg-white/50 backdrop-blur-lg">
           <MobileItem
