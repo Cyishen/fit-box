@@ -94,7 +94,7 @@ const AuthForm = ({ type }: { type: string }) => {
             <h1 className="text-2xl sm:text-3xl font-extrabold">FitBox 運動盒子</h1>
           </Link>
 
-          <div className='flex w-full mt-1'>
+          <div className='flex w-full mt-4'>
             <AnimatedTabsHover
               onChange={(tab) => {
                 router.push(tab === '登入' ? '/sign-in' : '/sign-up');

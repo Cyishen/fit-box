@@ -16,9 +16,10 @@ interface ExerciseListCardProps {
   onToggle: () => void;
   isLoading: boolean
   templateId: string
+  setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>
 }
 
-const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading, templateId }: ExerciseListCardProps) => {
+const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading, templateId, setTemplateState }: ExerciseListCardProps) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
 
@@ -145,11 +146,13 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
           {/* 組數設定顯示 */}
           {isOpen && (
             <ExerciseSet
+              exercise={exercise}
               sets={exercise.templateSets}
               movementId={exercise.movementId}
               onUpdateSets={onUpdateSets}
               templateId={templateId}
-              isSingleWeight={exercise.isSingleWeight}
+              isSingleWeight={exercise?.isSingleWeight}
+              setTemplateState={setTemplateState}
             />
           )}
         </div>

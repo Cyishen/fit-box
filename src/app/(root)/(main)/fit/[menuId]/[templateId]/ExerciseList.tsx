@@ -14,6 +14,7 @@ type ExerciseListProps = {
 };
 
 const ExerciseList = ({ template, setTemplateState, isLoading, exercises }: ExerciseListProps) => {
+  // 用戶未登入
   const updateTemplate = useTemplateStore(state => state.editTemplate);
 
   // 打開動作的組數設定
@@ -34,7 +35,6 @@ const ExerciseList = ({ template, setTemplateState, isLoading, exercises }: Exer
       ...template,
       templateExercises: updatedExercises,
     };
-    // 更新組數設定
     // 用戶未登入
     updateTemplate(template.id ?? '', updatedTemplate);
     // 更新狀態
@@ -49,10 +49,9 @@ const ExerciseList = ({ template, setTemplateState, isLoading, exercises }: Exer
       ...template,
       templateExercises: updatedExercises,
     };
-    // 更新刪除後的儲存
-    // 本地
+    // 用戶未登入
     updateTemplate(template.id ?? '', updatedTemplate);
-    // 資料庫狀態
+    // 更新狀態
     setTemplateState(updatedTemplate);
   };
 
@@ -96,6 +95,7 @@ const ExerciseList = ({ template, setTemplateState, isLoading, exercises }: Exer
                       onToggle={() => handleToggleExercise(exercise.movementId)}
                       isLoading={isLoading}
                       templateId={template?.id}
+                      setTemplateState={setTemplateState}
                     />
                   ))}
                 </>
@@ -104,7 +104,6 @@ const ExerciseList = ({ template, setTemplateState, isLoading, exercises }: Exer
                   <SkeletonCard />
                 </>
               )}
-
             </div>
           </div>
         </div>

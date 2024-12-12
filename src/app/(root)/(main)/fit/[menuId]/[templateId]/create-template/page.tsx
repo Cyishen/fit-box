@@ -24,10 +24,6 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
   const { templates, addTemplate, editTemplate } = useTemplateStore(state => state);
   const localTemplate = templates.find(template => template.id === templateId);
 
-  // 下載模板到本地: 透過 dataAllTemplate 取得exercise
-  // const { dataAllTemplate, setNewDataTemplate } = usePracticeModal();
-  // const findTemplate = dataAllTemplate.find(item => item.id === templateId)
-
   const [template, setTemplate] = useState<TemplateType>({
     id: templateId,
     userId: userId || "Guest",
@@ -42,16 +38,14 @@ const CreateTemplate = ({ params }: { params: { menuId: string; templateId: stri
       try {
         if (userId && templateId) {
           // 原本方式, 讀取資料庫(路由跳轉, 所以會自動更新 UI), 改成bottomSheet後: 添加動作後, 需要手動刷新頁面。 
-          // const exercises = await getTemplateExerciseByTemplateId(templateId);
-          // setTemplate(prevTemplate => ({
-          //   ...prevTemplate,
-          //   templateExercises: exercises,
-          // }));
+          // 解決: 傳遞setTemplate到 bottomSheet, 在bottomSheet中更新狀態
+          const exercises = await getTemplateExerciseByTemplateId(templateId);
+          setTemplate(prevTemplate => ({
+            ...prevTemplate,
+            templateExercises: exercises,
+          }));
 
-          // 方式二, 傳遞setTemplate到 bottomSheet, 直接更新狀態
-          await getTemplateExerciseByTemplateId(templateId);
-
-          // 方式三, 添加到本地, 再把資料給setTemplate
+          // 方式二, 添加到本地, 再把資料給setTemplate
           // // 第一步: 先把建立的模板給本地dataAllTemplate
           // setNewDataTemplate(template)
           // // 第二步: 找到新建的模板, 然後把資料給setTemplate

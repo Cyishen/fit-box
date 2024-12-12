@@ -24,10 +24,8 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
   const router = useRouter();
 
   useEffect(() => {
-    if(type==='編輯'){
-      setCount(template?.templateTitle.length);
-    }
-  }, [template?.templateTitle.length, type]);
+    setCount(template?.templateTitle.length);
+  }, [template?.templateTitle.length]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

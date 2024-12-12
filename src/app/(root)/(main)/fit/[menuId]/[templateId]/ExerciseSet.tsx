@@ -6,12 +6,15 @@ import { EllipsisVertical, Trash2, Check } from 'lucide-react'
 
 import { Switch } from '@/components/ui/switch'
 import { useTemplateStore } from '@/lib/store'
+import { upsertExercise } from '@/actions/user-create'
 
 
 interface SetProps {
+  exercise: TemplateExerciseType,
   sets: TemplateSetType[],
   movementId: string,
   onUpdateSets: (movementId: string, updatedSets: TemplateSetType[]) => void
+  setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>
 
   templateId: string,
   isSingleWeight?: boolean;
@@ -24,10 +27,14 @@ interface InputProps {
   totalWeight: number;
 }
 
-const ExerciseSet = ({ sets, movementId, onUpdateSets, templateId, isSingleWeight: initialIsSingleWeight = false }: SetProps) => {
+const ExerciseSet = ({ setTemplateState, exercise, sets, movementId, onUpdateSets, templateId, isSingleWeight: initialIsSingleWeight = false }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<TemplateSetType[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [saveIcon, setSaveIcon] = useState(false);
+
+  // useEffect(() => {
+  //   setIsSingleWeight(initialIsSingleWeight);
+  // }, [initialIsSingleWeight]);
 
   // 用戶沒登入
   const { templates, editTemplate } = useTemplateStore();
@@ -35,35 +42,66 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets, templateId, isSingleWeigh
 
   // 切換開關的事件處理器
   const [isSingleWeight, setIsSingleWeight] = useState(initialIsSingleWeight);
-  const handleSwitchChange = (checked: boolean) => {
+
+  const handleSwitchChange = async (checked: boolean) => {
     setIsSingleWeight(checked);
-  
-    if(findTemplate){
-      const updatedTemplate = {
-        ...findTemplate,
-        templateExercises: findTemplate.templateExercises.map(exercise => {
-          if (exercise.movementId === movementId) {
-            return {
-              ...exercise,
-              isSingleWeight: checked,
-              templateSets: exercise.templateSets.map(set => ({
-                ...set,
-                rightWeight: checked ? 0 : set.rightWeight,
-                totalWeight: checked 
-                  ? set.leftWeight * set.repetitions 
-                  : (set.leftWeight + set.rightWeight) * set.repetitions
-              })),
-            };
-          }
-          return exercise;
-        }),
-      };
-      editTemplate(templateId, updatedTemplate);
+
+    const updatedIsSingleWeight = {
+      ...exercise,
+      isSingleWeight: checked,
+    }
+
+    // TODO: 更新資料庫動作是否為單邊
+    try {
+      // 更新資料庫
+      await upsertExercise([updatedIsSingleWeight], templateId);
+      
+      // 更新父組件狀態
+      setTemplateState(prevTemplate => {
+        // 深拷貝並更新 templateExercises
+        const updatedExercises = prevTemplate.templateExercises.map(ex => 
+          ex.movementId === movementId 
+            ? { ...ex, isSingleWeight: checked }
+            : ex
+        );
+
+        return {
+          ...prevTemplate,
+          templateExercises: updatedExercises
+        };
+      });
+
+      // 本地 store 更新
+      if(findTemplate){
+        const updatedTemplate = {
+          ...findTemplate,
+          templateExercises: findTemplate.templateExercises.map(exercise => {
+            if (exercise.movementId === movementId) {
+              return {
+                ...exercise,
+                isSingleWeight: checked,
+                templateSets: exercise.templateSets.map(set => ({
+                  ...set,
+                  rightWeight: checked ? 0 : set.rightWeight,
+                  totalWeight: checked 
+                    ? set.leftWeight * set.repetitions 
+                    : (set.leftWeight + set.rightWeight) * set.repetitions
+                })),
+              };
+            }
+            return exercise;
+          }),
+        };
+        editTemplate(templateId, updatedTemplate);
+      }
+    } catch (error) {
+      console.error('更新失敗', error);
+      setIsSingleWeight(!checked);
     }
   };
 
+  // 輸入框渲染
   const [inputValues, setInputValues] = useState<InputProps[]>([]);
-
   useEffect(() => {
     if (sets.length > 0) {
       setDynamicSets(sets);

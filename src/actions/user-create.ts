@@ -144,6 +144,7 @@ export const upsertTemplate = async (data: TemplateType) => {
             movementId: exercise.movementId,
             name: exercise.name,
             exerciseCategory: exercise.exerciseCategory,
+            isSingleWeight: exercise.isSingleWeight,
             templateSets: {
               create: exercise.templateSets.map((set) => ({
                 movementId: exercise.movementId,
@@ -181,6 +182,7 @@ export const upsertTemplate = async (data: TemplateType) => {
           movementId: exercise.movementId,
           name: exercise.name,
           exerciseCategory: exercise.exerciseCategory,
+          isSingleWeight: exercise.isSingleWeight,
           templateSets: {
             create: exercise.templateSets.map((set) => ({
               movementId: exercise.movementId,
@@ -231,7 +233,7 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
 
   // 插入或更新項目
   const updatedExercises = await Promise.all(exercises.map(async (exercise) => {
-    const { movementId, name, templateSets, exerciseCategory } = exercise;
+    const { movementId, name, templateSets, exerciseCategory, isSingleWeight } = exercise;
 
     const existingExercise = await prismaDb.templateExercise.findFirst({
       where: { movementId, templateId },
@@ -245,6 +247,7 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
           name,
           movementId,
           exerciseCategory,
+          isSingleWeight,
           templateSets: {
             upsert: templateSets.map(set => ({
               where: { id: set.id },
@@ -275,6 +278,7 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
           name,
           movementId,
           exerciseCategory,
+          isSingleWeight,
           template: { connect: { id: templateId } },
           templateSets: {
             create: templateSets.map(set => ({

@@ -10,7 +10,6 @@ import FitSideBar from '@/components/FitSideBar';
 
 import { useSession } from 'next-auth/react'
 import { useTemplateStore } from '@/lib/store';
-import { usePracticeModal } from '@/lib/use-practice-modal';
 
 import { exerciseTemplates } from '@/constants/constants';
 import { getTemplateExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
@@ -34,7 +33,7 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
   const findCurrentTemplate = templates.find(template => template.id === templateId);
 
   // 下載模板到本地: 用dataAllTemplate, 取得exercise, 加快顯示速度
-  const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
+  // const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
 
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<TemplateExerciseType[]>([]);
@@ -76,25 +75,25 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
       if (userId) {
         // 更新動作到資料庫
         const updatedExercises = await upsertExercise(selectedExercises, templateId as string);
-
+        // 更新setTemplateState狀態, 讓列表能更新 UI
         setTemplateState(prevTemplate => ({
           ...prevTemplate,
           templateExercises: updatedExercises,
         }));
 
-        // 下載模板到本地: 更新 dataAllTemplate
-        if (dataAllTemplate) {
-          const updatedDataAllTemplate = dataAllTemplate.map(item => {
-            if (item.id === templateId) {
-              return {
-                ...item,
-                templateExercises: selectedExercises,
-              };
-            }
-            return item;
-          });
-          setDataAllTemplate(updatedDataAllTemplate as TemplateType[]);
-        }
+        // 需要更新 dataAllTemplate 目前測試不用?
+        // if (dataAllTemplate) {
+        //   const updatedDataAllTemplate = dataAllTemplate.map(item => {
+        //     if (item.id === templateId) {
+        //       return {
+        //         ...item,
+        //         templateExercises: selectedExercises,
+        //       };
+        //     }
+        //     return item;
+        //   });
+        //   setDataAllTemplate(updatedDataAllTemplate as TemplateType[]);
+        // }
       } else {
         // 用戶沒登入
         if (findCurrentTemplate) {
