@@ -106,10 +106,10 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
           {/* 添加動作 */}
           <div className="h-full">
             <ExerciseList
-              exercises={template?.templateExercises || []}
-              setTemplateState={setTemplateState}
               template={template}
+              setTemplateState={setTemplateState}
               isLoading={isLoading}
+              exercises={template?.templateExercises || []}
             />
           </div>
         </form>

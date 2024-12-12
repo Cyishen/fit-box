@@ -9,9 +9,9 @@ type TemplateType = {
   id: string;
   userId?: string;
   menuId: string;
+
   templateCategory: string;
   templateTitle: string;
-
   templateExercises: TemplateExerciseType[];
 };
 
@@ -21,10 +21,11 @@ type TemplateExerciseType = {
   movementId: string; // 動作ID，例如啞鈴胸推 "1"
   name: string; // 動作名稱，例如 "啞鈴胸推"
   exerciseCategory: string; // 動作類別
+  templateSets: TemplateSetType[];
 
   sortOrder?: number;
-
-  templateSets: TemplateSetType[];
+  iconSrc?: string;
+  isSingleWeight?: boolean;
 }
 
 type TemplateSetType = {
@@ -45,7 +46,9 @@ type WorkoutSessionType = {
   userId: string;
   menuId?: string;
   templateId?: string;
+
   templateTitle: string;
+  exercises: WorkoutExerciseType[];
 
   date: string | Date;
   createdAt: string | Date;
@@ -53,8 +56,6 @@ type WorkoutSessionType = {
   endTime: string | null;
 
   notes: string | null; 
-
-  exercises: WorkoutExerciseType[];
 
   isSynced?: boolean;
 };
@@ -65,8 +66,9 @@ type WorkoutExerciseType = {
   movementId: string; // 動作ID，例如啞鈴胸推 "1"
   name: string; // 動作名稱，例如 "啞鈴胸推"
   exerciseCategory: string; // 動作類別，例如 "胸"
-
   sets: WorkoutSetType[];
+
+  isSingleWeight?: boolean;
 };
 
 type WorkoutSetType = {
@@ -76,5 +78,6 @@ type WorkoutSetType = {
   rightWeight: number; 
   repetitions: number; 
   totalWeight: number;
+
   isCompleted?: boolean;
 };

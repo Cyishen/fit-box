@@ -335,7 +335,7 @@ function AnimatedTabsHover({ activeTab, onChange }: AnimatedTabsHoverProps) {
             data-id={tab.label}
             type='button'
             onClick={() => onChange(tab.label as '週' | '月' | '年')}
-            className={`inline-flex h-8 w-full items-center justify-center transition-colors duration-100 z-10 ${activeTab === tab.label ? 'text-blue-500 bg-white rounded-lg' : 'text-black'} px-2`}
+            className={`inline-flex h-8 w-full items-center justify-center transition-colors duration-100 z-10 ${activeTab === tab.label ? 'text-back bg-white rounded-lg' : 'text-gray-500'} px-2`}
           >
             <p className='flex items-center justify-center gap-1'>
               <span className='hidden md:block'>{tab.icon}</span>

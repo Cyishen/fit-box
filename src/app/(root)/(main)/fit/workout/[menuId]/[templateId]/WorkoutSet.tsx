@@ -4,12 +4,18 @@
 import { Button } from '@/components/ui/button'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { EllipsisVertical, Trash2, Check } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+
+import { useWorkoutStore } from '@/lib/store'
+
 
 
 interface SetProps {
   sets: WorkoutSetType[],
   movementId: string,
   onUpdateSets: (movementId: string, updatedSets: WorkoutSetType[]) => void
+
+  isSingleWeight?: boolean;
 }
 
 interface InputProps {
@@ -20,13 +26,46 @@ interface InputProps {
   isCompleted: boolean
 }
 
-const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
+const WorkoutSet = ({ sets, movementId, onUpdateSets, isSingleWeight: initialIsSingleWeight= false }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<WorkoutSetType[]>([]);
   const [inputValues, setInputValues] = useState<InputProps[]>([]);
 
   const [openDelSet, setOpenDelSet] = useState<number | null>(null);
   const [saveIcon, setSaveIcon] = useState(false);
 
+  // 用戶沒登入
+  const { workoutSessions, editWorkoutSession } = useWorkoutStore();
+
+  const getCurrentSessionId = localStorage.getItem('currentSessionId')
+  const findWorkout = workoutSessions.find(workout => workout.cardSessionId === getCurrentSessionId);
+
+  const [isSingleWeight, setIsSingleWeight] = useState(initialIsSingleWeight);
+  const handleSwitchChange = (checked: boolean) => {
+    setIsSingleWeight(checked);
+
+    if(findWorkout){
+      const updatedCardSession = {
+        ...findWorkout,
+        exercises: findWorkout.exercises.map(exercise => {
+          if (exercise.movementId === movementId) {
+            return {
+              ...exercise,
+              isSingleWeight: checked,
+              sets: exercise.sets.map(set => ({
+                ...set,
+                rightWeight: checked ? 0 : set.rightWeight,
+                totalWeight: checked 
+                  ? set.leftWeight * set.repetitions 
+                  : (set.leftWeight + set.rightWeight) * set.repetitions
+              })),
+            };
+          }
+          return exercise;
+        }),
+      };
+      editWorkoutSession(getCurrentSessionId as string, updatedCardSession);
+    }
+  };
 
   useEffect(() => {
     if (sets.length > 0) {
@@ -158,7 +197,9 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                 </div>
 
                 <div className='relative w-fit rounded-md'>
-                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>左</p>
+                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>
+                    {isSingleWeight ? '單重' : '左'}
+                  </p>
 
                   <input
                     type="text"
@@ -174,7 +215,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                   />
                 </div>
 
-                <div className='relative w-fit rounded-md'>
+                <div className={`relative w-fit rounded-md ${isSingleWeight ? 'hidden' : ''}`}>
                   <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>右</p>
 
                   <input
@@ -206,6 +247,14 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                   />
                 </div>
 
+                <div className='relative rounded-md'>
+                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>重量 kg</p>
+
+                  <div className="w-12 h-10 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold flex justify-end items-center">
+                    {set.totalWeight === 0 ? '' : set.totalWeight.toFixed(1)}
+                  </div>
+                </div>
+
                 <div className="relative w-7 h-7">
                   <input
                     type="checkbox"
@@ -230,7 +279,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
 
               {/* 彈出小視窗刪除按鈕 */}
               <div
-                className='flex items-center justify-center hover:bg-gray-100 min-w-10 h-10 rounded-full relative cursor-pointer'
+                className='flex items-center justify-center hover:bg-gray-100 min-w-8 h-8 rounded-full relative cursor-pointer'
                 onClick={() => setOpenDelSet(openDelSet === index ? null : index)}
               >
                 <EllipsisVertical className='w-3' />
@@ -256,14 +305,27 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
           ))}
 
           {/* 新增組數按鈕, 保存組數按鈕 */}
-          <div className='mt-2 flex justify-between'>
-            <Button variant='outline' type='button' onClick={handleAddSet}>
-              新增一組
-            </Button>
+          <div className='mt-2 flex justify-between items-center'>
+            <div className='flex items-center gap-2'>
+              <Button variant='outline' type='button' onClick={handleAddSet}>
+                新增一組
+              </Button>
 
-            <Button size='sm' type='button' onClick={handleSaveSetsIcon}>
-              {saveIcon ? <Check className='w-5 text-green-300' /> : '保存'}
-            </Button>
+              <div className='flex items-center gap-1'>
+                <Switch checked={isSingleWeight} onCheckedChange={handleSwitchChange} />
+                <p className='text-[10px] text-gray-500'>單重設定</p>
+              </div>
+            </div>
+
+            {!saveIcon ? (
+              <Button size='sm' type='button' onClick={handleSaveSetsIcon}>
+                保存
+              </Button>
+            ) : (
+              <Button size='sm' type='button'>
+                <Check className='w-5 text-green-300' />
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -13,12 +13,12 @@ import { useDayCardStore } from "@/lib/day-modal";
 
 type StartWorkoutProps = {
   isEditMode: boolean;
-  fetchLoading: boolean;
   workoutSession: WorkoutSessionType;
   setCurrentWorkout: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
+  fetchLoading: boolean;
 }
 
-const StartWorkout = ({ workoutSession, isEditMode, setCurrentWorkout, fetchLoading }: StartWorkoutProps) => {
+const StartWorkout = ({ isEditMode, workoutSession, setCurrentWorkout, fetchLoading }: StartWorkoutProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

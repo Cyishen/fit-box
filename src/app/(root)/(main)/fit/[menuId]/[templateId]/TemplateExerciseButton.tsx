@@ -43,7 +43,12 @@ const TemplateExerciseButton = ({ templateId, setTemplateState }: Props) => {
         </div>
       </Button>
 
-      <ExercisePickerSheet isOpen={isOpen} setIsOpen={setIsOpen} templateId={templateId} setTemplateState={setTemplateState}/>
+      <ExercisePickerSheet 
+        isOpen={isOpen} 
+        setIsOpen={setIsOpen} 
+        templateId={templateId} 
+        setTemplateState={setTemplateState}
+      />
     </div>
   )
 }

@@ -3,19 +3,19 @@ import { useTemplateStore } from '@/lib/store';
 
 import ExerciseListCard from './ExerciseListCard';
 import TemplateExerciseButton from './TemplateExerciseButton';
-
+import { SkeletonCard } from './SkeletonCard';
 
 
 type ExerciseListProps = {
-  exercises: TemplateExerciseType[];
   template: TemplateType;
   setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
   isLoading: boolean;
+  exercises: TemplateExerciseType[];
 };
 
-const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: ExerciseListProps) => {
+const ExerciseList = ({ template, setTemplateState, isLoading, exercises }: ExerciseListProps) => {
   const updateTemplate = useTemplateStore(state => state.editTemplate);
-  
+
   // 打開動作的組數設定
   const [openMovementId, setOpenMovementId] = useState<string | null>(null);
   const handleToggleExercise = (movementId: string) => {
@@ -35,9 +35,9 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
       templateExercises: updatedExercises,
     };
     // 更新組數設定
-    // 本地
+    // 用戶未登入
     updateTemplate(template.id ?? '', updatedTemplate);
-    // 資料庫狀態
+    // 更新狀態
     setTemplateState(updatedTemplate);
   };
 
@@ -73,25 +73,38 @@ const ExerciseList = ({ exercises, setTemplateState, template, isLoading }: Exer
           </div>
         </Button> */}
 
-        {/* BottomSheet */}
-        <TemplateExerciseButton templateId={template?.id} setTemplateState={setTemplateState} />
+        {/* BottomSheet 底部向上滑出 */}
+        <TemplateExerciseButton
+          templateId={template?.id}
+          setTemplateState={setTemplateState}
+        />
       </div>
 
       <div className='mt-3 px-3 rounded-t-2xl sm:rounded-2xl bg-slate-200'>
         <div className='pt-3'>
           <div className='overflow-y-scroll max-h-[500px] min-h-[500px] rounded-t-2xl'>
             <div className='flex flex-col gap-3 mb-32'>
-              {exercises.map((exercise) => (
-                <ExerciseListCard
-                  key={exercise.movementId}
-                  exercise={exercise}
-                  handleRemoveExercise={handleRemoveExercise}
-                  onUpdateSets={handleUpdateSets}
-                  isOpen={openMovementId === exercise.movementId}
-                  onToggle={() => handleToggleExercise(exercise.movementId)}
-                  isLoading={isLoading}
-                />
-              ))}
+              {exercises.length > 0 ? (
+                <>
+                  {exercises.map((exercise) => (
+                    <ExerciseListCard
+                      key={exercise.movementId}
+                      exercise={exercise}
+                      handleRemoveExercise={handleRemoveExercise}
+                      onUpdateSets={handleUpdateSets}
+                      isOpen={openMovementId === exercise.movementId}
+                      onToggle={() => handleToggleExercise(exercise.movementId)}
+                      isLoading={isLoading}
+                      templateId={template?.id}
+                    />
+                  ))}
+                </>
+              ) : (
+                <>
+                  <SkeletonCard />
+                </>
+              )}
+
             </div>
           </div>
         </div>

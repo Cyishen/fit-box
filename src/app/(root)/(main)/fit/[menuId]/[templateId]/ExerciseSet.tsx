@@ -4,10 +4,17 @@ import { Button } from '@/components/ui/button'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { EllipsisVertical, Trash2, Check } from 'lucide-react'
 
+import { Switch } from '@/components/ui/switch'
+import { useTemplateStore } from '@/lib/store'
+
+
 interface SetProps {
   sets: TemplateSetType[],
   movementId: string,
   onUpdateSets: (movementId: string, updatedSets: TemplateSetType[]) => void
+
+  templateId: string,
+  isSingleWeight?: boolean;
 }
 
 interface InputProps {
@@ -17,10 +24,43 @@ interface InputProps {
   totalWeight: number;
 }
 
-const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
+const ExerciseSet = ({ sets, movementId, onUpdateSets, templateId, isSingleWeight: initialIsSingleWeight = false }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<TemplateSetType[]>([]);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [saveIcon, setSaveIcon] = useState(false);
+
+  // 用戶沒登入
+  const { templates, editTemplate } = useTemplateStore();
+  const findTemplate = templates.find(template => template.id === templateId);
+
+  // 切換開關的事件處理器
+  const [isSingleWeight, setIsSingleWeight] = useState(initialIsSingleWeight);
+  const handleSwitchChange = (checked: boolean) => {
+    setIsSingleWeight(checked);
+  
+    if(findTemplate){
+      const updatedTemplate = {
+        ...findTemplate,
+        templateExercises: findTemplate.templateExercises.map(exercise => {
+          if (exercise.movementId === movementId) {
+            return {
+              ...exercise,
+              isSingleWeight: checked,
+              templateSets: exercise.templateSets.map(set => ({
+                ...set,
+                rightWeight: checked ? 0 : set.rightWeight,
+                totalWeight: checked 
+                  ? set.leftWeight * set.repetitions 
+                  : (set.leftWeight + set.rightWeight) * set.repetitions
+              })),
+            };
+          }
+          return exercise;
+        }),
+      };
+      editTemplate(templateId, updatedTemplate);
+    }
+  };
 
   const [inputValues, setInputValues] = useState<InputProps[]>([]);
 
@@ -32,7 +72,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
         leftWeight: set.leftWeight.toString(),
         rightWeight: set.rightWeight.toString(),
         repetitions: set.repetitions.toString(),
-        totalWeight: set.totalWeight
+        totalWeight: set.totalWeight,
       }));
       setInputValues(newInputValues);
 
@@ -40,7 +80,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
       setDynamicSets([{
         leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
         id: '',
-        movementId: movementId
+        movementId: movementId,
       }]);
 
       setInputValues([{
@@ -88,7 +128,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
     setDynamicSets([...dynamicSets, {
       leftWeight: 0, rightWeight: 0, repetitions: 0, totalWeight: 0,
       id: '',
-      movementId: movementId
+      movementId: movementId,
     }]);
   };
 
@@ -138,7 +178,9 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                 </div>
 
                 <div className='relative w-fit rounded-md'>
-                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>左</p>
+                  <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>
+                    {isSingleWeight ? '單重' : '左'}
+                  </p>
 
                   <input
                     type="text"
@@ -154,7 +196,7 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                   />
                 </div>
 
-                <div className='relative w-fit rounded-md'>
+                <div className={`relative w-fit rounded-md ${isSingleWeight ? 'hidden' : ''}`}>
                   <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>右</p>
 
                   <input
@@ -189,15 +231,15 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
                 <div className='relative rounded-md'>
                   <p className='absolute top-0 left-1 text-[10px] text-muted-foreground'>重量 kg</p>
 
-                  <div className="w-12 h-10 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold flex justify-end">
+                  <div className="w-12 h-10 bg-gray-100 rounded-md px-1 pt-3 pb-1 text-md font-bold flex justify-end items-center">
                     {set.totalWeight === 0 ? '' : set.totalWeight.toFixed(1)}
                   </div>
                 </div>
               </div>
 
-              {/* TODO:刪除按鈕 */}
+              {/* 刪除按鈕 小視窗 */}
               <div
-                className='flex items-center justify-center hover:bg-gray-100 min-w-10 h-10 rounded-full relative cursor-pointer'
+                className='flex items-center justify-center hover:bg-gray-100 min-w-8 h-8 rounded-full relative cursor-pointer'
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
               >
                 <EllipsisVertical className='w-3' />
@@ -223,10 +265,17 @@ const ExerciseSet = ({ sets, movementId, onUpdateSets }: SetProps) => {
           ))}
 
           {/* 新增一組按鈕 */}
-          <div className='mt-2 flex justify-between'>
-            <Button variant='outline' type='button' onClick={handleAddSet}>
-              新增一組
-            </Button>
+          <div className='mt-2 flex justify-between items-center'>
+            <div className='flex items-center gap-2'>
+              <Button variant='outline' type='button' onClick={handleAddSet}>
+                新增一組
+              </Button>
+
+              <div className='flex items-center gap-1'>
+                <Switch checked={isSingleWeight} onCheckedChange={handleSwitchChange} />
+                <p className='text-[10px] text-gray-500'>單重設定</p>
+              </div>
+            </div>
 
             {!saveIcon ? (
               <Button size='sm' type='button' onClick={handleSaveSetsIcon}>

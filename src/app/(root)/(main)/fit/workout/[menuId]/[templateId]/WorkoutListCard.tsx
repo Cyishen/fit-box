@@ -132,7 +132,7 @@ const WorkoutListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen,
             </div>
           </div>
 
-          {/* 左滑刪除 */}
+          {/* 左滑刪除顯示 */}
           <div
             ref={cardRef}
             className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
@@ -148,6 +148,7 @@ const WorkoutListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen,
               sets={exercise.sets}
               movementId={exercise.movementId}
               onUpdateSets={onUpdateSets}
+              isSingleWeight={exercise?.isSingleWeight}
             />
           )}
         </div>

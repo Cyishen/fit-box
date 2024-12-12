@@ -64,7 +64,6 @@ export const PracticeModal = () => {
   // 第二步, 依據 templateId找尋, 彈出視窗顯示exercise
   useEffect(() => {
     if (userId) {
-      // data儲存本地,
       const selectedTemplate = filteredData.find(item => item.id === templateId);
       const exercisesToRender = selectedTemplate?.templateExercises;
 
@@ -84,7 +83,7 @@ export const PracticeModal = () => {
       //     console.error(error);
       //   });
     } else {
-      // 本地
+      // 用戶沒登入
       setExercise(localExercise || []);
     }
   }, [filteredData, localExercise, templateId, userId])
@@ -167,7 +166,9 @@ export const PracticeModal = () => {
               movementId: exercise.movementId,
               name: exercise.name,
               exerciseCategory: exercise.exerciseCategory,
-              sets: exercise.templateSets.map((set, index) => ({
+              iconSrc: exercise?.iconSrc,
+              isSingleWeight: exercise?.isSingleWeight,
+              sets: exercise?.templateSets.map((set, index) => ({
                 id: `${set.movementId}-${index + 1}`,
                 movementId: set.movementId,
                 leftWeight: set.leftWeight,

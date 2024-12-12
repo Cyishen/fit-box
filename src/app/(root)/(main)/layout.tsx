@@ -1,6 +1,6 @@
-import MobileFooter from "@/components/mobile/MobileFooter";
-import { Metadata } from "next";
 import React from "react";
+import { Metadata } from "next";
+import FooterVisibility from "@/components/mobile/FooterVisibility";
 
 
 type Props = {
@@ -24,7 +24,7 @@ const MainLayout = ({ children }: Props) => {
         </div>
       </main>
       
-      <MobileFooter />
+      <FooterVisibility />
     </>
   );
 };

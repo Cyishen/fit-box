@@ -80,7 +80,7 @@ interface WorkoutStore {
   addWorkoutSession: (session: WorkoutSessionType) => void;
   removeWorkoutSession: (id: string) => void;
   editWorkoutSession: (id: string, updatedSession: WorkoutSessionType) => void;
-  removerAllWorkoutSessions: () => void;
+  // removerAllWorkoutSessions: () => void;
 }
 
 export const useWorkoutStore = create<WorkoutStore>()(
@@ -102,10 +102,10 @@ export const useWorkoutStore = create<WorkoutStore>()(
             : session
           ),
         })),
-      removerAllWorkoutSessions: () =>
-        set(() => ({
-          workoutSessions: [],
-        })),
+      // removerAllWorkoutSessions: () =>
+      //   set(() => ({
+      //     workoutSessions: [],
+      //   })),
     }),
     {
       name: 'workout-storage',

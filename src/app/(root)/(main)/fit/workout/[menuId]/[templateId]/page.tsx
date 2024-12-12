@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 import StartWorkout from './StartWorkout'
 
 import { useSession } from "next-auth/react"
-// import { getWorkoutSessionByCardId } from '@/actions/user-create';
 
 import { useWorkoutStore } from '@/lib/store';
 import { useDayCardStore } from '@/lib/day-modal';
@@ -30,41 +29,6 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
 
   // TODO? 用戶登入, 本地找dayCard當天的訓練卡
   const { dayCard } = useDayCardStore();
-
-
-  // const currentSessionId = localStorage.getItem('currentSessionId');
-  // const findCardFromStore = useMemo(() => {
-  //   return dayCard.find(session => session.cardSessionId === currentSessionId);
-  // }, [dayCard, currentSessionId]);
-
-  // 第一個useEffect , 把資料庫id 更新給 dayCard
-  // useEffect(() => {
-  //   if (!currentSessionId) {
-  //     setFetchIsLoading(false);
-  //     return;
-  //   }
-  
-  //   const catchDataCardId = async () => {
-  //     try {
-  //       const workoutCard = await getWorkoutSessionByCardId(currentSessionId);
-  
-  //       if (findCardFromStore && workoutCard?.id) {
-  //         if (findCardFromStore.id !== workoutCard.id) { 
-  //           const updatedCard = {
-  //             ...findCardFromStore,
-  //             id: workoutCard.id,
-  //           };
-  //           editDayCard(currentSessionId, updatedCard as WorkoutSessionType);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching workout session:", error);
-  //     }
-  //   };
-  
-  //   catchDataCardId();
-  // }, [editDayCard, findCardFromStore, currentSessionId]); 
-
 
   // useEffect 顯示動作列表
   useEffect(() => {
@@ -100,6 +64,38 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
     }
   }, [workoutSessions, dayCard, userId, close]);
 
+  // const currentSessionId = localStorage.getItem('currentSessionId');
+  // const findCardFromStore = useMemo(() => {
+  //   return dayCard.find(session => session.cardSessionId === currentSessionId);
+  // }, [dayCard, currentSessionId]);
+
+  // 第一個useEffect , 把資料庫id 更新給 dayCard
+  // useEffect(() => {
+  //   if (!currentSessionId) {
+  //     setFetchIsLoading(false);
+  //     return;
+  //   }
+  
+  //   const catchDataCardId = async () => {
+  //     try {
+  //       const workoutCard = await getWorkoutSessionByCardId(currentSessionId);
+  
+  //       if (findCardFromStore && workoutCard?.id) {
+  //         if (findCardFromStore.id !== workoutCard.id) { 
+  //           const updatedCard = {
+  //             ...findCardFromStore,
+  //             id: workoutCard.id,
+  //           };
+  //           editDayCard(currentSessionId, updatedCard as WorkoutSessionType);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching workout session:", error);
+  //     }
+  //   };
+  
+  //   catchDataCardId();
+  // }, [editDayCard, findCardFromStore, currentSessionId]); 
 
   return (
     <div>

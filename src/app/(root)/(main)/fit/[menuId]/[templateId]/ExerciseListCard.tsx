@@ -15,15 +15,16 @@ interface ExerciseListCardProps {
   isOpen: boolean;
   onToggle: () => void;
   isLoading: boolean
+  templateId: string
 }
 
-const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading }: ExerciseListCardProps) => {
+const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading, templateId }: ExerciseListCardProps) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
 
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const totalWeights = exercise.templateSets.reduce((sum, set) => sum + set.totalWeight, 0)
+  const showTotalWeight = exercise.templateSets.reduce((sum, set) => sum + set.totalWeight, 0)
 
   // 手機觸摸事件處理
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -113,7 +114,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
 
                   <div className='flex gap-0 text-xs text-muted-foreground'>
                     <p>{exercise.templateSets.length} 組・</p>
-                    <p>{totalWeights} kg</p>
+                    <p>{showTotalWeight} kg</p>
                   </div>
                 </div>
               </div>
@@ -131,7 +132,7 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
             </div>
           </div>
 
-          {/* 左滑刪除 */}
+          {/* 左滑刪除顯示 */}
           <div
             ref={cardRef}
             className={`absolute top-0 right-0 h-full flex items-center transition-all duration-300 bg-[#FF3B30] hover:brightness-110 z-10 cursor-pointer rounded-r-2xl
@@ -147,6 +148,8 @@ const ExerciseListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen
               sets={exercise.templateSets}
               movementId={exercise.movementId}
               onUpdateSets={onUpdateSets}
+              templateId={templateId}
+              isSingleWeight={exercise.isSingleWeight}
             />
           )}
         </div>

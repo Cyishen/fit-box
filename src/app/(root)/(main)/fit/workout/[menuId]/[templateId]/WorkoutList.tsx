@@ -10,6 +10,8 @@ import { useSession } from "next-auth/react"
 import { useWorkoutStore } from "@/lib/store";
 import { useDayCardStore } from "@/lib/day-modal";
 import { upsertWorkoutSession, upsertWorkoutSummary } from "@/actions/user-create";
+import { Button } from "@/components/ui/button";
+
 
 
 type StartWorkoutProps = {
@@ -26,14 +28,13 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
   const userId = session?.user?.id
 
   // 用戶沒有登入-更新本地訓練卡
-  const updateWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
-  const updateCurrentSession = (updatedSession: WorkoutSessionType) => {
-    updateWorkoutSession(updatedSession.cardSessionId, updatedSession);
+  const editWorkoutSession = useWorkoutStore(state => state.editWorkoutSession);
+  const updateLocalCard = (updatedSession: WorkoutSessionType) => {
+    editWorkoutSession(updatedSession.cardSessionId, updatedSession);
   };
 
-  // TODO? dayCard 讀取儲存的訓練卡
+  // dayCard 讀取儲存的訓練卡
   const { dayCard, editDayCard } = useDayCardStore();
-
   const findCardFromStore = dayCard.find(
     session => session.cardSessionId === workoutSession?.cardSessionId
   );
@@ -66,7 +67,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
       }
     } else {
       // 無用戶登入, 本地更新
-      updateCurrentSession(updatedSession);
+      updateLocalCard(updatedSession);
     }
   };
 
@@ -102,7 +103,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
         }
       } else {
         // 用戶沒登入
-        updateCurrentSession(updatedSession);
+        updateLocalCard(updatedSession);
         setCurrentWorkout(updatedSession);
       }
     }
@@ -112,40 +113,48 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
     <div>
       <div className='flex items-center justify-end gap-3 px-4'>
         <h3 className="font-bold">添加動作</h3>
-
-        <button
+        <Button
           type="button"
+          className='w-8 h-8 flex justify-center items-center duration-300 rounded-full'
           onClick={() => router.push(`/action`)}
-          className='w-10 h-10 flex justify-center items-center duration-300 rounded-full bg-[#66CCFF] hover:brightness-110'
         >
-          <div className='w-full h-full rounded-full flex justify-center items-center hover:invert '>
-            <CopyPlus className='w-5' />
+          <div className='min-w-8 min-h-8 rounded-full flex justify-center items-center'>
+            <CopyPlus size={14} />
           </div>
-        </button>
+        </Button>
       </div>
 
       <div className='mt-3 px-3 rounded-t-2xl sm:rounded-t-2xl bg-slate-200'>
         <div className='pt-3'>
           <div className='overflow-y-scroll h-full min-h-[500px] rounded-t-2xl'>
             <div className='flex flex-col gap-3 mb-32'>
-              {fetchLoading
-                ? Array(3)
-                  .fill(null)
-                  .map((_, index) => <SkeletonCard key={index} />)
-                : (
-                  workoutSession?.exercises.map((exercise) => (
-                    <WorkoutListCard
-                      key={exercise.movementId}
-                      exercise={exercise}
+              {workoutSession?.exercises.length > 0 ? (
+                <>
+                  {fetchLoading
+                    ? Array(3)
+                      .fill(null)
+                      .map((_, index) => <SkeletonCard key={index} />)
+                    : (
+                      workoutSession?.exercises.map((exercise) => (
+                        <WorkoutListCard
+                          key={exercise.movementId}
+                          exercise={exercise}
 
-                      handleRemoveExercise={handleRemoveExercise}
-                      onUpdateSets={handleUpdateSets}
-                      isOpen={openMovementId === exercise.movementId}
-                      onToggle={() => handleToggleExercise(exercise.movementId)}
-                      isLoading={isLoading}
-                    />
-                  ))
-                )}
+                          handleRemoveExercise={handleRemoveExercise}
+                          onUpdateSets={handleUpdateSets}
+                          isOpen={openMovementId === exercise.movementId}
+                          onToggle={() => handleToggleExercise(exercise.movementId)}
+                          isLoading={isLoading}
+                        />
+                      ))
+                    )}
+                </>
+              ) : (
+                <>
+                  <SkeletonCard />
+                </>
+              )}
+
             </div>
           </div>
         </div>
