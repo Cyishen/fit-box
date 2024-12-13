@@ -7,6 +7,7 @@ import { EllipsisVertical, Trash2, Check } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { useTemplateStore } from '@/lib/store'
 import { upsertExercise } from '@/actions/user-create'
+import { useSession } from 'next-auth/react'
 
 
 interface SetProps {
@@ -32,6 +33,10 @@ const ExerciseSet = ({ setTemplateState, exercise, sets, movementId, onUpdateSet
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [saveIcon, setSaveIcon] = useState(false);
 
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+
   // useEffect(() => {
   //   setIsSingleWeight(initialIsSingleWeight);
   // }, [initialIsSingleWeight]);
@@ -53,46 +58,48 @@ const ExerciseSet = ({ setTemplateState, exercise, sets, movementId, onUpdateSet
 
     // TODO: 更新資料庫動作是否為單邊
     try {
-      // 更新資料庫
-      await upsertExercise([updatedIsSingleWeight], templateId);
-      
-      // 更新父組件狀態
-      setTemplateState(prevTemplate => {
-        // 深拷貝並更新 templateExercises
-        const updatedExercises = prevTemplate.templateExercises.map(ex => 
-          ex.movementId === movementId 
-            ? { ...ex, isSingleWeight: checked }
-            : ex
-        );
+      if (userId) {
+        // 更新資料庫
+        await upsertExercise([updatedIsSingleWeight], templateId);
 
-        return {
-          ...prevTemplate,
-          templateExercises: updatedExercises
-        };
-      });
+        // 更新父組件狀態
+        setTemplateState(prevTemplate => {
+          // 深拷貝並更新 templateExercises
+          const updatedExercises = prevTemplate.templateExercises.map(ex =>
+            ex.movementId === movementId
+              ? { ...ex, isSingleWeight: checked }
+              : ex
+          );
 
-      // 本地 store 更新
-      if(findTemplate){
-        const updatedTemplate = {
-          ...findTemplate,
-          templateExercises: findTemplate.templateExercises.map(exercise => {
-            if (exercise.movementId === movementId) {
-              return {
-                ...exercise,
-                isSingleWeight: checked,
-                templateSets: exercise.templateSets.map(set => ({
-                  ...set,
-                  rightWeight: checked ? 0 : set.rightWeight,
-                  totalWeight: checked 
-                    ? set.leftWeight * set.repetitions 
-                    : (set.leftWeight + set.rightWeight) * set.repetitions
-                })),
-              };
-            }
-            return exercise;
-          }),
-        };
-        editTemplate(templateId, updatedTemplate);
+          return {
+            ...prevTemplate,
+            templateExercises: updatedExercises
+          };
+        });
+      } else {
+        // 用戶沒登入, 本地更新
+        if (findTemplate) {
+          const updatedTemplate = {
+            ...findTemplate,
+            templateExercises: findTemplate.templateExercises.map(exercise => {
+              if (exercise.movementId === movementId) {
+                return {
+                  ...exercise,
+                  isSingleWeight: checked,
+                  templateSets: exercise.templateSets.map(set => ({
+                    ...set,
+                    rightWeight: checked ? 0 : set.rightWeight,
+                    totalWeight: checked
+                      ? set.leftWeight * set.repetitions
+                      : (set.leftWeight + set.rightWeight) * set.repetitions
+                  })),
+                };
+              }
+              return exercise;
+            }),
+          };
+          editTemplate(templateId, updatedTemplate);
+        }
       }
     } catch (error) {
       console.error('更新失敗', error);

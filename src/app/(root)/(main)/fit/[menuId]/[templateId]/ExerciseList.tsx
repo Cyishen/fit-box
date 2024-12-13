@@ -101,7 +101,12 @@ const ExerciseList = ({ template, setTemplateState, isLoading, exercises }: Exer
                 </>
               ) : (
                 <>
-                  <SkeletonCard />
+                  <div className='relative'>
+                    <SkeletonCard />
+                    <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+                    <p className='text-gray-500 text-sm font-thin'>無動作</p>
+                    </div>
+                  </div>
                 </>
               )}
             </div>
