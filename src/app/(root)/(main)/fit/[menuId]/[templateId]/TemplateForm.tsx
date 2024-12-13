@@ -107,7 +107,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
               template={template}
               setTemplateState={setTemplateState}
               isLoading={isLoading}
-              exercises={template?.templateExercises || []}
+              templateExercise={template?.templateExercises || []}
             />
           </div>
         </form>

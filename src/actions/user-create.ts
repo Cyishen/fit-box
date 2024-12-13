@@ -237,7 +237,11 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
 
     const existingExercise = await prismaDb.templateExercise.findFirst({
       where: { movementId, templateId },
+      include: {
+        templateSets: true
+      }
     });
+
 
     if (existingExercise) {
       return await prismaDb.templateExercise.update({
@@ -249,22 +253,28 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
           exerciseCategory,
           isSingleWeight,
           templateSets: {
-            upsert: templateSets.map(set => ({
-              where: { id: set.id },
-              create: {
-                movementId: exercise.movementId,
-                leftWeight: set.leftWeight,
-                rightWeight: set.rightWeight,
-                repetitions: set.repetitions,
-                totalWeight: set.totalWeight,
-              },
-              update: {
-                leftWeight: set.leftWeight,
-                rightWeight: set.rightWeight,
-                repetitions: set.repetitions,
-                totalWeight: set.totalWeight,
-              }
-            })),
+            upsert: templateSets.map(set => {
+              const existingSet = existingExercise.templateSets.find(
+                existSet => existSet.movementId === set.movementId
+              );
+
+              return {
+                where: { id: existingSet?.id || 'not-exist' },
+                create: {
+                  movementId: exercise.movementId,
+                  leftWeight: set.leftWeight,
+                  rightWeight: set.rightWeight,
+                  repetitions: set.repetitions,
+                  totalWeight: set.totalWeight,
+                },
+                update: {
+                  leftWeight: set.leftWeight,
+                  rightWeight: set.rightWeight,
+                  repetitions: set.repetitions,
+                  totalWeight: set.totalWeight,
+                }
+              };
+            }),
           },
         },
         include: {
@@ -282,6 +292,7 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
           template: { connect: { id: templateId } },
           templateSets: {
             create: templateSets.map(set => ({
+              where: { id: set.id || ''},
               movementId: exercise.movementId,
               leftWeight: set.leftWeight,
               rightWeight: set.rightWeight,
@@ -436,6 +447,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
             movementId: exercise.movementId,
             name: exercise.name,
             exerciseCategory: exercise.exerciseCategory,
+            isSingleWeight: exercise.isSingleWeight,
             sets: {
               create: exercise.sets.map((set) => ({
                 movementId: exercise.movementId,
@@ -480,6 +492,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
               movementId: exercise.movementId,
               name: exercise.name,
               exerciseCategory: exercise.exerciseCategory,
+              isSingleWeight: exercise.isSingleWeight,
               sets: {
                 create: exercise.sets.map((set) => ({
                   movementId: exercise.movementId,
@@ -494,6 +507,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
             update: {
               name: exercise.name, // 已有動作進行更新
               exerciseCategory: exercise.exerciseCategory,
+              isSingleWeight: exercise.isSingleWeight,
               sets: {
                 deleteMany: {}, // 刪除舊的組數數據，重新創建新的
                 create: exercise.sets.map((set) => ({
@@ -527,6 +541,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
             movementId: exercise.movementId,
             name: exercise.name,
             exerciseCategory: exercise.exerciseCategory,
+            isSingleWeight: exercise.isSingleWeight,
             sets: {
               create: exercise.sets.map((set) => ({
                 movementId: exercise.movementId,

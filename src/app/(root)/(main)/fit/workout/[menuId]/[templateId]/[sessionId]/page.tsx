@@ -80,7 +80,7 @@ const WorkoutEditPage = ({ params }: { params: { menuId: string; templateId: str
       <StartWorkout
         isEditMode={true}
         workoutSession={currentWorkout as WorkoutSessionType}
-        setCurrentWorkout={setCurrentWorkout}
+        setCurrentWorkoutCardState={setCurrentWorkout}
         fetchLoading={fetchLoading}
       />
     </div>

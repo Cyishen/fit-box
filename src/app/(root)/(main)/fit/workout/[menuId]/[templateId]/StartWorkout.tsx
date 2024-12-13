@@ -14,11 +14,11 @@ import { useDayCardStore } from "@/lib/day-modal";
 type StartWorkoutProps = {
   isEditMode: boolean;
   workoutSession: WorkoutSessionType;
-  setCurrentWorkout: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
+  setCurrentWorkoutCardState: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
   fetchLoading: boolean;
 }
 
-const StartWorkout = ({ isEditMode, workoutSession, setCurrentWorkout, fetchLoading }: StartWorkoutProps) => {
+const StartWorkout = ({ isEditMode, workoutSession, setCurrentWorkoutCardState, fetchLoading }: StartWorkoutProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,12 +49,12 @@ const StartWorkout = ({ isEditMode, workoutSession, setCurrentWorkout, fetchLoad
         if (currentDayCard) {
           // 更新 dayCard
           editDayCard(updatedSession.cardSessionId, updatedSession);
-          setCurrentWorkout(updatedSession)
+          setCurrentWorkoutCardState(updatedSession)
         }
       } else {
         // 用戶沒有登入- 更新本地 useWorkoutStore
         updateLocalCard(updatedSession);
-        setCurrentWorkout(updatedSession);
+        setCurrentWorkoutCardState(updatedSession);
       }
     } catch (error) {
       console.error("Error completing workout", error);
@@ -75,7 +75,7 @@ const StartWorkout = ({ isEditMode, workoutSession, setCurrentWorkout, fetchLoad
 
       <WorkoutList
         workoutSession={workoutSession}
-        setCurrentWorkout={setCurrentWorkout}
+        setCurrentWorkoutCardState={setCurrentWorkoutCardState}
         isLoading={isLoading}
         fetchLoading={fetchLoading}
       />

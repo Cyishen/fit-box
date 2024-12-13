@@ -88,13 +88,13 @@ const ActionPicker = () => {
       }
     } else {
       // 用戶沒有登入
-      const findSession = workoutSessions.find(
+      const findLocal = workoutSessions.find(
         session => session.cardSessionId === currentSessionId
       );
 
-      if (findSession) {
-        setCurrentSession(findSession);
-        setSelectedExercises(findSession?.exercises);
+      if (findLocal) {
+        setCurrentSession(findLocal);
+        setSelectedExercises(findLocal?.exercises);
       }
     }
   }, [dayCard, userId, workoutSessions]);
@@ -115,13 +115,13 @@ const ActionPicker = () => {
       exercises: selectedExercises
     };
 
-    const findCardFromStore = dayCard.find(
+    const findCardFromLocalDb = dayCard.find(
       session => session.cardSessionId === sessionId
     );
 
     if (userId) {
       // 用戶登入, 更新 editDayCard, 頁面才會得到新修改動作
-      if (findCardFromStore) {
+      if (findCardFromLocalDb) {
         editDayCard(sessionId, updatedSession);
       } else {
         // 更新動作到資料庫

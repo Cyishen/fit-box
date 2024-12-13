@@ -16,9 +16,10 @@ interface WorkoutListCardProps {
   isOpen: boolean;
   onToggle: () => void;
   isLoading: boolean
+  setCurrentWorkoutCardState: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>
 }
 
-const WorkoutListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading }: WorkoutListCardProps) => {
+const WorkoutListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen, onToggle, isLoading, setCurrentWorkoutCardState }: WorkoutListCardProps) => {
   const [isSwiped, setIsSwiped] = useState(false);
   const [startX, setStartX] = useState(0);
 
@@ -149,6 +150,7 @@ const WorkoutListCard = ({ exercise, handleRemoveExercise, onUpdateSets, isOpen,
               movementId={exercise.movementId}
               onUpdateSets={onUpdateSets}
               isSingleWeight={exercise?.isSingleWeight}
+              setCurrentWorkoutCardState={setCurrentWorkoutCardState}
             />
           )}
         </div>

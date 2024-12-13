@@ -16,12 +16,12 @@ import { Button } from "@/components/ui/button";
 
 type StartWorkoutProps = {
   workoutSession: WorkoutSessionType;
-  setCurrentWorkout: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
+  setCurrentWorkoutCardState: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
   isLoading: boolean
   fetchLoading: boolean
 }
 
-const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoading }: StartWorkoutProps) => {
+const WorkoutList = ({ workoutSession, setCurrentWorkoutCardState, isLoading, fetchLoading }: StartWorkoutProps) => {
   const router = useRouter();
 
   const { data: session } = useSession()
@@ -35,7 +35,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
 
   // dayCard 讀取儲存的訓練卡
   const { dayCard, editDayCard } = useDayCardStore();
-  const findCardFromStore = dayCard.find(
+  const findCardFromLocalDb = dayCard.find(
     session => session.cardSessionId === workoutSession?.cardSessionId
   );
 
@@ -55,9 +55,9 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
 
     if (userId) {
       // 用戶登入(workoutSession有來自本地或資料庫)
-      if (findCardFromStore) {
+      if (findCardFromLocalDb) {
         editDayCard(updatedSession.cardSessionId, updatedSession)
-        setCurrentWorkout(updatedSession);
+        setCurrentWorkoutCardState(updatedSession);
       } else {
         // 資料庫更新
         await Promise.all([
@@ -90,21 +90,21 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
 
       if (userId) {
         // 用戶登入
-        if (findCardFromStore) {
+        if (findCardFromLocalDb) {
           editDayCard(updatedSession.cardSessionId, updatedSession)
-          setCurrentWorkout(updatedSession);
+          setCurrentWorkoutCardState(updatedSession);
         } else {
           // 資料庫更新
           await Promise.all([
             upsertWorkoutSession(updatedSession),
             upsertWorkoutSummary(updatedSession.id as string),
           ]);
-          setCurrentWorkout(updatedSession);
+          setCurrentWorkoutCardState(updatedSession);
         }
       } else {
         // 用戶沒登入
         updateLocalCard(updatedSession);
-        setCurrentWorkout(updatedSession);
+        setCurrentWorkoutCardState(updatedSession);
       }
     }
   };
@@ -128,7 +128,7 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
         <div className='pt-3'>
           <div className='overflow-y-scroll h-full min-h-[500px] rounded-t-2xl'>
             <div className='flex flex-col gap-3 mb-32'>
-              {workoutSession?.exercises.length > 0 ? (
+              {workoutSession?.exercises?.length > 0 ? (
                 <>
                   {fetchLoading
                     ? Array(3)
@@ -145,16 +145,15 @@ const WorkoutList = ({ workoutSession, setCurrentWorkout, isLoading, fetchLoadin
                           isOpen={openMovementId === exercise.movementId}
                           onToggle={() => handleToggleExercise(exercise.movementId)}
                           isLoading={isLoading}
+                          setCurrentWorkoutCardState={setCurrentWorkoutCardState}
                         />
                       ))
                     )}
                 </>
               ) : (
                 <>
-                  <SkeletonCard />
                 </>
               )}
-
             </div>
           </div>
         </div>

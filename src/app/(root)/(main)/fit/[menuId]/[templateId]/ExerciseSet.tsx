@@ -36,38 +36,76 @@ const ExerciseSet = ({ setTemplateState, exercise, sets, movementId, onUpdateSet
   const { data: session } = useSession()
   const userId = session?.user?.id
 
-
-  // useEffect(() => {
-  //   setIsSingleWeight(initialIsSingleWeight);
-  // }, [initialIsSingleWeight]);
-
   // 用戶沒登入
   const { templates, editTemplate } = useTemplateStore();
-  const findTemplate = templates.find(template => template.id === templateId);
+  const findLocal = templates.find(template => template.id === templateId);
 
-  // 切換開關的事件處理器
+  // 切換開關處理
   const [isSingleWeight, setIsSingleWeight] = useState(initialIsSingleWeight);
+  // const updateExerciseData = (checked: boolean, targetExercise: TemplateExerciseType) => {
+  //   return {
+  //     ...targetExercise,
+  //     isSingleWeight: checked,
+  //     templateSets: targetExercise.templateSets.map(set => ({
+  //       ...set,
+  //       rightWeight: checked ? 0 : set.rightWeight,
+  //       totalWeight: checked
+  //         ? set.leftWeight * set.repetitions
+  //         : (set.leftWeight + set.rightWeight) * set.repetitions,
+  //     })),
+  //   };
+  // };
 
   const handleSwitchChange = async (checked: boolean) => {
     setIsSingleWeight(checked);
 
-    const updatedIsSingleWeight = {
+    // const updatedExercise = updateExerciseData(checked, exercise);
+
+    const updatedExercise = {
       ...exercise,
       isSingleWeight: checked,
+      templateSets: exercise.templateSets.map(set => {
+        if(set.movementId === movementId){
+          return {
+            ...set,
+            rightWeight: checked ? 0 : set.rightWeight,
+            totalWeight: checked
+              ? set.leftWeight * set.repetitions
+              : (set.leftWeight + set.rightWeight) * set.repetitions
+          }
+        }
+      })
     }
 
-    // TODO: 更新資料庫動作是否為單邊
     try {
       if (userId) {
-        // 更新資料庫
-        await upsertExercise([updatedIsSingleWeight], templateId);
+        // 切換後, 更新資料庫
+        await upsertExercise([updatedExercise] as TemplateExerciseType[], templateId);
 
         // 更新父組件狀態
+        // setTemplateState(prevTemplate => {
+        //   const updatedExercises = prevTemplate.templateExercises.map(ex =>
+        //     ex.movementId === movementId ? updatedExercise : ex
+        //   );
+        //   return { ...prevTemplate, templateExercises: updatedExercises };
+        // });
+
+
         setTemplateState(prevTemplate => {
-          // 深拷貝並更新 templateExercises
+          // 更新 templateExercises
           const updatedExercises = prevTemplate.templateExercises.map(ex =>
             ex.movementId === movementId
-              ? { ...ex, isSingleWeight: checked }
+              ? {
+                ...ex,
+                isSingleWeight: checked,
+                templateSets: ex.templateSets.map(set => ({
+                  ...set,
+                  rightWeight: checked ? 0 : set.rightWeight,
+                  totalWeight: checked
+                    ? set.leftWeight * set.repetitions
+                    : (set.leftWeight + set.rightWeight) * set.repetitions
+                })),
+              }
               : ex
           );
 
@@ -78,10 +116,10 @@ const ExerciseSet = ({ setTemplateState, exercise, sets, movementId, onUpdateSet
         });
       } else {
         // 用戶沒登入, 本地更新
-        if (findTemplate) {
+        if (findLocal) {
           const updatedTemplate = {
-            ...findTemplate,
-            templateExercises: findTemplate.templateExercises.map(exercise => {
+            ...findLocal,
+            templateExercises: findLocal.templateExercises.map(exercise => {
               if (exercise.movementId === movementId) {
                 return {
                   ...exercise,
@@ -100,6 +138,16 @@ const ExerciseSet = ({ setTemplateState, exercise, sets, movementId, onUpdateSet
           };
           editTemplate(templateId, updatedTemplate);
         }
+        
+        // if (findLocal) {
+        //   const updatedTemplate = {
+        //     ...findLocal,
+        //     templateExercises: findLocal.templateExercises.map(ex =>
+        //       ex.movementId === movementId ? updatedExercise : ex
+        //     ),
+        //   };
+        //   editTemplate(templateId, updatedTemplate);
+        // }
       }
     } catch (error) {
       console.error('更新失敗', error);

@@ -22,13 +22,12 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
   const userId = session?.user?.id
 
   // 用戶沒登入
-  const templates = useTemplateStore((state) => state.templates);
+  const { templates, editTemplate } = useTemplateStore(state => state);
   const localTemplate = templates.find(template => template.id === templateId);
-  const editTemplate = useTemplateStore((state) => state.editTemplate);
 
   // 下載模板到本地: 透過 dataAllTemplate 取得exercise, 加快圖片顯示速度
   const { dataAllTemplate } = usePracticeModal();
-  const findTemplate = dataAllTemplate.find(item => item.id === templateId);
+  const findTemplateFromLocalData = dataAllTemplate.find(item => item.id === templateId);
 
 
   const [template, setTemplate] = useState<TemplateType>({
@@ -46,8 +45,8 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
       try {
         if (userId) {
           // 方式二, dataAllTemplate 加快顯示圖片
-          if (findTemplate) {
-            setTemplate(findTemplate)
+          if (findTemplateFromLocalData) {
+            setTemplate(findTemplateFromLocalData)
           }
           // 原本方式, 抓資料庫資料, 刷新網頁正常
           // const fetchedTemplate = await getTemplateById(templateId);
@@ -70,7 +69,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     };
 
     fetchExercises();
-  }, [localTemplate, findTemplate, templateId, userId]);
+  }, [localTemplate, findTemplateFromLocalData, templateId, userId]);
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -81,7 +80,7 @@ const UpdateTemplate = ({ params }: { params: { menuId: string, templateId: stri
     try {
       if (userId) {
         // 資料庫
-        await upsertTemplate(template as TemplateType);
+        await upsertTemplate(template);
       } else {
         // 用戶沒登入
         if (template) {

@@ -8,12 +8,16 @@ import { Switch } from '@/components/ui/switch'
 
 import { useWorkoutStore } from '@/lib/store'
 
+import { useSession } from 'next-auth/react'
+import { useDayCardStore } from '@/lib/day-modal'
+
 
 
 interface SetProps {
   sets: WorkoutSetType[],
   movementId: string,
   onUpdateSets: (movementId: string, updatedSets: WorkoutSetType[]) => void
+  setCurrentWorkoutCardState: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>
 
   isSingleWeight?: boolean;
 }
@@ -26,44 +30,89 @@ interface InputProps {
   isCompleted: boolean
 }
 
-const WorkoutSet = ({ sets, movementId, onUpdateSets, isSingleWeight: initialIsSingleWeight= false }: SetProps) => {
+const WorkoutSet = ({ setCurrentWorkoutCardState, sets, movementId, onUpdateSets, isSingleWeight: initialIsSingleWeight = false }: SetProps) => {
   const [dynamicSets, setDynamicSets] = useState<WorkoutSetType[]>([]);
   const [inputValues, setInputValues] = useState<InputProps[]>([]);
+  const [saveIcon, setSaveIcon] = useState(false);
 
   const [openDelSet, setOpenDelSet] = useState<number | null>(null);
-  const [saveIcon, setSaveIcon] = useState(false);
+
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+  const getCurrentSessionId = localStorage.getItem('currentSessionId')
 
   // 用戶沒登入
   const { workoutSessions, editWorkoutSession } = useWorkoutStore();
+  const findLocalWorkout = workoutSessions.find(workout => workout.cardSessionId === getCurrentSessionId);
 
-  const getCurrentSessionId = localStorage.getItem('currentSessionId')
-  const findWorkout = workoutSessions.find(workout => workout.cardSessionId === getCurrentSessionId);
+  // 用戶登入, dayCard
+  const { dayCard, editDayCard } = useDayCardStore();
+  const findDayCard = dayCard.find(workout => workout.cardSessionId === getCurrentSessionId);
 
+
+  // 切換開關處理
   const [isSingleWeight, setIsSingleWeight] = useState(initialIsSingleWeight);
-  const handleSwitchChange = (checked: boolean) => {
+
+  const handleSwitchChange = async (checked: boolean) => {
     setIsSingleWeight(checked);
 
-    if(findWorkout){
-      const updatedCardSession = {
-        ...findWorkout,
-        exercises: findWorkout.exercises.map(exercise => {
-          if (exercise.movementId === movementId) {
-            return {
-              ...exercise,
-              isSingleWeight: checked,
-              sets: exercise.sets.map(set => ({
-                ...set,
-                rightWeight: checked ? 0 : set.rightWeight,
-                totalWeight: checked 
-                  ? set.leftWeight * set.repetitions 
-                  : (set.leftWeight + set.rightWeight) * set.repetitions
-              })),
-            };
-          }
-          return exercise;
-        }),
-      };
-      editWorkoutSession(getCurrentSessionId as string, updatedCardSession);
+    try {
+      if (userId) {
+        if (findDayCard) {
+          const updatedDayCardExercise = {
+            ...findDayCard,
+            exercises: findDayCard.exercises.map(exercise => {
+              if (exercise.movementId === movementId) {
+                return {
+                  ...exercise,
+                  isSingleWeight: checked,
+                  sets: exercise.sets.map(set => ({
+                    ...set,
+                    rightWeight: checked ? 0 : set.rightWeight,
+                    totalWeight: checked
+                      ? set.leftWeight * set.repetitions
+                      : (set.leftWeight + set.rightWeight) * set.repetitions
+                  })),
+                };
+              }
+              return exercise;
+            }),
+          };
+
+          editDayCard(getCurrentSessionId as string, updatedDayCardExercise);
+          // 更新父組件狀態
+          setCurrentWorkoutCardState(updatedDayCardExercise);
+        }
+      } else {
+        // 用戶沒登入, 本地更新
+        if (findLocalWorkout) {
+          const updatedCardSession = {
+            ...findLocalWorkout,
+            exercises: findLocalWorkout.exercises.map(exercise => {
+              if (exercise.movementId === movementId) {
+                return {
+                  ...exercise,
+                  isSingleWeight: checked,
+                  sets: exercise.sets.map(set => ({
+                    ...set,
+                    rightWeight: checked ? 0 : set.rightWeight,
+                    totalWeight: checked
+                      ? set.leftWeight * set.repetitions
+                      : (set.leftWeight + set.rightWeight) * set.repetitions
+                  })),
+                };
+              }
+              return exercise;
+            }),
+          };
+
+          editWorkoutSession(getCurrentSessionId as string, updatedCardSession);
+        }
+      }
+    } catch (error) {
+      console.error('更新失敗', error);
+      setIsSingleWeight(!checked);
     }
   };
 
@@ -129,7 +178,7 @@ const WorkoutSet = ({ sets, movementId, onUpdateSets, isSingleWeight: initialIsS
     setDynamicSets(updatedSets);
   };
 
-  // 完成組數
+  // 完成組數isCompleted
   const handleCheckSet = (index: number) => {
     const updatedSets = dynamicSets.map((set, idx) =>
       idx === index ? { ...set, isCompleted: !set.isCompleted } : { ...set }

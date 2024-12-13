@@ -21,16 +21,16 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
   const [fetchLoading, setFetchIsLoading] = useState(true);
 
   // 卡片管理
-  const [currentWorkout, setCurrentWorkout] = useState<WorkoutSessionType | null>(null);
+  const [currentWorkoutCard, setCurrentWorkoutCard] = useState<WorkoutSessionType | null>(null);
 
-  // 用戶沒有登入-本地
+  // 用戶沒有登入
   const workoutSessions = useWorkoutStore(state => state.workoutSessions);
   const { close } = usePracticeModal();
 
-  // TODO? 用戶登入, 本地找dayCard當天的訓練卡
+  // db儲存到本地的 dayCard 訓練卡
   const { dayCard } = useDayCardStore();
 
-  // useEffect 顯示動作列表
+  // 顯示動作列表
   useEffect(() => {
     close()
 
@@ -42,13 +42,13 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
     }
 
     if (userId) {
-      // 用戶登入, 找dayCard當天的訓練卡
-      const findCardFromStore = dayCard.find(
+      // 用戶登入, 找符合的dayCard
+      const findCardFromLocalDb = dayCard.find(
         session => session.cardSessionId === currentSessionId
       );
 
-      if (findCardFromStore) {
-        setCurrentWorkout(findCardFromStore);
+      if (findCardFromLocalDb) {
+        setCurrentWorkoutCard(findCardFromLocalDb);
         setFetchIsLoading(false);
       } 
     } else {
@@ -58,7 +58,7 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
       );
 
       if (findLocal) {
-        setCurrentWorkout(findLocal);
+        setCurrentWorkoutCard(findLocal);
         setFetchIsLoading(false);
       }
     }
@@ -99,11 +99,11 @@ const WorkoutPage = ({ }: { params: { menuId: string; templateId: string } }) =>
 
   return (
     <div>
-      {currentWorkout ? (
+      {currentWorkoutCard ? (
         <StartWorkout
           isEditMode={false}
-          workoutSession={currentWorkout as WorkoutSessionType}
-          setCurrentWorkout={setCurrentWorkout}
+          workoutSession={currentWorkoutCard as WorkoutSessionType}
+          setCurrentWorkoutCardState={setCurrentWorkoutCard}
           fetchLoading={fetchLoading}
         />
       ) : (
