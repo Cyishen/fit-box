@@ -13,6 +13,7 @@ import { useTemplateStore } from '@/lib/store';
 
 import { exerciseTemplates } from '@/constants/constants';
 import { getTemplateExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
+import { usePracticeModal } from '@/lib/use-practice-modal';
 
 
 
@@ -30,13 +31,26 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
 
   // 用戶沒登入, 本地
   const templates = useTemplateStore(state => state.templates);
-  const findCurrentTemplate = templates.find(template => template.id === templateId);
+  const findLocal = templates.find(template => template.id === templateId);
+  const localMovement = findLocal?.templateExercises.map(ex => ex.movementId) || [];
 
   // 下載模板到本地: 用dataAllTemplate, 取得exercise, 加快顯示速度
-  // const { dataAllTemplate, setDataAllTemplate } = usePracticeModal();
+  const { dataAllTemplate } = usePracticeModal();
+  const findData = dataAllTemplate.find(item => item.id === templateId);
+  const dataMovement = findData?.templateExercises.map(ex => ex.movementId) || [];
+
+  const choseFolder = userId ? dataMovement : localMovement;
 
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<TemplateExerciseType[]>([]);
+  const showSelectedMovementId = selectedExercises.map(ex => ex.movementId);
+
+  // 找出新增的動作不存在於原始資料
+  const addedMovementIds = showSelectedMovementId.filter(id => !choseFolder.includes(id));
+  // 找出刪除的動作
+  const removedMovementIds = choseFolder.filter(id => !showSelectedMovementId.includes(id));
+  // 判斷是否有變化
+  const hasChanges = addedMovementIds.length > 0 || removedMovementIds.length > 0;
 
   // 左邊選單分類
   const [category, setCategory] = useState<string>('胸');
@@ -59,14 +73,14 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
         setSelectedExercises(existingExercises);
       } else {
         // 用戶沒登入
-        if (findCurrentTemplate) {
-          setSelectedExercises(findCurrentTemplate.templateExercises);
+        if (findLocal) {
+          setSelectedExercises(findLocal.templateExercises);
         }
       }
     };
 
     fetchSelectedExercises();
-  }, [findCurrentTemplate, templateId, userId]);
+  }, [userId, templateId, findLocal]);
 
   const handleSaveExercises = async () => {
     setIsLoading(true);
@@ -96,9 +110,9 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
         // }
       } else {
         // 用戶沒登入
-        if (findCurrentTemplate) {
+        if (findLocal) {
           const updatedTemplate: TemplateType = {
-            ...findCurrentTemplate,
+            ...findLocal,
             templateExercises: selectedExercises,
           };
 
@@ -128,17 +142,7 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
 
   return (
     <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
-      <div className='flex justify-end'>
-        <button
-          type='button'
-          onClick={() => setIsOpen(false)}
-          className='flex items-center justify-center border w-5 h-5 text-[10px] px-2 rounded-md hover:ring-1 hover:ring-offset-1 ring-black'
-        >
-          X
-        </button>
-      </div>
-
-      <div className='flex justify-end mt-4'>
+      <div className='flex justify-end px-4 bg-gray-100 sticky top-10 pb-2'>
         <Button
           size='sm'
           type="button"
@@ -151,20 +155,20 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
               <Loader size={14} className="animate-spin" />
             </>
           ) : (
-            <>儲存 {selectedExercises.length}</>
+            <>{hasChanges ? '變更' : '已選'} {selectedExercises.length}</>
           )}
         </Button>
       </div>
 
-      <div className='flex mt-3 gap-3 mb-20'>
+      <div className='flex mt-1 gap-3 mb-20 px-4'>
         <div className='w-28'>
           <h3 className="font-bold">選擇動作</h3>
           <hr className='my-2' />
 
-          <FitSideBar 
-            category={category} 
-            setCategoryState={setCategory} 
-            categoryCounts={categoryCounts} 
+          <FitSideBar
+            category={category}
+            setCategoryState={setCategory}
+            categoryCounts={categoryCounts}
           />
         </div>
 

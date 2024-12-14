@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChangeEvent, useEffect, useState } from "react"
 
 import ExerciseList from "./ExerciseList";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Loader } from "lucide-react";
 
 
@@ -21,7 +21,7 @@ type Props = {
 
 const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoading }: Props) => {
   const [count, setCount] = useState(0);
-  const router = useRouter();
+  // const router = useRouter();
 
   useEffect(() => {
     setCount(template?.templateTitle.length);
@@ -46,7 +46,7 @@ const TemplateForm = ({ type, template, setTemplateState, handleSubmit, isLoadin
         <form onSubmit={handleSubmit} className="bg-gray-100 sm:rounded-2xl">
           <div className="p-4">
             <div className="flex justify-between">
-              <Button size='sm' disabled={isLoading} onClick={() => router.back()} className='font-bold'>返回</Button>
+              {/* <Button size='sm' disabled={isLoading} onClick={() => router.back()} className='font-bold'>返回</Button> */}
 
               <h3 className="font-bold">{type}</h3>
 

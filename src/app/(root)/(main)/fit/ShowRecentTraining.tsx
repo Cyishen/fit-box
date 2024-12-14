@@ -27,7 +27,7 @@ const ShowRecentTraining = ({ weekData }: Props) => {
   const [workoutCards, setWorkoutCards] = useState<WorkoutSessionType[]>([]);
 
   const [showAll, setShowAll] = useState(false);
-  const visibleCards = showAll ? workoutCards : workoutCards.slice(0, 3);
+  const visibleCards = showAll ? workoutCards : workoutCards.slice(0, 0);
 
   useEffect(() => {
     if (userId) {
@@ -87,7 +87,7 @@ const ShowRecentTraining = ({ weekData }: Props) => {
       ))}
       </div>
 
-      {workoutCards.length > 3 && !showAll && (
+      {workoutCards.length > 0 && !showAll && (
         <div className="my-4 text-center text-sm">
           <button
             onClick={() => setShowAll(true)}

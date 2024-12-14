@@ -3,7 +3,6 @@ import { useTemplateStore } from '@/lib/store';
 
 import ExerciseListCard from './ExerciseListCard';
 import TemplateExerciseButton from './TemplateExerciseButton';
-import { SkeletonCard } from './SkeletonCard';
 
 import { useSession } from "next-auth/react"
 import { upsertExercise } from '@/actions/user-create';
@@ -104,12 +103,6 @@ const ExerciseList = ({ template, setTemplateState, isLoading, templateExercise 
                 </>
               ) : (
                 <>
-                  <div className='relative'>
-                    <SkeletonCard />
-                    <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-                    <p className='text-gray-500 text-sm font-thin'>無動作</p>
-                    </div>
-                  </div>
                 </>
               )}
             </div>
