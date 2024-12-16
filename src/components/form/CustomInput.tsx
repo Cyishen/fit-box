@@ -45,7 +45,7 @@ const CustomInput = ({ control, name, label, placeholder, id, disabled }: Custom
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"
                     disabled={disabled}
                   >
                     {showPassword ? 'close' : 'show'}

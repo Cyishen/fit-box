@@ -91,7 +91,7 @@ const AuthForm = ({ type }: { type: string }) => {
         <header className='mt-10 md:mt-20'>
           <Link href="/" className="flex items-center cursor-pointer hover:text-blue-500">
             <ChevronLeft size={20} />
-            <h1 className="text-2xl sm:text-3xl font-extrabold">FitBox 運動盒子</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold">FitBox 運動盒</h1>
           </Link>
 
           <div className='flex w-full mt-4'>

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { CopyPlus } from 'lucide-react';
+
 import { SkeletonCard } from "../../../[menuId]/[templateId]/SkeletonCard";
 
 import WorkoutListCard from "./WorkoutListCard";
@@ -10,8 +9,8 @@ import { useSession } from "next-auth/react"
 import { useWorkoutStore } from "@/lib/store";
 import { useDayCardStore } from "@/lib/day-modal";
 import { upsertWorkoutSession, upsertWorkoutSummary } from "@/actions/user-create";
-import { Button } from "@/components/ui/button";
 
+import WorkoutExerciseButton from "./WorkoutExerciseButton";
 
 
 type StartWorkoutProps = {
@@ -22,7 +21,7 @@ type StartWorkoutProps = {
 }
 
 const WorkoutList = ({ workoutSession, setCurrentWorkoutCardState, isLoading, fetchLoading }: StartWorkoutProps) => {
-  const router = useRouter();
+
 
   const { data: session } = useSession()
   const userId = session?.user?.id
@@ -113,15 +112,10 @@ const WorkoutList = ({ workoutSession, setCurrentWorkoutCardState, isLoading, fe
     <div>
       <div className='flex items-center justify-end gap-3 px-4'>
         <h3 className="font-bold">添加動作</h3>
-        <Button
-          type="button"
-          className='w-8 h-8 flex justify-center items-center duration-300 rounded-full'
-          onClick={() => router.push(`/action`)}
-        >
-          <div className='min-w-8 min-h-8 rounded-full flex justify-center items-center'>
-            <CopyPlus size={14} />
-          </div>
-        </Button>
+        <WorkoutExerciseButton
+          workoutSession={workoutSession}
+          setCurrentWorkoutCardState={setCurrentWorkoutCardState}
+        />
       </div>
 
       <div className='mt-3 px-3 rounded-t-2xl sm:rounded-t-2xl bg-slate-200'>

@@ -9,54 +9,73 @@ import BottomSheet from '@/components/BottomSheet'
 import FitSideBar from '@/components/FitSideBar';
 
 import { useSession } from 'next-auth/react'
-import { useTemplateStore } from '@/lib/store';
 
-import { exerciseTemplates } from '@/constants/constants';
-import { getTemplateExerciseByTemplateId, upsertExercise } from '@/actions/user-create';
-import { usePracticeModal } from '@/lib/use-practice-modal';
+import { useWorkoutStore } from '@/lib/store';
+import { useDayCardStore } from '@/lib/day-modal';
+
+import { exerciseWorkouts } from '@/constants/constants';
+import { getWorkoutSessionByCardId, upsertWorkoutSession } from '@/actions/user-create';
 
 
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  templateId?: string
-  setTemplateState: React.Dispatch<React.SetStateAction<TemplateType>>;
+  workoutSession: WorkoutSessionType;
+  setCurrentWorkoutCardState: React.Dispatch<React.SetStateAction<WorkoutSessionType | null>>;
 }
-const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }: Props) => {
+const WorkoutPickerSheet = ({
+  isOpen,
+  setIsOpen,
+  workoutSession,
+  setCurrentWorkoutCardState
+}: Props) => {
   const { data: session } = useSession()
   const userId = session?.user?.id
 
+  const currentSessionId = localStorage.getItem('currentSessionId');
   const [isLoading, setIsLoading] = useState(false);
 
   // 用戶沒登入, 本地
-  const templates = useTemplateStore(state => state.templates);
-  const findLocal = templates.find(template => template.id === templateId);
+  const { workoutSessions, editWorkoutSession } = useWorkoutStore();
+  const findLocal = workoutSessions?.find(session => session.cardSessionId === currentSessionId);
 
-  // 下載模板到本地: 用dataAllTemplate, 取得exercise, 加快顯示速度
-  const { dataAllTemplate } = usePracticeModal();
-  const findData = dataAllTemplate.find(item => item.id === templateId);
+  // 用戶登入, dayCard資料
+  const { dayCard, editDayCard } = useDayCardStore();
+  const findDayCard = dayCard?.find(session => session.cardSessionId === currentSessionId);
+
 
   // 選中的動作管理
-  const [selectedExercises, setSelectedExercises] = useState<TemplateExerciseType[]>([]);
+  const [selectedExercises, setSelectedExercises] = useState<WorkoutExerciseType[]>([]);
 
+  // 新方式
+  const [initialMovementIds, setInitialMovementIds] = useState<string[]>([]);
 
-  // 判斷動作選項的改變
-  const localMovement = findLocal?.templateExercises.map(ex => ex.movementId) || [];
-  const dataMovement = findData?.templateExercises.map(ex => ex.movementId) || [];
-  const choseFolder = userId ? dataMovement : localMovement;
-  const showSelectedMovementId = selectedExercises.map(ex => ex.movementId);
-  // 找出新增的動作, 不存在於原始資料
-  const addedMovementIds = showSelectedMovementId.filter(id => !choseFolder.includes(id));
-  // 找出刪除的動作, 不存在於新選項
-  const removedMovementIds = choseFolder.filter(id => !showSelectedMovementId.includes(id));
-  // 判斷是否有變化
-  const hasChanges = addedMovementIds.length > 0 || removedMovementIds.length > 0;
+  const currentMovementIds = selectedExercises.map(ex => ex.movementId);
+  const newChanges =
+    initialMovementIds.length === 0
+      ? selectedExercises.length > 0
+      : initialMovementIds.some(id => !currentMovementIds.includes(id)) ||
+      currentMovementIds.some(id => !initialMovementIds.includes(id));
+
+  // 原本方式, 判斷動作選項的改變
+  // const localMovement = findLocal?.exercises.map(ex => ex.movementId) || [];
+  // const dayCardMovement = findDayCard?.exercises.map(ex => ex.movementId) || [];
+  // const choseFolder = userId
+  //   ? dayCardMovement
+  //   : localMovement;
+  // const showSelectedMovementId = selectedExercises.map(ex => ex.movementId);
+  // // 找出新增的動作, 不存在於原始資料
+  // const addedMovementIds = showSelectedMovementId.filter(id => !choseFolder.includes(id));
+  // // 找出刪除的動作, 不存在於新選項
+  // const removedMovementIds = choseFolder.filter(id => !showSelectedMovementId.includes(id));
+  // // 判斷是否有變化
+  // const hasChanges = addedMovementIds?.length > 0 || removedMovementIds?.length > 0;
 
 
   // 左邊選單分類
   const [category, setCategory] = useState<string>('胸');
-  const filteredWorkouts = exerciseTemplates.filter(
+  const filteredWorkouts = exerciseWorkouts.filter(
     (exercise) => exercise.exerciseCategory === category
   );
   // 動作分類
@@ -68,45 +87,73 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
 
 
   useEffect(() => {
-    const fetchSelectedExercises = async () => {
-      if (userId) {
-        // 資料庫
-        const existingExercises = await getTemplateExerciseByTemplateId(templateId as string);
-        setSelectedExercises(existingExercises);
+    const currentSessionId = localStorage.getItem('currentSessionId');
+
+    if (!currentSessionId) return
+
+    const fetchDataExercise = async () => {
+      try {
+        const workoutCard = await getWorkoutSessionByCardId(currentSessionId)
+        const workoutCardExercises = workoutCard?.exercises || [];
+
+        if (workoutCard) {
+          setSelectedExercises(workoutCardExercises);
+          setInitialMovementIds(workoutCardExercises.map(ex => ex.movementId));
+        }
+      } catch (error) {
+        console.log(error);
       }
-    };
+    }
 
     if (userId) {
-      fetchSelectedExercises();
+      const findDayCardExercises = findDayCard?.exercises || [];
+
+      if (findDayCard) {
+        setSelectedExercises(findDayCardExercises);
+        setInitialMovementIds(findDayCardExercises.map(ex => ex.movementId));
+      } else {
+        // findDayCard沒找到, 代表用戶是點擊歷史訓練卡, 從資料庫加載
+        fetchDataExercise()
+      }
     } else if (findLocal) {
       // 用戶沒登入
-      setSelectedExercises(findLocal.templateExercises);
+      setSelectedExercises(findLocal.exercises);
     }
-  }, [userId, templateId, findLocal]);
+  }, [findDayCard, findLocal, setCurrentWorkoutCardState, userId]);
 
 
   const handleSaveExercises = async () => {
     setIsLoading(true);
 
+    const currentSessionId = localStorage.getItem('currentSessionId');
+
+    const updatedSession = {
+      ...workoutSession,
+      exercises: selectedExercises
+    };
+
+    const findDayCard = dayCard.find(
+      session => session.cardSessionId === currentSessionId
+    );
     try {
       if (userId) {
-        // 更新動作到資料庫
-        const updatedExercises = await upsertExercise(selectedExercises, templateId as string);
-        // 更新setTemplateState狀態, 讓列表能更新 UI
-        setTemplateState(prevTemplate => ({
-          ...prevTemplate,
-          templateExercises: updatedExercises,
-        }));
+        if (findDayCard) {
+          editDayCard(currentSessionId as string, updatedSession);
+        } else {
+          // 歷史訓練卡, 更新動作到資料庫
+          await upsertWorkoutSession(updatedSession);
+          // 更新列表狀態
+          setCurrentWorkoutCardState(updatedSession);
+        }
       } else {
         // 用戶沒登入
         if (findLocal) {
-          const updatedTemplate: TemplateType = {
+          const updatedWorkoutExercise: WorkoutSessionType = {
             ...findLocal,
-            templateExercises: selectedExercises,
+            exercises: selectedExercises,
           };
 
-          const updateTemplate = useTemplateStore.getState().editTemplate;
-          updateTemplate(templateId as string, updatedTemplate);
+          editWorkoutSession(updatedWorkoutExercise.cardSessionId, updatedWorkoutExercise);
         }
       }
 
@@ -119,7 +166,7 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
     }
   };
 
-  const handleToggleExercise = (exercise: TemplateExerciseType) => {
+  const handleToggleExercise = (exercise: WorkoutExerciseType) => {
     const isSelected = selectedExercises.some(ex => ex.movementId === exercise.movementId);
 
     if (isSelected) {
@@ -132,7 +179,7 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
   return (
     <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <div className='flex justify-end px-4 bg-gray-100 sticky top-10 pb-2'>
-      {hasChanges ? (
+        {newChanges ? (
           <Button
             size='sm'
             type="button"
@@ -153,7 +200,7 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
             size='sm'
             type='button'
             disabled
-            variant='outline' 
+            variant='outline'
             className='flex items-center'
           >
             已選 {selectedExercises.length}
@@ -212,4 +259,4 @@ const ExercisePickerSheet = ({ isOpen, setIsOpen, templateId, setTemplateState }
   )
 }
 
-export default ExercisePickerSheet
+export default WorkoutPickerSheet

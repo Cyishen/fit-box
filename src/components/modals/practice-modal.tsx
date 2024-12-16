@@ -102,7 +102,6 @@ export const PracticeModal = () => {
       if (userId) {
         // 用戶登入
         const newCurrentSession = {
-          // isSynced: false,
           cardSessionId: newSessionId,
           userId: userId,
           menuId: menuId ?? '',

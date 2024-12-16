@@ -33,18 +33,18 @@ const OAuth = () => {
       </div>
 
       <button
-        className="w-full flex justify-center items-center mt-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 font-bold gap-2"
+        className="w-full flex justify-center items-center mt-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 gap-2 text-sm"
         onClick={handleLogin}
         disabled={isLoading}
       >
         <Image
           src="/media/google.svg"
-          width={25}
-          height={25}
+          width={20}
+          height={20}
           alt="google"
           className={isLoading ? 'opacity-50' : ''} 
         />
-        {isLoading ? 'Loading...' : '使用 Google 繼續'}
+        {isLoading ? 'Loading...' : '使用 Google 帳戶繼續'}
       </button>
     </div>
   )
