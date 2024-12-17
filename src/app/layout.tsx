@@ -7,6 +7,7 @@ import { DeleteMenuModal } from "@/components/modals/delete-menu-modal";
 
 import { QueryProvider } from "@/components/query-provider";
 import AuthProvider from "@/components/form/AuthProvider";
+import Head from "next/head";
 
 
 const geistSans = localFont({
@@ -36,9 +37,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
+      <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-      </head>
+      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
