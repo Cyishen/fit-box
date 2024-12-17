@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   description: "FitBox App",
   icons: {
     icon: "/icons/workout.svg"
-  }
+  },
+  viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
 };
 
 const MainLayout = ({ children }: Props) => {
@@ -23,10 +24,10 @@ const MainLayout = ({ children }: Props) => {
           {children}
         </div>
       </main>
-      
+
       <FooterVisibility />
     </>
   );
 };
- 
+
 export default MainLayout;
