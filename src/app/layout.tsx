@@ -33,7 +33,8 @@ export const metadata: Metadata = {
   description: "FitBox App",
   icons: {
     icon: "/icons/workout.svg"
-  }
+  },
+  viewport: viewport
 };
 
 export default function RootLayout({
