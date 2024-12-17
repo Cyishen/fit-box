@@ -7,7 +7,15 @@ import { DeleteMenuModal } from "@/components/modals/delete-menu-modal";
 
 import { QueryProvider } from "@/components/query-provider";
 import AuthProvider from "@/components/form/AuthProvider";
+import type { Viewport } from 'next/types'
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover'
+}
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
