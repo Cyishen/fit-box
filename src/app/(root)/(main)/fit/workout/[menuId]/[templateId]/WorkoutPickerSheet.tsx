@@ -14,7 +14,7 @@ import { useWorkoutStore } from '@/lib/store';
 import { useDayCardStore } from '@/lib/day-modal';
 
 import { exerciseWorkouts } from '@/constants/constants';
-import { getWorkoutSessionByCardId, upsertWorkoutSession } from '@/actions/user-create';
+import { upsertWorkoutSession } from '@/actions/user-create';
 
 
 
@@ -48,29 +48,36 @@ const WorkoutPickerSheet = ({
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<WorkoutExerciseType[]>([]);
 
-  // 新方式
+  // 比對傳遞的動作與新修改選項的變化
   const [initialMovementIds, setInitialMovementIds] = useState<string[]>([]);
 
-  const currentMovementIds = selectedExercises.map(ex => ex.movementId);
-  const newChanges =
-    initialMovementIds.length === 0
-      ? selectedExercises.length > 0
-      : initialMovementIds.some(id => !currentMovementIds.includes(id)) ||
-      currentMovementIds.some(id => !initialMovementIds.includes(id));
+  const selectedMovementIds = selectedExercises.map(ex => ex.movementId);
 
-  // 原本方式, 判斷動作選項的改變
-  // const localMovement = findLocal?.exercises.map(ex => ex.movementId) || [];
-  // const dayCardMovement = findDayCard?.exercises.map(ex => ex.movementId) || [];
-  // const choseFolder = userId
-  //   ? dayCardMovement
-  //   : localMovement;
-  // const showSelectedMovementId = selectedExercises.map(ex => ex.movementId);
-  // // 找出新增的動作, 不存在於原始資料
-  // const addedMovementIds = showSelectedMovementId.filter(id => !choseFolder.includes(id));
-  // // 找出刪除的動作, 不存在於新選項
-  // const removedMovementIds = choseFolder.filter(id => !showSelectedMovementId.includes(id));
-  // // 判斷是否有變化
-  // const hasChanges = addedMovementIds?.length > 0 || removedMovementIds?.length > 0;
+  const newChanges = initialMovementIds.length === 0
+    ? selectedExercises.length > 0
+    : initialMovementIds.some(id => !selectedMovementIds.includes(id)) ||
+    selectedMovementIds.some(id => !initialMovementIds.includes(id));
+
+
+  useEffect(() => {
+    const currentSessionId = localStorage.getItem('currentSessionId');
+
+    if (!currentSessionId) return
+
+    if (userId) {
+      // 用戶登入
+      const findWorkoutExercises = workoutSession?.exercises || [];
+      if (workoutSession) {
+        setSelectedExercises(findWorkoutExercises)
+        setInitialMovementIds(findWorkoutExercises.map(ex => ex.movementId))
+      }
+
+    } else if (findLocal) {
+      // 用戶沒登入
+      setSelectedExercises(findLocal.exercises);
+      setInitialMovementIds(findLocal.exercises.map(ex => ex.movementId));
+    }
+  }, [workoutSession, userId, findDayCard, findLocal]);
 
 
   // 左邊選單分類
@@ -84,42 +91,6 @@ const WorkoutPickerSheet = ({
     acc[category] = (acc[category] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-
-
-  useEffect(() => {
-    const currentSessionId = localStorage.getItem('currentSessionId');
-
-    if (!currentSessionId) return
-
-    const fetchDataExercise = async () => {
-      try {
-        const workoutCard = await getWorkoutSessionByCardId(currentSessionId)
-        const workoutCardExercises = workoutCard?.exercises || [];
-
-        if (workoutCard) {
-          setSelectedExercises(workoutCardExercises);
-          setInitialMovementIds(workoutCardExercises.map(ex => ex.movementId));
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    if (userId) {
-      const findDayCardExercises = findDayCard?.exercises || [];
-
-      if (findDayCard) {
-        setSelectedExercises(findDayCardExercises);
-        setInitialMovementIds(findDayCardExercises.map(ex => ex.movementId));
-      } else {
-        // findDayCard沒找到, 代表用戶是點擊歷史訓練卡, 從資料庫加載
-        fetchDataExercise()
-      }
-    } else if (findLocal) {
-      // 用戶沒登入
-      setSelectedExercises(findLocal.exercises);
-    }
-  }, [findDayCard, findLocal, setCurrentWorkoutCardState, userId]);
 
 
   const handleSaveExercises = async () => {
