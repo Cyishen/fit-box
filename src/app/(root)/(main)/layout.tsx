@@ -1,6 +1,15 @@
 import React from "react";
 import { Metadata } from "next";
 import FooterVisibility from "@/components/mobile/FooterVisibility";
+import type { Viewport } from 'next/types'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover'
+}
 
 
 type Props = {
@@ -13,7 +22,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/icons/workout.svg"
   },
-  viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  viewport: viewport
 };
 
 const MainLayout = ({ children }: Props) => {
