@@ -44,7 +44,6 @@ const WorkoutPickerSheet = ({
   const { dayCard, editDayCard } = useDayCardStore();
   const findDayCard = dayCard?.find(session => session.cardSessionId === currentSessionId);
 
-
   // 選中的動作管理
   const [selectedExercises, setSelectedExercises] = useState<WorkoutExerciseType[]>([]);
 
@@ -77,7 +76,7 @@ const WorkoutPickerSheet = ({
       setSelectedExercises(findLocal.exercises);
       setInitialMovementIds(findLocal.exercises.map(ex => ex.movementId));
     }
-  }, [workoutSession, userId, findDayCard, findLocal]);
+  }, [findLocal, userId, workoutSession]);
 
 
   // 左邊選單分類
@@ -103,9 +102,6 @@ const WorkoutPickerSheet = ({
       exercises: selectedExercises
     };
 
-    const findDayCard = dayCard.find(
-      session => session.cardSessionId === currentSessionId
-    );
     try {
       if (userId) {
         if (findDayCard) {
