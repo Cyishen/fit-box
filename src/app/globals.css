@@ -9,8 +9,15 @@ body {
 html, body {
   touch-action: manipulation;
   overscroll-behavior: none;
-  -ms-touch-action: none;
+  -ms-touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 @layer base {
