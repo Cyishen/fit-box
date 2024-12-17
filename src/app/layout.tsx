@@ -15,7 +15,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
   minimumScale: 1,
   userScalable: false,
-  viewportFit: 'cover'
 }
 
 const geistSans = localFont({
@@ -34,8 +33,7 @@ export const metadata: Metadata = {
   description: "FitBox App",
   icons: {
     icon: "/icons/workout.svg"
-  },
-  viewport: viewport
+  }
 };
 
 export default function RootLayout({
