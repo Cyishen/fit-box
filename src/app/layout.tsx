@@ -7,12 +7,13 @@ import { DeleteMenuModal } from "@/components/modals/delete-menu-modal";
 
 import { QueryProvider } from "@/components/query-provider";
 import AuthProvider from "@/components/form/AuthProvider";
-import type { Viewport } from 'next/types'
+import type { Viewport } from 'next'
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  minimumScale: 1,
   userScalable: false,
   viewportFit: 'cover'
 }
@@ -44,9 +45,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

@@ -1,16 +1,16 @@
 import React from "react";
 import { Metadata } from "next";
 import FooterVisibility from "@/components/mobile/FooterVisibility";
-import type { Viewport } from 'next/types'
+import type { Viewport } from 'next'
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  minimumScale: 1,
   userScalable: false,
   viewportFit: 'cover'
 }
-
 
 type Props = {
   children: React.ReactNode;
