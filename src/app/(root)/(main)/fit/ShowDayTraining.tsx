@@ -34,6 +34,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
   // 第一個useEffect, 把剛建立的訓練卡dayCard上傳到資料庫且拿回id給 dayCard(用戶不會感受到上傳)
   const isSyncingRef = useRef(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
     if (!dayCard || dayCard.length === 0 || !userId) return;
@@ -41,19 +42,27 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
 
     const debounceTimeout = setTimeout(() => {
       isSyncingRef.current = true;
-
+      setIsSyncing(true);
       const updateToDb = async () => {
         try {
           for (const session of dayCard) {
 
             const updatedSession = await upsertWorkoutSession(session);
-            if (updatedSession?.id && session.id !== updatedSession.id) {
+            const setsId = updatedSession.exercises.map(exercise => exercise.sets.map(set => set.id));
 
-              const updatedLocalCard = {
+            if (updatedSession?.id && session.id !== updatedSession.id) {
+              const updatedDayCardId = {
                 ...session,
                 id: updatedSession.id,
+                exercises: session.exercises.map(exercise => ({
+                  ...exercise,
+                  sets: exercise.sets.map(set => ({
+                    ...set,
+                    id: setsId[session.exercises.indexOf(exercise)][exercise.sets.indexOf(set)]
+                  }))
+                }))
               };
-              editDayCard(session.cardSessionId, updatedLocalCard);
+              editDayCard(session.cardSessionId, updatedDayCardId);
             }
             await upsertWorkoutSummary(updatedSession.id);
           }
@@ -61,6 +70,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
           console.error("Error syncing DayCard:", error);
         } finally {
           isSyncingRef.current = false;
+          setIsSyncing(false);
         }
       };
 
@@ -92,11 +102,12 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
   useEffect(() => {
     try {
       if (userId) {
+        // 設備內有的dayCard
         const userDayCards = dayCard.filter(session => session.userId === userId);
-
+        // 合併資料庫: 不重複在dayCard內的訓練卡
         const mergedCards = [
           ...userDayCards,
-          ...dayCardData.filter(card => !userDayCards.some(existingCard => existingCard.cardSessionId === card.cardSessionId)) // 合併不重複的資料庫卡片
+          ...dayCardData.filter(card => !userDayCards.some(dayCardId => dayCardId.cardSessionId === card.cardSessionId)) 
         ];
         setWorkoutCards(mergedCards);
       } else {
@@ -138,10 +149,10 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
       localStorage.setItem('currentSessionId', cardSessionId);
     } else {
       // 用戶沒有登入-本地
-      const sessionToEdit = workoutSessions.find(session => session.cardSessionId === cardSessionId);
+      const localToEdit = workoutSessions.find(session => session.cardSessionId === cardSessionId);
 
-      if (sessionToEdit) {
-        router.push(`/fit/workout/${sessionToEdit.menuId}/${sessionToEdit.templateId}/${cardSessionId}`);
+      if (localToEdit) {
+        router.push(`/fit/workout/${localToEdit.menuId}/${localToEdit.templateId}/${cardSessionId}`);
       }
       localStorage.setItem('currentSessionId', cardSessionId);
     }
@@ -181,6 +192,7 @@ const ShowDayTraining = ({ dayCardData }: Props) => {
               sessionCards={session}
               handleRemoveWorkoutSession={handleRemoveWorkoutSession}
               handleEditWorkout={handleEditWorkout}
+              isSyncing={isSyncing}
             />
           ))}
         </>

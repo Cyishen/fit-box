@@ -450,6 +450,7 @@ export const upsertWorkoutSession = async (data: WorkoutSessionType) => {
             isSingleWeight: exercise.isSingleWeight,
             sets: {
               create: exercise.sets.map((set) => ({
+                id: set.id,
                 movementId: exercise.movementId,
                 leftWeight: set.leftWeight,
                 rightWeight: set.rightWeight,

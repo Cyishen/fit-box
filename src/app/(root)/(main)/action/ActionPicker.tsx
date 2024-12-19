@@ -221,6 +221,7 @@ const ActionPicker = () => {
                         width={36}
                         height={36}
                         className='object-contain w-16'
+                        loading='lazy'
                       />
                       <p
                         className={`text-sm mt-2 

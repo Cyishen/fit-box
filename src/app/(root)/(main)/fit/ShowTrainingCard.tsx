@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 
-import { Trash2 } from 'lucide-react';
+import { Trash2, LoaderCircle } from 'lucide-react';
 
 import RippleAni from '@/components/RippleAni';
 import { multiFormatDateString } from '@/lib/TimeFn/Timer';
@@ -20,9 +20,10 @@ type Props = {
   sessionCards: WorkoutSessionType
   handleRemoveWorkoutSession: (cardSessionId: string) => void
   handleEditWorkout: (cardSessionId: string) => void
+  isSyncing?: boolean
 }
 
-const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEditWorkout }: Props) => {
+const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEditWorkout, isSyncing }: Props) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const randomImage = heroImage[Math.floor(Math.random() * heroImage.length)];
 
@@ -125,6 +126,9 @@ const ShowTrainingCard = ({ sessionCards, handleRemoveWorkoutSession, handleEdit
               <p className='font-bold line-clamp-1 py-1'>{sessionCards?.templateTitle}</p>
 
               <p className='flex items-center ml-auto text-[12px] whitespace-nowrap'>
+                <span className='pr-1'>
+                  {isSyncing ? <LoaderCircle size={8} className="animate-spin" />  : ''}
+                </span>
                 完成&nbsp;
                 <span className={`font-bold text-sm ${completionPercentage === 100 ? 'text-green-500' : ''}`}>{completionPercentage.toFixed(0)}%&nbsp;</span>
                 {completionPercentage === 100 ? '🎉' : ''}
