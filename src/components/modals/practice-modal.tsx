@@ -242,17 +242,27 @@ export const PracticeModal = () => {
             <Link href={`/fit/${menuId}/${templateId}/update`} className="flex w-full">
               <Button
                 onClick={close}
-                className="w-full"
+                className="w-full bg-white text-black hover:text-white"
               >
-                編輯模板 ({exercise?.length})
+                編輯模板 
+                <span className="text-[10px] ml-1 flex justify-center items-center bg-slate-100 text-gray-500 rounded-full w-4 h-4">
+                  {exercise?.length}
+                </span>
               </Button>
             </Link>
 
             <div className="flex w-full"
               onClick={handleToWorkoutSession}
             >
-              <Button className="w-full">
+              <Button className="w-full relative group">
                 開始訓練
+                <img
+                  src="/icons/barIcon-action.svg"
+                  alt="arrow right"
+                  width={16}
+                  height={16} 
+                  className="absolute top-1/2 -translate-y-1/2 left-3/4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"
+                />
               </Button>
             </div>
           </div>

@@ -140,7 +140,7 @@ const AuthForm = ({ type }: { type: string }) => {
             />
 
             <div className="flex flex-col pt-2">
-              <Button type="submit" disabled={isLoading} className='py-5'>
+              <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader size={20} className="animate-spin" /> &nbsp;

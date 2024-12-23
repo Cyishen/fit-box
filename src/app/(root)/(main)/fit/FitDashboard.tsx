@@ -91,7 +91,7 @@ const FitDashboard = ({ menusData, templatesData }: Props) => {
   return (
     <div className='flex flex-col gap-5 relative'>
       <MenuList
-        menus={menusData?.length > 0 ? menusData : menus}
+        menus={userId ? menusData : menus}
         selectedMenuId={selectedMenuId}
         onMenuSelect={handleMenuClick}
         isMenuOpen={isMenuOpen}

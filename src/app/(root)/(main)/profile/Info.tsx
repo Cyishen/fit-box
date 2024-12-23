@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-import { calculateDaysSinceStart } from '@/lib/TimeFn/Timer';
-import { useSession, signOut } from "next-auth/react"
+import { calculateTimeSinceStart } from '@/lib/TimeFn/Timer';
+import { useSession } from "next-auth/react"
 
 
 interface Props {
@@ -15,20 +15,17 @@ interface Props {
 }
 
 const Info = ({ cardsCount, userFirstDay }: Props) => {
-  const { data: session, status } = useSession()
-
-  const handleLogout = async () => {
-    if (status === "authenticated") {
-      await signOut()
-    }
-  };
+  const { data: session } = useSession()
 
   const firstDay = userFirstDay?.createdAt
     ? new Date(userFirstDay.createdAt).toLocaleString().replace(/\//g, '-').slice(0, 10)
     : 'N/A';
 
+  const { years, months, days } = calculateTimeSinceStart(userFirstDay?.createdAt || new Date());
+
+
   return (
-    <div className='flex items-center gap-3 mt-5 bg-white px-3 py-1 rounded-lg'>
+    <div className='flex items-center gap-3 mt-5 bg-white px-3 py-2 rounded-lg'>
       <div className='min-w-[50px] min-h-[50px] rounded-full border border-gray-500 flex justify-center items-center'>
         <div className='w-full h-full flex justify-center items-center'>
           {session?.user.image ? (
@@ -57,22 +54,18 @@ const Info = ({ cardsCount, userFirstDay }: Props) => {
         </div>
 
         <div className='text-[12px] text-gray-500 mt-1'>
-          {session?.user ? (
+          {session?.user && (
             <div>
               <p>健身開始日 {firstDay as string}</p>
-              <p>健齡 {calculateDaysSinceStart(userFirstDay?.createdAt) || 0} 日</p>
-              <p>已累積 {cardsCount?.length || 0} 次訓練 🔥</p>
+              <p>健齡 {`${years >= 0 ? `${years} 年` : ''} ${months} 個月 ${days}`} 天</p>
+              <p>累積 {cardsCount?.length || 0} 次訓練 🔥</p>
             </div>
-          ) : ('')}
+          )}
         </div>
       </div>
 
       <div>
-        {session?.user ? (
-          <div className='flex items-center'>
-            <Button onClick={handleLogout} variant='outline' size='sm'>登出</Button>
-          </div>
-        ) : (
+        {!session?.user && (
           <Link href="/sign-in">
             <Button variant='outline' size='sm'>登入</Button>
           </Link>

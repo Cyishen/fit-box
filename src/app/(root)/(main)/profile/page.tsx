@@ -20,7 +20,7 @@ const ProfilePage = async () => {
   ]);
 
   return (
-    <section className='flex flex-col bg-[#f3f2f8] h-screen'>
+    <section className='flex flex-col bg-[#f3f2f8] pb-32'>
       <Wrapper>
         <h1 className='text-2xl font-bold mt-5'>設定</h1>
         <Info 

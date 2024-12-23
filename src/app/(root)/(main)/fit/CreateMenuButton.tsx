@@ -23,19 +23,24 @@ const CreateMenuButton = () => {
   return (
     <div
       className='flex items-center justify-between w-full py-3'
-      // style={{
-      //   backgroundImage: `url(${randomBoxImage})`,
-      //   backgroundSize: 'contain',
-      //   backgroundPosition: 'center',
-      //   backgroundRepeat: 'repeat',
-      //   backgroundBlendMode: 'overlay',
-      //   backgroundColor: '#f3f4f6',
-      // }}
+    // style={{
+    //   backgroundImage: `url(${randomBoxImage})`,
+    //   backgroundSize: 'contain',
+    //   backgroundPosition: 'center',
+    //   backgroundRepeat: 'repeat',
+    //   backgroundBlendMode: 'overlay',
+    //   backgroundColor: '#f3f4f6',
+    // }}
     >
       <h1 className='font-bold'>訓練盒</h1>
 
       <Link href='/fit/create-menu'>
-        <Button className='w-fit self-end'>+ 新盒子</Button>
+        <Button
+          size='sm'
+          className='w-fit self-end hover:bg-white hover:text-black'
+        >
+          + 新盒子
+        </Button>
       </Link>
     </div>
   )

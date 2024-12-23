@@ -172,13 +172,14 @@ const LineChart = ({ userYearSummary }: Props) => {
       nameLocation: 'end',
       nameGap: 30,
       axisLabel: {
-        formatter: '{value}kg',
+        formatter: '{value}',
         fontSize: 8,
       },
       nameTextStyle: {
-        align: "left",
+        align: "right",
         fontSize: 12,
-      }
+      },
+      position: 'right'
     },
     dataZoom: [
       {

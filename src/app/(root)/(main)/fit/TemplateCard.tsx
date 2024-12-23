@@ -49,7 +49,7 @@ const TemplateCard = ({ iconSrc, templateCategory, templateTitle, onRemove, temp
           <p className='font-bold capitalize text-sm line-clamp-2 no-select'>{templateTitle}</p>
 
           <div
-            className='flex items-center justify-center hover:bg-gray-300 min-w-5 h-5 rounded-full relative'
+            className='flex items-center justify-center hover:bg-white min-w-5 h-5 rounded-full relative'
             onClick={() => setIsOpen((prev) => !prev)}
           >
             <EllipsisVertical className='w-3' />

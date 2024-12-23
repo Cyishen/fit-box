@@ -93,7 +93,8 @@ const MenuList: React.FC<MenuListProps> = ({
             {/* open modal */}
             <div
               onClick={() => handleOpen(menu.id)}
-              className='bg-white text-black min-w-8 min-h-8 rounded-full flex justify-center items-center'
+              className={`text-black min-w-6 min-h-6 rounded-full flex justify-center items-center hover:bg-white
+                ${selectedMenuId === menu.id ? "bg-white" : ""}`}
             >
               <EllipsisVertical width={14} />
             </div>

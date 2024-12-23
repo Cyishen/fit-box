@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import Wrapper from "@/components/Wrapper";
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react"
+
 
 
 type Props = {
@@ -35,12 +37,15 @@ const MenuForm = ({ type, menu, setMenu, handleSubmit, isLoading }: Props) => {
     <div className='flex pt-10'>
       <Wrapper>
         <form onSubmit={handleSubmit} className="bg-gray-100 p-4 rounded-2xl">
-          <div className="flex justify-between">
-            <Button size='sm' onClick={() => router.back()} className='font-bold'>返回</Button>
+          <div className="flex items-center">
+            <div
+              onClick={() => router.back()}
+              className='p-2 rounded-full w-8 h-8 cursor-pointer bg-white hover:bg-gray-200 flex justify-center items-center'
+            >
+              <ChevronLeft size={16} />
+            </div>
 
-            <h3 className="font-bold">{type}</h3>
-
-            <Button variant='ghost' size='sm' type="button" className='font-bold'>盒子</Button>
+            <h3 className="font-bold pl-2">{type}</h3>
           </div>
 
           <div className="mt-10">

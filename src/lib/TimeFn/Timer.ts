@@ -58,6 +58,31 @@ export const calculateDaysSinceStart = (startDate: string | Date ): number => {
   return diffInDays;
 };
 
+export const calculateTimeSinceStart = (startDate: string | Date): { years: number, months: number, days: number } => {
+  // 將開始日期格式化
+  const start = new Date(typeof startDate === 'string' ? startDate.replace(/\//g, '-') : startDate);
+  const end = new Date();
+
+  // 計算年、月、天
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
+
+  // 調整月份和天數
+  if (days < 0) {
+    months -= 1;
+    const lastMonth = new Date(end.getFullYear(), end.getMonth(), 0);
+    days += lastMonth.getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { years, months, days };
+};
+
+
 // 轉換區間日期
 export function getDateRange(
   timeFrame: string,
@@ -100,7 +125,7 @@ export function getDateRange(
   return { start, end };
 }
 
-// 利用fns轉換區間日期, 比較方便
+// 測試利用fns轉換區間日期
 export function getFnsRange(
   timeFrame: string, 
   startDate: Date, 
