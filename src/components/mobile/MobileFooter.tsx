@@ -18,6 +18,12 @@ const MobileFooter = () => {
             iconHoverSrc="/icons/barIcon-action-on.svg"
             title="動作"
           />
+          <MobileItem
+            href="/post"
+            iconSrc="/icons/barIcon-action.svg"
+            iconHoverSrc="/icons/barIcon-action-on.svg"
+            title="貼文"
+          />
           {/* <MobileItem
             href="/"
             iconSrc="/icons/dumbbell.svg"

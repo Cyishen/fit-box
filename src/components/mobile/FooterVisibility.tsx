@@ -7,7 +7,7 @@ const FooterVisibility = () => {
   const pathname = usePathname();
 
   // 定義主要路由
-  const mainRoutes = ["/fit", "/action", "/record", "/profile"];
+  const mainRoutes = ["/fit", "/action", "/record", "/profile", "/post"];
   const shouldShowFooter = mainRoutes.includes(pathname);
 
   return shouldShowFooter ? <MobileFooter /> : null;
