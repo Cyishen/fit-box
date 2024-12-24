@@ -7,9 +7,9 @@ const PostCard = () => {
   const scrollContainer = useRef(null)
   const [scrolling, setScrolling] = useState(false)
 
-  const handleScroll = (e: any) => {
-    const scrollLeft = e.target.scrollLeft
-    setScrolling(scrollLeft > 0)
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollLeft = (e.target as HTMLDivElement).scrollLeft;
+    setScrolling(scrollLeft > 0);
   }
 
   return (
