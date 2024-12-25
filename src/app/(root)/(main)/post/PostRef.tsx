@@ -4,7 +4,7 @@ const PostRef = () => {
   return (
     <div>
       <div className='flex sm:hidden'>
-        <div className='flex flex-col justify-center w-full min-h-[60px] bg-white border-b'>
+        <div className='flex flex-col justify-center w-full min-h-[20px] bg-white border-b'>
           <div className='p-2'>
             <h2 className='font-bold'>推薦</h2>
           </div>

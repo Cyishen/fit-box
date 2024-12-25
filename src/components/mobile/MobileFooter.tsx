@@ -22,7 +22,7 @@ const MobileFooter = () => {
             href="/post"
             iconSrc="/icons/barIcon-action.svg"
             iconHoverSrc="/icons/barIcon-action-on.svg"
-            title="貼文"
+            title="討論"
           />
           {/* <MobileItem
             href="/"
