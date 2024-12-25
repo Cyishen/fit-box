@@ -4,13 +4,13 @@ import MobileFooter from "@/components/mobile/MobileFooter";
 import { usePathname } from "next/navigation";
 
 import { useScroll, useMotionValueEvent } from "framer-motion";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 
 const FooterVisibility = () => {
   const pathname = usePathname();
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  // 定義主要路由
+  // const timerRef = useRef<NodeJS.Timeout | null>(null);
+  // 定義要顯示Bar路由
   const mainRoutes = ["/fit", "/action", "/record", "/profile", "/post"];
   const shouldShowFooter = mainRoutes.includes(pathname);
 
@@ -29,12 +29,12 @@ const FooterVisibility = () => {
 
     setLastScrollY(latest);
 
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(() => {
-      setScrolled(false);
-    }, 500); 
+    // if (timerRef.current) {
+    //   clearTimeout(timerRef.current);
+    // }
+    // timerRef.current = setTimeout(() => {
+    //   setScrolled(false);
+    // }, 500); 
   })
 
   return (

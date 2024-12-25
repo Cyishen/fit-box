@@ -4,20 +4,14 @@ import PostCard from './PostCard'
 
 const PostList = () => {
   return (
-    <div className='flex flex-col w-full sm:rounded-t-3xl'>
-      <div className='flex sm:hidden'>
-        <div className='flex flex-col justify-center w-full min-h-[60px] bg-white border-b'>
-          <div className='p-2'>
-            <h2 className='font-bold'>推薦</h2>
+    <div className='flex h-full mx-auto w-full max-w-screen-sm overflow-y-scroll sm:rounded-t-3xl sm:border-[0.5px] custom-scrollbar'>
+      <div className='flex flex-col w-full sm:rounded-t-3xl'>
+        {Array.from({ length: 10 }).map((_, index) => (
+          <div key={index}>
+            <PostCard />
           </div>
-        </div>
+        ))}
       </div>
-
-      {Array.from({ length: 10 }).map((_, index) => (
-        <div key={index}>
-          <PostCard />
-        </div>
-      ))}
     </div>
   )
 }

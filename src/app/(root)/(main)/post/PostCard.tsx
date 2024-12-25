@@ -15,9 +15,9 @@ const PostCard = () => {
   return (
     <div className="flex flex-col w-full h-full py-3 border-b-[0.5px] bg-white">
       <div className="flex flex-col w-full">
-        <div className="flex flex-col px-3 sm:px-6">
-          <div className="flex gap-2">
-            <div className="flex min-w-9 min-h-9 ring-offset-0 ring-1 ring-gray-200 rounded-full overflow-hidden">
+        <div className="flex flex-col px-3 sm:px-6 ml-[44px]">
+          <div className="flex gap-2 relative">
+            <div className="flex min-w-9 min-h-9 ring-offset-0 ring-1 ring-gray-200 rounded-full overflow-hidden absolute top-0 -left-11 sm:-left-12">
               <div className="flex w-9 h-9 bg-gray-100"></div>
             </div>
 
@@ -35,7 +35,7 @@ const PostCard = () => {
             </div>
           </div>
 
-          <div className="flex flex-col mt-2 ml-[44px]">
+          <div className="flex flex-col">
             <p className="text-sm line-clamp-2">蛋白質</p>
           </div>
         </div>
@@ -54,7 +54,7 @@ const PostCard = () => {
                   <img
                     src='/posts/post1.jpeg'
                     alt='post1'
-                    className='h-full object-cover'
+                    className='h-full object-fill'
                   />
                 </div>
               </div>
@@ -62,7 +62,7 @@ const PostCard = () => {
           </div>
         </div>
 
-        <div className="flex gap-3 mt-2 text-[10px] h-9 ml-[68px]">
+        <div className="flex gap-5 mt-2 text-[10px] h-9 ml-[56px] sm:ml-[68px]">
           <div className="flex items-center gap-1">
             <Heart size={20} />
             <p>101</p>
