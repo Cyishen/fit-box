@@ -2,25 +2,76 @@
 
 import React from 'react'
 import { Heart, MessageCircle, Bookmark, Ellipsis } from 'lucide-react'
+import Link from 'next/link';
 
-const DCard = () => {
+export type CommentType = {
+  id: string,
+  userId: string,
+  userName: string,
+  userImage?: string,
+  isAnonymous: boolean;
+  gender?: 'male' | 'female';
+  content: string,
+  createdAt: Date,
+  updatedAt: Date,
+}
+
+export interface DCardProps {
+  id: string;
+  userId: string;
+  userName: string;
+  userImage?: string;
+  isAnonymous: boolean;
+  gender?: 'male' | 'female';
+  title: string;
+  content: string;
+  contentImage: string[];
+  like: number;
+  comment: number;
+  bookmark: number;
+  createdAt: Date;
+  updatedAt: Date;
+  tags?: string[];
+  comments: CommentType[]
+}
+
+const DCard = (props: DCardProps) => {
+  const { userName, isAnonymous, title, content, contentImage, like, comment, bookmark, gender } = props
+
+  const displayName = isAnonymous ? '匿名' : userName;
+
   return (
-    <div className="flex flex-col w-full h-full py-3 border-b-[0.5px] bg-white">
+    <Link
+      href={`/post/${props.id}`}
+      className="flex flex-col w-full h-full py-3 border-b-[0.5px] bg-white hover:bg-gray-50"
+    >
       <div className="flex flex-col w-full">
         <div className="flex flex-col px-3 sm:px-6">
-          <div className="flex gap-2 items-center">
-            <div className="flex min-w-6 min-h-6 ring-offset-0 ring-1 ring-gray-200 rounded-full overflow-hidden">
-              <div className="flex w-6 h-6 bg-gray-100"></div>
+          <div className="flex gap-2 py-0">
+            <div className="flex w-5 h-5 min-w-5 min-h-5 ring-offset-1 ring-[0.5px] ring-gray-500 rounded-full overflow-hidden">
+              <div className="flex items-center justify-center min-w-5 min-h-5 bg-gray-100">
+                <img
+                  src={gender === 'male'
+                    ? '/posts/boy.svg'
+                    : (gender === 'female'
+                      ? '/posts/girl.svg'
+                      : '/posts/baby.svg'
+                    )}
+                  alt="gender"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
 
             <div className="flex w-full">
               <div className="flex justify-between w-full">
                 <div className="flex gap-2">
-                  <p className="text-sm font-bold">Cyi</p>
-                  <p className="text-sm text-gray-500">10分鐘</p>
+                  <p className="text-[12px] font-bold capitalize">{displayName}</p>
                 </div>
-                <div className="flex justify-end">
-                  <Ellipsis size={16} className="text-gray-500" />
+                <div className="flex justify-end rounded-full w-5 h-5 overflow-hidden cursor-pointer">
+                  <div className='flex justify-center items-center w-5 h-5 hover:bg-gray-100'>
+                    <Ellipsis size={14} className="text-gray-500" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -31,35 +82,41 @@ const DCard = () => {
           <div className='flex justify-between gap-1'>
             <div className='flex flex-col'>
               <div className="flex flex-col">
-                <p className="text-base line-clamp-1 font-bold">蛋白質蛋白質蛋白質蛋白質蛋白質蛋白質蛋白質</p>
-                <p className="text-sm line-clamp-1">蛋白質蛋白質蛋白質蛋白質蛋白質蛋白質蛋白質</p>
+                <p className="text-base line-clamp-1 font-bold">{title}</p>
+                <p className="text-sm line-clamp-1">{content}</p>
               </div>
 
               <div className="flex gap-5 mt-3 text-[10px]">
                 <div className="flex items-center gap-1">
-                  <Heart size={20} />
-                  <p>101</p>
+                  <Heart size={16} fill='#f87171' stroke='#f87171' />
+                  <p>{like}</p>
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <MessageCircle size={20} />
-                  <p>123</p>
+                  <MessageCircle size={16} className='transform -scale-x-100' />
+                  <p>{comment}</p>
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <Bookmark size={20} />
-                  <p>11</p>
+                  <Bookmark size={16} fill='#f3f3f3' />
+                  <p>{bookmark}</p>
                 </div>
               </div>
             </div>
 
-            <div className="h-20 min-w-20 bg-gray-100 rounded-lg overflow-hidden">
-              <img src='/posts/post1.jpeg' alt="setting" className='w-full h-full object-fill' />
-            </div>
+            {contentImage.length > 0 && (
+              <div className="h-20 min-w-20 max-w-20 bg-gray-100 rounded-lg overflow-hidden">
+                <img
+                  src={contentImage.length > 0 ? contentImage[0] : ''}
+                  alt="setting"
+                  className='w-full h-full object-cover'
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

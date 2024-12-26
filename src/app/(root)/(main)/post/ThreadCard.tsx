@@ -3,7 +3,7 @@
 import { Heart, MessageCircle, Bookmark, Ellipsis } from 'lucide-react'
 import React, { useState, useRef } from 'react'
 
-const PostCard = () => {
+const ThreadCard = () => {
   const scrollContainer = useRef(null)
   const [scrolling, setScrolling] = useState(false)
 
@@ -83,4 +83,4 @@ const PostCard = () => {
   );
 };
 
-export default PostCard;
+export default ThreadCard;
