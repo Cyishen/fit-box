@@ -7,7 +7,7 @@ interface CardDetailProps {
 }
 
 const CardDetailLike = ({ post }: CardDetailProps) => {
-  if (!post) return
+  if (!post) return null
   const { like, comment, bookmark } = post
 
   const [likeCount, setLikeCount] = useState(like);
