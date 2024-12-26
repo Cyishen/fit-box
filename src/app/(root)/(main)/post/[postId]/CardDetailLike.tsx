@@ -7,28 +7,28 @@ interface CardDetailProps {
 }
 
 const CardDetailLike = ({ post }: CardDetailProps) => {
-  if (!post) return null
-  const { like, comment, bookmark } = post
-
-  const [likeCount, setLikeCount] = useState(like);
+  const [likeCount, setLikeCount] = useState(post?.like);
   const [isLiked, setIsLiked] = useState(false)
-  const [saveCount, setSaveCount] = useState(bookmark);
+  const [saveCount, setSaveCount] = useState(post?.bookmark);
   const [isSaved, setIsSaved] = useState(false)
+
+  if (!post) return null
+  const { comment } = post
 
   const handleLike = () => {
     if (!isLiked) {
-      setLikeCount((prev) => prev + 1);
+      setLikeCount((prev) => prev! + 1);
     } else {
-      setLikeCount((prev) => Math.max(prev - 1, 0));
+      setLikeCount((prev) => Math.max(prev! - 1, 0));
     }
     setIsLiked(!isLiked);
   };
 
   const handleSave = () => {
     if(!isSaved) {
-      setSaveCount((prev) => prev + 1)
+      setSaveCount((prev) => prev! + 1)
     } else {
-      setSaveCount((prev) => Math.max(prev - 1, 0));
+      setSaveCount((prev) => Math.max(prev! - 1, 0));
     }
     setIsSaved(!isSaved)
   }
