@@ -4,21 +4,23 @@ import { multiFormatDateString } from '@/lib/TimeFn/Timer'
 
 
 interface ChatProps {
-  data: CommentType
+  commentData: CommentType
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const CommentCard = ({ data }: ChatProps) => {
-  const { id, gender, userName, content, createdAt, replays } = data;
+const CommentCard = ({ commentData, setIsOpen }: ChatProps) => {
+  const { id, gender, userName, content, createdAt, replays } = commentData;
 
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
+
   const handleToggleExercise = (id: string) => {
     setOpenCommentId((prev) => (prev === id ? null : id));
   };
 
-  const isOpen = openCommentId === id;
+  const isOpenComment = openCommentId === id;
 
   return (
-    <div className={`flex gap-2 ${isOpen ? 'h-full' : 'h-fit'}`}>
+    <div className={`flex gap-2 ${isOpenComment ? 'h-full' : 'h-fit'}`}>
       <div className="flex w-8 h-8 min-w-8 min-h-8 rounded-full overflow-hidden">
         <div className={`flex items-center justify-center min-w-8 min-h-8 
           ${gender === 'male' ? 'bg-blue-50' : 'bg-pink-50'}`}
@@ -52,9 +54,11 @@ const CommentCard = ({ data }: ChatProps) => {
             </p>
           </div>
 
-          <p className="text-[12px] text-gray-500 cursor-pointer px-2 rounded-sm">
-            回覆
-          </p>
+          <div className="text-[12px] text-gray-500 cursor-pointer px-2 rounded-sm" 
+            onClick={() => setIsOpen(true)}
+          >
+            <p>回覆</p>
+          </div>
         </div>
 
         {replays && replays?.length > 0 && (
@@ -69,7 +73,7 @@ const CommentCard = ({ data }: ChatProps) => {
               </p>
             </div>
 
-            {isOpen && replays && replays?.length > 0 && (
+            {isOpenComment && replays && replays?.length > 0 && (
               replays.map((replay) => (
                 <div key={replay.id} className='flex flex-col w-full mt-1'>
                   <div className={`flex gap-2`}>

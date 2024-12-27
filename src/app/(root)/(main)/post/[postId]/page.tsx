@@ -19,7 +19,7 @@ const PostContentPage = ({ params }: { params: { postId: string } }) => {
   }, [postId])
 
   return (
-    <section className='flex flex-col bg-white sm:bg-[#f3f2f8] h-dvh relative pb-5'>
+    <section className='flex flex-col bg-white sm:bg-[#f3f2f8] h-dvh relative'>
       <CardDetail post={post}/>
     </section>
   )

@@ -1,12 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { DCardProps } from '../DCard';
 import CommentCard from './CommentCard';
+
+import CommentSheet from './CommentSheet';
+
+
 
 interface CardDetailProps {
   post: DCardProps | null;
 }
 
 const CardDetailCommentList = ({ post }: CardDetailProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   if (!post) return
   const { comments } = post
 
@@ -17,9 +23,9 @@ const CardDetailCommentList = ({ post }: CardDetailProps) => {
       </div>
 
       <div className='mt-1 px-2 sm:px-3 py-3 bg-white'>
-        {comments?.map((data) => (
-          <div key={data.id} className='flex flex-col py-2 border-b'>
-            <CommentCard data={data}/>
+        {comments?.map((comment) => (
+          <div key={comment.id} className='flex flex-col py-2 border-b'>
+            <CommentCard commentData={comment} setIsOpen={setIsOpen}/>
           </div>
         ))}
       </div>
@@ -31,10 +37,16 @@ const CardDetailCommentList = ({ post }: CardDetailProps) => {
               placeholder='留言'
               className="text-base placeholder:text-sm placeholder:text-gray-400 bg-gray-100 outline-none"
               type={'text'}
+              onClick={() => setIsOpen(true)}
             />
           </div>
         </div>
       </div>
+
+      <CommentSheet
+        isOpen={isOpen}
+        setIsOpen={setIsOpen} 
+      />
     </div>
   )
 }
