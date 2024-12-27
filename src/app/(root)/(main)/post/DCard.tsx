@@ -4,6 +4,18 @@ import React from 'react'
 import { Heart, MessageCircle, Bookmark, Ellipsis } from 'lucide-react'
 import Link from 'next/link';
 
+type ReplyType = {
+  id: string,
+  userId: string,
+  userName: string,
+  userImage?: string,
+  isAnonymous: boolean;
+  gender?: 'male' | 'female';
+  content: string,
+  createdAt: Date,
+  updatedAt: Date,
+}
+
 export type CommentType = {
   id: string,
   userId: string,
@@ -14,6 +26,7 @@ export type CommentType = {
   content: string,
   createdAt: Date,
   updatedAt: Date,
+  replays?: ReplyType[]
 }
 
 export interface DCardProps {
@@ -27,18 +40,18 @@ export interface DCardProps {
   content: string;
   contentImage: string[];
   like: number;
-  comment: number;
   bookmark: number;
   createdAt: Date;
   updatedAt: Date;
   tags?: string[];
-  comments: CommentType[]
+  comments?: CommentType[]
 }
 
 const DCard = (props: DCardProps) => {
-  const { userName, isAnonymous, title, content, contentImage, like, comment, bookmark, gender } = props
+  const { userName, isAnonymous, title, content, contentImage, like, bookmark, gender, comments } = props
 
   const displayName = isAnonymous ? '匿名' : userName;
+
 
   return (
     <Link
@@ -94,7 +107,7 @@ const DCard = (props: DCardProps) => {
 
                 <div className="flex items-center gap-1">
                   <MessageCircle size={16} className='transform -scale-x-100' />
-                  <p>{comment}</p>
+                  <p>{comments?.length}</p>
                 </div>
 
                 <div className="flex items-center gap-1">

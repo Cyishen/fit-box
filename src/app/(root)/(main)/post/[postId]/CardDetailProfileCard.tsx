@@ -15,8 +15,8 @@ const CardDetailProfileCard = ({ post }: CardDetailProps) => {
     <div className='py-1'>
       {!isAnonymous && (
         <div className='flex w-full px-2 sm:px-3 group'>
-          <div className='flex border p-3 w-full rounded-lg h-20 gap-2 group-hover:bg-gray-50 cursor-pointer'>
-            <div className="flex w-fit rounded-full border overflow-hidden">
+          <div className='flex border p-3 w-full rounded-lg h-20 gap-2 group-hover:bg-gray-50 cursor-pointer '>
+            <div className="flex min-w-fit rounded-full shadow-md overflow-hidden">
               <div className="flex w-full h-full mt-0">
                 <img
                   src={gender === 'male'
@@ -26,7 +26,8 @@ const CardDetailProfileCard = ({ post }: CardDetailProps) => {
                       : '/posts/baby.svg'
                     )}
                   alt={gender}
-                  className="w-full h-full object-cover overflow-hidden group-hover:bg-pink-100"
+                  className={`w-full h-full object-cover overflow-hidden 
+                    ${gender === 'male' ? 'group-hover:bg-blue-200' : 'group-hover:bg-pink-200'}`}
                 />
               </div>
             </div>

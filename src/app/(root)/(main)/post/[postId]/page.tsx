@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import CardDetail from './CardDetail'
-import { FakeCardData } from '../PostList'
+import { generateFakeCardData } from '../PostList'
 import { DCardProps } from '../DCard'
 
 
@@ -12,13 +12,14 @@ const PostContentPage = ({ params }: { params: { postId: string } }) => {
 
   useEffect(() => {
     if(postId) {
-      const findPost = FakeCardData.find(post => post.id === postId)
+      const fakeCard = generateFakeCardData()
+      const findPost = fakeCard.find(post => post.id === postId)
       setPost(findPost || null)
     }
   }, [postId])
 
   return (
-    <section className='flex flex-col bg-white sm:bg-[#f3f2f8] h-dvh relative'>
+    <section className='flex flex-col bg-white sm:bg-[#f3f2f8] h-dvh relative pb-5'>
       <CardDetail post={post}/>
     </section>
   )

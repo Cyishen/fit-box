@@ -13,7 +13,7 @@ const CardDetailLike = ({ post }: CardDetailProps) => {
   const [isSaved, setIsSaved] = useState(false)
 
   if (!post) return null
-  const { comment } = post
+  const { comments } = post
 
   const handleLike = () => {
     if (!isLiked) {
@@ -44,7 +44,7 @@ const CardDetailLike = ({ post }: CardDetailProps) => {
 
           <div className="flex items-center gap-1">
             <MessageCircle size={18} className='transform -scale-x-100' />
-            <p>{comment}</p>
+            <p>{comments?.length}</p>
           </div>
 
           <div className="flex items-center gap-1">

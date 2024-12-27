@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { DCardProps } from '../DCard';
+import { multiFormatDateString } from '@/lib/TimeFn/Timer';
 
 interface CardDetailProps {
   post: DCardProps | null;
@@ -43,7 +44,7 @@ const CardDetailTop = ({ post }: CardDetailProps) => {
 
         <div className='flex flex-col'>
           <p className='text-[12px] capitalize font-semibold'>{displayName}</p>
-          <p className='text-[12px] text-gray-400'>{createdAt.toLocaleDateString()}</p>
+          <p className='text-[12px] text-gray-400'>{multiFormatDateString(createdAt.toLocaleDateString())}</p>
         </div>
 
         {!isAnonymous && (

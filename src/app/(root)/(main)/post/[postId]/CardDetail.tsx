@@ -7,7 +7,7 @@ import CardDetailTop from './CardDetailTop'
 import CardDetailContent from './CardDetailContent'
 import CardDetailProfileCard from './CardDetailProfileCard'
 import CardDetailLike from './CardDetailLike'
-import CardDetailChat from './CardDetailChat'
+import CardDetailCommentList from './CardDetailCommentList'
 
 
 interface CardDetailProps {
@@ -20,10 +20,9 @@ const CardDetail = ({ post }: CardDetailProps) => {
 
   if (!post) return
 
-
   return (
-    <div className='flex flex-col h-full mx-auto w-full max-w-screen-sm overflow-y-scroll sm:rounded-3xl sm:border-[0.5px] custom-scrollbar sm:mt-[60px] pb-20 bg-white'>
-      <div className='sticky top-0 flex items-center justify-between bg-white p-2 sm:p-3'>
+    <div className='flex flex-col h-full mx-auto w-full max-w-screen-sm overflow-y-scroll sm:rounded-3xl sm:border-[0.5px] custom-scrollbar sm:mt-[60px] pb-0 bg-white'>
+      <div className='sticky top-0 flex items-center justify-between z-20 bg-white p-2 sm:p-3'>
         <div
           onClick={() => router.back()}
           className='p-2 rounded-full cursor-pointer bg-gray-100'
@@ -41,8 +40,8 @@ const CardDetail = ({ post }: CardDetailProps) => {
       <CardDetailTop post={post} />
       <CardDetailContent post={post} />
       <CardDetailProfileCard post={post} />
-      <CardDetailLike post={post}/>
-      <CardDetailChat post={post}/>
+      <CardDetailLike post={post} />
+      <CardDetailCommentList post={post} />
     </div>
   )
 }
