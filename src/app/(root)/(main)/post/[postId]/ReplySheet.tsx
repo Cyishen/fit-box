@@ -1,45 +1,28 @@
 import BottomCommentSheet from '@/components/BottomCommentSheet'
-import React, { ChangeEvent, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Sticker, Image } from 'lucide-react';
-import { CommentType } from '../DCard';
-
 
 type Props = {
+  id?: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  newComment: (newComment: CommentType) => void;
-  commentData: CommentType[]
 }
 
-const CommentSheet = ({ isOpen, setIsOpen, newComment, commentData }: Props) => {
+const ReplySheet = ({ isOpen, setIsOpen, id }: Props) => {
   const [message, setMessage] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const { value } = e.target;
-    setMessage(value);
-  };
+  useEffect(() => {
+    if (id) {
+      setMessage(`${id} `);
+    }
+  }, [id]);
 
-  const handleSubmit = () => {
-    if (!message.trim()) return;
-
-    const newCommentData: CommentType = {
-      id: `B${commentData.length + 1}`, 
-      userId: 'a1',
-      userImage: '',
-      isAnonymous: false,
-      userName: 'User',    
-      gender: 'male',       
-      content: message,  
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      replies: []
-    };
-
-    newComment(newCommentData);
-
-    setMessage('');
-    setIsOpen(false);
-  };
+  useEffect(() => {
+    if (isOpen && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isOpen]);
 
   return (
     <BottomCommentSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
@@ -59,12 +42,13 @@ const CommentSheet = ({ isOpen, setIsOpen, newComment, commentData }: Props) => 
 
           <div className='flex px-10 py-2 rounded-lg cursor-pointer w-full mt-3' >
             <textarea
+              ref={textareaRef}
               name="message"
               required
               rows={1}
               value={message}
-              onChange={handleChange}
-              placeholder="留言..."
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="回覆..."
               className="flex w-full focus:outline-none text-sm bg-white"
               onInput={(e) => {
                 const target = e.target as HTMLTextAreaElement;
@@ -85,7 +69,7 @@ const CommentSheet = ({ isOpen, setIsOpen, newComment, commentData }: Props) => 
               </div>
             </div>
             <div>
-              <button className='px-3 py-0 rounded-lg text-sm' onClick={handleSubmit}>
+              <button className='flex px-3 rounded-sm text-sm border'>
                 送出
               </button>
             </div>
@@ -96,4 +80,4 @@ const CommentSheet = ({ isOpen, setIsOpen, newComment, commentData }: Props) => 
   )
 }
 
-export default CommentSheet
+export default ReplySheet

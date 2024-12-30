@@ -3,7 +3,7 @@ import DCard, { DCardProps } from './DCard'
 
 export const generateFakeCardData = (): DCardProps[] => {
   const generateCommentId = (index: number) => `B${index + 1}`;
-  const generateReplayId = (commentId: string, index: number) => `${commentId}-${index + 1}`;
+  const generateReplyId = (commentId: string, index: number) => `${commentId}-${index + 1}`;
 
   return [
     {
@@ -32,26 +32,26 @@ export const generateFakeCardData = (): DCardProps[] => {
           content: '留言1',
           createdAt: new Date(),
           updatedAt: new Date(),
-          replays: [
+          replies: [
             {
-              id: generateReplayId('B1', 0),
+              id: generateReplyId('B1', 0),
               userId: 'a1',
               userName: 'cyi',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
-              content: '回覆留言1',
+              content: '回覆1',
               createdAt: new Date(),
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 1),
+              id: generateReplyId('B1', 1),
               userId: 'a2',
               userName: 'Rose',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'female',
-              content: '回覆留言2',
+              content: '回覆2',
               createdAt: new Date(),
               updatedAt: new Date(),
             },
@@ -67,15 +67,15 @@ export const generateFakeCardData = (): DCardProps[] => {
           content: '留言2',
           createdAt: new Date(),
           updatedAt: new Date(),
-          replays: [
+          replies: [
             {
-              id: generateReplayId('B1', 0),
+              id: generateReplyId('B2', 0),
               userId: 'a1',
               userName: 'Cyi2',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
-              content: '回覆留言1',
+              content: '回覆1',
               createdAt: new Date(),
               updatedAt: new Date(),
             },
@@ -111,7 +111,7 @@ export const generateFakeCardData = (): DCardProps[] => {
           content: '回覆內文',
           createdAt: new Date(),
           updatedAt: new Date(),
-          replays: []
+          replies: []
         }
       ]
     },
@@ -142,11 +142,11 @@ export const generateFakeCardData = (): DCardProps[] => {
           content: '回覆內文',
           createdAt: new Date(),
           updatedAt: new Date(),
-          replays: [
+          replies: [
             {
-              id: generateReplayId('B1', 0),
+              id: generateReplyId('B1', 0),
               userId: 'a1',
-              userName: 'Cyi2',
+              userName: 'Cyi1',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -155,20 +155,20 @@ export const generateFakeCardData = (): DCardProps[] => {
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 1),
+              id: generateReplyId('B1', 1),
               userId: 'a1',
               userName: 'Cyi2',
               userImage: '/icons/',
-              isAnonymous: false,
+              isAnonymous: true,
               gender: 'male',
               content: '回覆留言2',
               createdAt: new Date(),
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 2),
+              id: generateReplyId('B1', 2),
               userId: 'a1',
-              userName: 'Cyi2',
+              userName: 'Cyi3',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -177,9 +177,9 @@ export const generateFakeCardData = (): DCardProps[] => {
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 3),
+              id: generateReplyId('B1', 3),
               userId: 'a1',
-              userName: 'Cyi2',
+              userName: 'Cyi4',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -188,9 +188,9 @@ export const generateFakeCardData = (): DCardProps[] => {
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 4),
+              id: generateReplyId('B1', 4),
               userId: 'a1',
-              userName: 'Cyi2',
+              userName: 'Cyi5',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -199,9 +199,9 @@ export const generateFakeCardData = (): DCardProps[] => {
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 5),
+              id: generateReplyId('B1', 5),
               userId: 'a1',
-              userName: 'Cyi2',
+              userName: 'Cyi6',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -210,9 +210,9 @@ export const generateFakeCardData = (): DCardProps[] => {
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 6),
+              id: generateReplyId('B1', 6),
               userId: 'a1',
-              userName: 'Cyi2',
+              userName: 'Cyi7',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -221,9 +221,9 @@ export const generateFakeCardData = (): DCardProps[] => {
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 7),
+              id: generateReplyId('B1', 7),
               userId: 'a1',
-              userName: 'Cyi2',
+              userName: 'Cyi8',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -232,20 +232,20 @@ export const generateFakeCardData = (): DCardProps[] => {
               updatedAt: new Date(),
             },
             {
-              id: generateReplayId('B1', 8),
-              userId: 'a1',
-              userName: 'Cyi2',
-              userImage: '/icons/',
-              isAnonymous: false,
-              gender: 'male',
-              content: '回覆留言3',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-            {
-              id: generateReplayId('B1', 9),
+              id: generateReplyId('B1', 8),
               userId: 'a1',
               userName: 'Cyi9',
+              userImage: '/icons/',
+              isAnonymous: false,
+              gender: 'male',
+              content: '回覆留言3',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+            {
+              id: generateReplyId('B1', 9),
+              userId: 'a1',
+              userName: 'Cyi10',
               userImage: '/icons/',
               isAnonymous: false,
               gender: 'male',
@@ -260,12 +260,12 @@ export const generateFakeCardData = (): DCardProps[] => {
           userId: 'a1',
           userName: 'user1',
           userImage: '/icons/',
-          isAnonymous: false,
+          isAnonymous: true,
           gender: 'male',
           content: '回覆內文',
           createdAt: new Date(),
           updatedAt: new Date(),
-          replays: []
+          replies: []
         },
         {
           id: generateCommentId(2),
@@ -277,181 +277,12 @@ export const generateFakeCardData = (): DCardProps[] => {
           content: '回覆內文',
           createdAt: new Date(),
           updatedAt: new Date(),
-          replays: []
-        },
-        {
-          id: generateCommentId(3),
-          userId: 'a1',
-          userName: 'user1',
-          userImage: '/icons/',
-          isAnonymous: false,
-          gender: 'male',
-          content: '回覆內文',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          replays: []
-        },
-        {
-          id: generateCommentId(4),
-          userId: 'a1',
-          userName: 'user1',
-          userImage: '/icons/',
-          isAnonymous: false,
-          gender: 'male',
-          content: '回覆內文',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          replays: []
-        },
-        {
-          id: generateCommentId(5),
-          userId: 'a1',
-          userName: 'user1',
-          userImage: '/icons/',
-          isAnonymous: false,
-          gender: 'male',
-          content: '回覆內文',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          replays: []
-        },
-        {
-          id: generateCommentId(6),
-          userId: 'a1',
-          userName: 'user1',
-          userImage: '/icons/',
-          isAnonymous: false,
-          gender: 'male',
-          content: '回覆內文',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          replays: []
+          replies: []
         }
       ]
     },
   ];
 };
-
-
-// export const FakeCardData: DCardProps[] = [
-//   {
-//     id: 'post1',
-//     userId: 'a1',
-//     userName: 'user1',
-//     isAnonymous: true,
-//     gender: 'male',
-//     userImage: '/icons/',
-//     title: '測試標題1 高蛋白飲食',
-//     content: '內文測試內文測試內文測試內文測試內文測試內文測試內文測試內文測試',
-//     contentImage: [
-//       '/posts/post2.jpeg',
-//       '/posts/post1.jpeg',
-//     ],
-//     like: 14,
-//     bookmark: 0,
-//     createdAt: new Date(),
-//     updatedAt: new Date(),
-//     tags: ['蛋白質', '雞蛋'],
-//     comments: [
-//       {
-//         id: 'B1',
-//         userId: 'a1',
-//         userName: 'cyi',
-//         userImage: '/icons/',
-//         isAnonymous: false,
-//         gender: 'male',
-//         content: '留言1',
-//         createdAt: new Date(),
-//         updatedAt: new Date(),
-//         replays: [
-//           {
-//             id: `${'B1'}-1`,
-//             userId: 'a1',
-//             userName: 'cyi',
-//             userImage: '/icons/',
-//             isAnonymous: false,
-//             gender: 'male',
-//             content: '回覆留言1',
-//             createdAt: new Date(),
-//             updatedAt: new Date(),
-//           }
-//         ]
-//       },
-//       {
-//         id: 'B2',
-//         userId: 'a2',
-//         userName: 'Lin',
-//         userImage: '/icons/',
-//         isAnonymous: false,
-//         gender: 'female',
-//         content: '留言2',
-//         createdAt: new Date(),
-//         updatedAt: new Date(),
-//       }
-//     ]
-//   },
-//   {
-//     id: 'post2',
-//     userId: 'a1',
-//     userName: 'user2',
-//     isAnonymous: false,
-//     gender: 'female',
-//     userImage: '/icons/',
-//     title: '測試標題2 乳清推薦',
-//     content: '內文測試',
-//     contentImage: [
-//       '/posts/post1.jpeg',
-//     ],
-//     like: 16,
-//     bookmark: 0,
-//     createdAt: new Date(),
-//     updatedAt: new Date(),
-//     tags: ['乳清', '蛋白質'],
-//     comments: [
-//       {
-//         id: 'B1',
-//         userId: 'a1',
-//         userName: 'user1',
-//         userImage: '/icons/',
-//         isAnonymous: false,
-//         gender: 'male',
-//         content: '回覆內文',
-//         createdAt: new Date(),
-//         updatedAt: new Date(),
-//       }
-//     ]
-//   },
-//   {
-//     id: 'post3',
-//     userId: 'a1',
-//     userName: 'user2',
-//     isAnonymous: false,
-//     gender: 'male',
-//     userImage: '/icons/',
-//     title: '測試標題2 乳清推薦',
-//     content: '內文測試',
-//     contentImage: [
-//     ],
-//     like: 16,
-//     bookmark: 0,
-//     createdAt: new Date(),
-//     updatedAt: new Date(),
-//     tags: ['tag3', 'tag2'],
-//     comments: [
-//       {
-//         id: 'B1',
-//         userId: 'a1',
-//         userName: 'user1',
-//         userImage: '/icons/',
-//         isAnonymous: false,
-//         gender: 'male',
-//         content: '回覆內文',
-//         createdAt: new Date(),
-//         updatedAt: new Date(),
-//       },
-//     ]
-//   },
-// ]
 
 
 const PostList = () => {

@@ -4,7 +4,7 @@ import React from 'react'
 import { Heart, MessageCircle, Bookmark, Ellipsis } from 'lucide-react'
 import Link from 'next/link';
 
-type ReplyType = {
+export type ReplyType = {
   id: string,
   userId: string,
   userName: string,
@@ -26,7 +26,7 @@ export type CommentType = {
   content: string,
   createdAt: Date,
   updatedAt: Date,
-  replays?: ReplyType[]
+  replies?: ReplyType[]
 }
 
 export interface DCardProps {
