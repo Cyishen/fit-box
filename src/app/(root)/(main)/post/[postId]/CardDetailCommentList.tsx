@@ -33,12 +33,12 @@ const CardDetailCommentList = ({ post }: CardDetailProps) => {
       <div className='sticky bottom-0 flex items-center z-20 bg-white p-2 sm:p-3'>
         <div className='flex items-center w-full gap-2'>
           <div className='flex-1 px-3 py-1 rounded-full cursor-pointer bg-gray-100 w-full' >
-            <input
-              placeholder='留言'
-              className="text-base placeholder:text-sm placeholder:text-gray-400 bg-gray-100 outline-none"
-              type={'text'}
+            <button 
+              className='flex justify-start text-gray-400 text-sm w-full' 
               onClick={() => setIsOpen(true)}
-            />
+            >
+              留言...
+            </button>
           </div>
         </div>
       </div>

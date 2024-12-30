@@ -13,14 +13,14 @@ const CommentCard = ({ commentData, setIsOpen }: ChatProps) => {
 
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
 
-  const handleToggleExercise = (id: string) => {
+  const handleToggleReplay = (id: string) => {
     setOpenCommentId((prev) => (prev === id ? null : id));
   };
 
-  const isOpenComment = openCommentId === id;
+  const isOpenReplay = openCommentId === id;
 
   return (
-    <div className={`flex gap-2 ${isOpenComment ? 'h-full' : 'h-fit'}`}>
+    <div className={`flex gap-2 ${isOpenReplay ? 'h-full' : 'h-fit'}`}>
       <div className="flex w-8 h-8 min-w-8 min-h-8 rounded-full overflow-hidden">
         <div className={`flex items-center justify-center min-w-8 min-h-8 
           ${gender === 'male' ? 'bg-blue-50' : 'bg-pink-50'}`}
@@ -54,17 +54,18 @@ const CommentCard = ({ commentData, setIsOpen }: ChatProps) => {
             </p>
           </div>
 
-          <div className="text-[12px] text-gray-500 cursor-pointer px-2 rounded-sm" 
+          <button 
+            className="text-[12px] text-gray-500 px-2 rounded-sm" 
             onClick={() => setIsOpen(true)}
           >
             <p>回覆</p>
-          </div>
+          </button>
         </div>
 
         {replays && replays?.length > 0 && (
           <div
             className="flex flex-col items-center mt-1 cursor-pointer"
-            onClick={() => handleToggleExercise(id)}
+            onClick={() => handleToggleReplay(id)}
           >
             <div className="flex items-center w-full gap-1">
               <hr className='flex w-10' />
@@ -73,7 +74,7 @@ const CommentCard = ({ commentData, setIsOpen }: ChatProps) => {
               </p>
             </div>
 
-            {isOpenComment && replays && replays?.length > 0 && (
+            {isOpenReplay && replays && replays?.length > 0 && (
               replays.map((replay) => (
                 <div key={replay.id} className='flex flex-col w-full mt-1'>
                   <div className={`flex gap-2`}>
@@ -116,8 +117,6 @@ const CommentCard = ({ commentData, setIsOpen }: ChatProps) => {
             )}
           </div>
         )}
-
-
       </div>
     </div>
   )

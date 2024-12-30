@@ -12,16 +12,16 @@ const BottomCommentSheet = ({ isOpen, onClose, children }: BottomSheetProps) => 
       onClick={onClose}
     >
       <div
-        className={`fixed bottom-0 left-0 right-0 bg-gray-100 rounded-t-xl shadow-lg transform ${isOpen ? "translate-y-0" : "translate-y-full"
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-lg transform ${isOpen ? "translate-y-0" : "translate-y-full"
           } transition-transform duration-300`}
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxHeight: '30%',
-          minHeight: '30%',
+          maxHeight: '35%',
+          minHeight: '35%',
           overflowY: 'auto'
         }}
       >
-        <div className='flex justify-end sticky top-0 px-4 bg-gray-100 h-10'>
+        <div className='flex justify-end sticky top-0 px-4 bg-white h-10'>
           <button
             type='button'
             onClick={onClose}
