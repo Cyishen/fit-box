@@ -7,11 +7,11 @@ import { CommentType } from '../DCard';
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  newComment: (newComment: CommentType) => void;
+  addNewComment: (newComment: CommentType) => void;
   commentData: CommentType[]
 }
 
-const CommentSheet = ({ isOpen, setIsOpen, newComment, commentData }: Props) => {
+const CommentSheet = ({ isOpen, setIsOpen, addNewComment, commentData }: Props) => {
   const [message, setMessage] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -25,9 +25,9 @@ const CommentSheet = ({ isOpen, setIsOpen, newComment, commentData }: Props) => 
     const newCommentData: CommentType = {
       id: `B${commentData.length + 1}`, 
       userId: 'a1',
+      userName: 'User',  
       userImage: '',
       isAnonymous: false,
-      userName: 'User',    
       gender: 'male',       
       content: message,  
       createdAt: new Date(),
@@ -35,7 +35,7 @@ const CommentSheet = ({ isOpen, setIsOpen, newComment, commentData }: Props) => 
       replies: []
     };
 
-    newComment(newCommentData);
+    addNewComment(newCommentData);
 
     setMessage('');
     setIsOpen(false);

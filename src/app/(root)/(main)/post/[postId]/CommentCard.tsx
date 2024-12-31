@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CommentType } from '../DCard'
+import { CommentType, ReplyType } from '../DCard'
 import { multiFormatDateString } from '@/lib/TimeFn/Timer'
 import ReplyCard from './ReplyCard'
 import ReplySheet from './ReplySheet'
@@ -13,7 +13,13 @@ const CommentCard = ({ commentData }: ChatProps) => {
   const [isReply, setIsReply] = useState(false);
   const { id, gender, userName, content, createdAt, replies, isAnonymous } = commentData;
 
+  const [replyData, setReplyData] = useState<ReplyType[]>(replies || [])
   const [openCommentId, setOpenCommentId] = useState<string | null>(null);
+
+  const addNewReply = (newReply: ReplyType) => {
+    const updatedReply = [...replyData as ReplyType[], newReply]
+    setReplyData(updatedReply)
+  }
 
   const handleToggleReplay = (id: string) => {
     setOpenCommentId((prev) => (prev === id ? null : id));
@@ -65,7 +71,7 @@ const CommentCard = ({ commentData }: ChatProps) => {
           </button>
         </div>
 
-        {replies && replies?.length > 0 && (
+        {replyData && replyData?.length > 0 && (
           <div className="flex flex-col items-center mt-1 cursor-pointer" >
             <div 
               className="flex items-center w-full gap-1" 
@@ -73,13 +79,13 @@ const CommentCard = ({ commentData }: ChatProps) => {
             >
               <hr className='flex w-10' />
               <p className="text-gray-500 text-[12px] font-semibold" >
-                查看 {replies?.length} 留言
+                查看 {replyData?.length} 留言
               </p>
             </div>
 
             {isOpenReplay && (
-              replies.map((reply) => (
-                <ReplyCard key={reply.id} reply={reply} />
+              replyData.map((reply) => (
+                <ReplyCard key={reply.id} reply={reply} addNewReply={addNewReply} replyData={replyData}/>
               ))
             )}
           </div>
@@ -90,6 +96,8 @@ const CommentCard = ({ commentData }: ChatProps) => {
         id={id}
         isOpen={isReply} 
         setIsOpen={setIsReply} 
+        addNewReply={addNewReply}
+        replyData={replyData}
       />
     </div>
   )

@@ -49,10 +49,10 @@ const CardDetailCommentList = ({ post }: CardDetailProps) => {
       </div>
 
       <CommentSheet
-        commentData={commentData}
-        newComment={addNewComment}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        commentData={commentData}
+        addNewComment={addNewComment}
       />
     </div>
   )

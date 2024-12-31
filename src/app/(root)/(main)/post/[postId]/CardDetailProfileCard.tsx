@@ -15,8 +15,8 @@ const CardDetailProfileCard = ({ post }: CardDetailProps) => {
     <div className='py-1'>
       {!isAnonymous && (
         <div className='flex w-full px-2 sm:px-3 group'>
-          <div className='flex border p-3 w-full rounded-lg h-20 gap-2 group-hover:bg-gray-50 cursor-pointer '>
-            <div className="flex min-w-fit rounded-full shadow-md overflow-hidden">
+          <div className='flex items-center border p-3 w-full rounded-lg h-20 gap-2 group-hover:bg-gray-50 cursor-pointer'>
+            <div className="flex min-w-16 max-w-16 min-h-16 max-h-16 rounded-full shadow-md overflow-hidden">
               <div className="flex w-full h-full mt-0">
                 <img
                   src={gender === 'male'

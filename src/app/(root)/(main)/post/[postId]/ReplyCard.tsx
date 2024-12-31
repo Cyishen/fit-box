@@ -6,9 +6,11 @@ import ReplySheet from './ReplySheet'
 
 type Props = {
   reply: ReplyType
+  addNewReply: (newReply: ReplyType) => void;
+  replyData: ReplyType[]
 }
 
-const ReplyCard = ({ reply }: Props) => {
+const ReplyCard = ({ reply, addNewReply, replyData }: Props) => {
   const [isReply, setIsReply] = useState(false);
   const [replyId, setReplyId] = useState<string | null>(null);
 
@@ -65,9 +67,11 @@ const ReplyCard = ({ reply }: Props) => {
 
         {isReply && replyId && (
           <ReplySheet
+            id={replyId}
             isOpen={isReply}
             setIsOpen={setIsReply}
-            id={replyId}
+            addNewReply={addNewReply}
+            replyData={replyData}
           />
         )}
       </div>

@@ -13,27 +13,27 @@ const CardDetailContent = ({ post }: CardDetailProps) => {
 
   return (
     <>
-      <div className='flex flex-col w-full p-2 sm:p-3'>
-        <div className='flex flex-col min-h-20 rounded-lg py-1 gap-1'>
+      <div className='flex flex-col w-full p-2 sm:p-3 mt-3'>
+        <div className='flex flex-col rounded-lg py-1 gap-1'>
           <p className='text-[14px]'>{content}</p>
-
-          <div className='mt-3 space-y-2'>
-            {contentImage && contentImage.length > 0 && (
-              contentImage.map((contentImage, index) => (
-                <div key={index}>
-                  <img
-                    src={contentImage}
-                    alt='contentImage'
-                    className='w-full h-full object-cover'
-                  />
-                </div>
-              ))
-            )}
-          </div>
         </div>
       </div>
 
-      <div className='flex p-2 sm:p-3'>
+      <div className='mt-3 space-y-2'>
+        {contentImage && contentImage.length > 0 && (
+          contentImage.map((contentImage, index) => (
+            <div key={index}>
+              <img
+                src={contentImage}
+                alt='contentImage'
+                className='w-full h-full object-cover'
+              />
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className='flex p-2 sm:p-3 mt-3'>
         {tags && tags.length > 0 && (
           <div className='flex flex-wrap gap-1'>
             {tags?.map((tag, index) => (

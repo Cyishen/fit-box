@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react'
 import CardDetail from './CardDetail'
-import { generateFakeCardData } from '../PostList'
+
 import { DCardProps } from '../DCard'
+import { generateFakeCardData } from '@/constants/post-constants'
 
 
 const PostContentPage = ({ params }: { params: { postId: string } }) => {

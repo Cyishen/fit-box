@@ -1,16 +1,24 @@
 import BottomCommentSheet from '@/components/BottomCommentSheet'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Sticker, Image } from 'lucide-react';
+import { ReplyType } from '../DCard';
 
 type Props = {
   id?: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  addNewReply: (newReply: ReplyType) => void;
+  replyData: ReplyType[]
 }
 
-const ReplySheet = ({ isOpen, setIsOpen, id }: Props) => {
+const ReplySheet = ({ isOpen, setIsOpen, id, addNewReply, replyData }: Props) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = e.target;
+    setMessage(value);
+  };
 
   useEffect(() => {
     if (id) {
@@ -23,6 +31,29 @@ const ReplySheet = ({ isOpen, setIsOpen, id }: Props) => {
       textareaRef.current.focus();
     }
   }, [isOpen]);
+
+  const newId = id?.split('-')?.[0] || '';
+
+  const handleSubmit = () => {
+    if (!message.trim()) return;
+
+    const newReply: ReplyType = {
+      id: `${newId}-${replyData.length + 1}`, 
+      userId: 'a1',
+      userName: 'User',  
+      userImage: '',
+      isAnonymous: false,
+      gender: 'male',       
+      content: message,  
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    addNewReply(newReply);
+
+    setMessage('');
+    setIsOpen(false);
+  };
 
   return (
     <BottomCommentSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
@@ -47,7 +78,7 @@ const ReplySheet = ({ isOpen, setIsOpen, id }: Props) => {
               required
               rows={1}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleChange}
               placeholder="回覆..."
               className="flex w-full focus:outline-none text-sm bg-white"
               onInput={(e) => {
@@ -69,7 +100,7 @@ const ReplySheet = ({ isOpen, setIsOpen, id }: Props) => {
               </div>
             </div>
             <div>
-              <button className='flex px-3 rounded-sm text-sm border'>
+              <button className='flex px-3 rounded-sm text-sm border' onClick={handleSubmit}>
                 送出
               </button>
             </div>
