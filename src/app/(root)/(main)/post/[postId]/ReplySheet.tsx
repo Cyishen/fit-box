@@ -71,7 +71,7 @@ const ReplySheet = ({ isOpen, setIsOpen, id, addNewReply, replyData }: Props) =>
             </div>
           </div>
 
-          <div className='flex px-10 py-2 rounded-lg cursor-pointer w-full mt-3' >
+          <div className='flex px-10 py-2 rounded-lg cursor-pointer w-full mt-2 bg-gray-50' >
             <textarea
               ref={textareaRef}
               name="message"
@@ -80,7 +80,7 @@ const ReplySheet = ({ isOpen, setIsOpen, id, addNewReply, replyData }: Props) =>
               value={message}
               onChange={handleChange}
               placeholder="回覆..."
-              className="flex w-full focus:outline-none text-sm bg-white"
+              className="flex w-full focus:outline-none text-sm p-1 rounded-sm"
               onInput={(e) => {
                 const target = e.target as HTMLTextAreaElement;
                 target.style.height = "auto";

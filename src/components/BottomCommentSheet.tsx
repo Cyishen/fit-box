@@ -21,7 +21,7 @@ const BottomCommentSheet = ({ isOpen, onClose, children }: BottomSheetProps) => 
           overflowY: 'auto'
         }}
       >
-        <div className='flex justify-end sticky top-0 px-4 bg-white h-10'>
+        <div className='flex justify-end sticky top-0 px-4 bg-white h-10 border-b-[0.5px]'>
           <button
             type='button'
             onClick={onClose}

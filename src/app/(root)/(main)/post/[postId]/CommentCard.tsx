@@ -52,7 +52,12 @@ const CommentCard = ({ commentData }: ChatProps) => {
           {displayName}
         </h3>
         <p className="text-gray-700 text-sm mt-1">
-          {content}
+          {content.split('\n').map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
         </p>
 
         <div className="flex items-end mt-2 justify-between">
@@ -63,8 +68,8 @@ const CommentCard = ({ commentData }: ChatProps) => {
             </p>
           </div>
 
-          <button 
-            className="text-[12px] text-gray-500 px-2 rounded-sm" 
+          <button
+            className="text-[12px] text-gray-500 px-2 rounded-sm"
             onClick={() => setIsReply(true)}
           >
             <p>回覆</p>
@@ -73,8 +78,8 @@ const CommentCard = ({ commentData }: ChatProps) => {
 
         {replyData && replyData?.length > 0 && (
           <div className="flex flex-col items-center mt-1 cursor-pointer" >
-            <div 
-              className="flex items-center w-full gap-1" 
+            <div
+              className="flex items-center w-full gap-1"
               onClick={() => handleToggleReplay(id)}
             >
               <hr className='flex w-10' />
@@ -85,17 +90,17 @@ const CommentCard = ({ commentData }: ChatProps) => {
 
             {isOpenReplay && (
               replyData.map((reply) => (
-                <ReplyCard key={reply.id} reply={reply} addNewReply={addNewReply} replyData={replyData}/>
+                <ReplyCard key={reply.id} reply={reply} addNewReply={addNewReply} replyData={replyData} />
               ))
             )}
           </div>
         )}
       </div>
 
-      <ReplySheet 
+      <ReplySheet
         id={id}
-        isOpen={isReply} 
-        setIsOpen={setIsReply} 
+        isOpen={isReply}
+        setIsOpen={setIsReply}
         addNewReply={addNewReply}
         replyData={replyData}
       />

@@ -45,7 +45,12 @@ const ReplyCard = ({ reply, addNewReply, replyData }: Props) => {
             {displayName}
           </h3>
           <p className="text-gray-700 text-sm mt-1">
-            {reply.content}
+            {reply.content.split('\n').map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ))}
           </p>
 
           <div className="flex mt-2">
