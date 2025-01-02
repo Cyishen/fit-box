@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { CommentType, ReplyType } from '../DCard'
-import { multiFormatDateString } from '@/lib/TimeFn/Timer'
+import { postMultiFormatDateString } from '@/lib/TimeFn/Timer'
 import ReplyCard from './ReplyCard'
 import ReplySheet from './ReplySheet'
 
@@ -27,6 +27,9 @@ const CommentCard = ({ commentData }: ChatProps) => {
 
   const isOpenReplay = openCommentId === id;
   const displayName = isAnonymous ? '匿名' : userName;
+  const timeChange = typeof createdAt === 'string'
+    ? createdAt 
+    : createdAt instanceof Date ? createdAt.toLocaleString() : new Date().toLocaleString();
 
   return (
     <div className="flex gap-2">
@@ -64,7 +67,7 @@ const CommentCard = ({ commentData }: ChatProps) => {
           <div className="flex">
             <p className="text-gray-400 text-[12px]">{id}<span>・</span></p>
             <p className="text-gray-400 text-[12px]">
-              {multiFormatDateString(createdAt.toLocaleDateString())}
+              {postMultiFormatDateString(timeChange)}
             </p>
           </div>
 

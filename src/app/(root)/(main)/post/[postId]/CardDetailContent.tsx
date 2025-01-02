@@ -13,9 +13,16 @@ const CardDetailContent = ({ post }: CardDetailProps) => {
 
   return (
     <>
-      <div className='flex flex-col w-full p-2 sm:p-3 mt-3'>
+      <div className='flex flex-col w-full p-2 sm:p-3 mt-2'>
         <div className='flex flex-col rounded-lg py-1 gap-1'>
-          <p className='text-[14px]'>{content}</p>
+          <p className='text-[14px] leading-6'>
+            {content.split('\n').map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ))}
+          </p>
         </div>
       </div>
 

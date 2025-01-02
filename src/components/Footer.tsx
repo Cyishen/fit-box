@@ -123,7 +123,7 @@ const Footer = () => {
               &copy;
             </p>
             <p className='text-muted-foreground font-mono text-xs'>
-              {new Date().getFullYear()} FitBox Inc.
+              {new Date().getFullYear()} FitBox.
             </p>
           </div>
 

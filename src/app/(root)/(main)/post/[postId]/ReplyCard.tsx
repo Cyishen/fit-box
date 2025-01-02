@@ -1,4 +1,4 @@
-import { multiFormatDateString } from '@/lib/TimeFn/Timer'
+import { postMultiFormatDateString } from '@/lib/TimeFn/Timer'
 import React, { useState } from 'react'
 import { ReplyType } from '../DCard'
 import ReplySheet from './ReplySheet'
@@ -20,6 +20,9 @@ const ReplyCard = ({ reply, addNewReply, replyData }: Props) => {
   };
 
   const displayName = reply.isAnonymous ? '匿名' : reply.userName;
+  const timeChange = typeof reply.createdAt === 'string'
+    ? reply.createdAt
+    : reply.createdAt instanceof Date ? reply.createdAt.toLocaleString() : new Date().toLocaleString();
 
   return (
     <div className='flex flex-col w-full mt-1'>
@@ -57,7 +60,7 @@ const ReplyCard = ({ reply, addNewReply, replyData }: Props) => {
             <div className="flex">
               <p className="text-gray-400 text-[12px]">{reply.id}<span>・</span></p>
               <p className="text-gray-400 text-[12px]">
-                {multiFormatDateString(reply.createdAt.toLocaleDateString())}
+                {postMultiFormatDateString(timeChange)}
               </p>
 
               <button

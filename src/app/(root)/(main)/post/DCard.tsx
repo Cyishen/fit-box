@@ -3,6 +3,7 @@
 import React from 'react'
 import { Heart, MessageCircle, Bookmark, Ellipsis } from 'lucide-react'
 import Link from 'next/link';
+import { postMultiFormatDateString } from '@/lib/TimeFn/Timer';
 
 export type ReplyType = {
   id: string,
@@ -12,7 +13,7 @@ export type ReplyType = {
   isAnonymous: boolean;
   gender?: 'male' | 'female';
   content: string,
-  createdAt: Date,
+  createdAt: Date | string,
   updatedAt: Date,
 }
 
@@ -24,7 +25,7 @@ export type CommentType = {
   isAnonymous: boolean;
   gender?: 'male' | 'female';
   content: string,
-  createdAt: Date,
+  createdAt: Date | string,
   updatedAt: Date,
   replies?: ReplyType[]
 }
@@ -41,17 +42,19 @@ export interface DCardProps {
   contentImage: string[];
   like: number;
   bookmark: number;
-  createdAt: Date;
+  createdAt: Date | string;
   updatedAt: Date;
   tags?: string[];
   comments?: CommentType[]
 }
 
 const DCard = (props: DCardProps) => {
-  const { userName, isAnonymous, title, content, contentImage, like, bookmark, gender, comments } = props
+  const { userName, isAnonymous, title, content, contentImage, like, bookmark, gender, comments, createdAt } = props
 
   const displayName = isAnonymous ? '匿名' : userName;
-
+  const timeChange = typeof createdAt === 'string'
+    ? createdAt 
+    : createdAt instanceof Date ? createdAt.toLocaleString() : new Date().toLocaleString();
 
   return (
     <Link
@@ -81,6 +84,9 @@ const DCard = (props: DCardProps) => {
               <div className="flex justify-between w-full">
                 <div className="flex gap-2">
                   <p className="text-[12px] font-bold capitalize">{displayName}</p>
+                  <p className="text-gray-400 text-[12px]">
+                    {postMultiFormatDateString(timeChange)}
+                  </p>
                 </div>
                 <div className="flex justify-end rounded-full w-5 h-5 overflow-hidden cursor-pointer">
                   <div className='flex justify-center items-center w-5 h-5 hover:bg-gray-100'>
@@ -92,7 +98,7 @@ const DCard = (props: DCardProps) => {
           </div>
         </div>
 
-        <div className="flex flex-col mt-3 gap-1 px-3 sm:px-6 h-20">
+        <div className="flex flex-col mt-3 gap-1 px-3 sm:px-6 max-h-20 min-h-20">
           <div className='flex justify-between gap-1'>
             <div className='flex flex-col'>
               <div className="flex flex-col">
@@ -100,7 +106,7 @@ const DCard = (props: DCardProps) => {
                 <p className="text-sm line-clamp-1">{content}</p>
               </div>
 
-              <div className="flex gap-5 mt-3 text-[10px]">
+              <div className={`flex gap-5  text-[10px] ${contentImage.length > 0 ? 'mt-auto' : 'mt-3'}`}>
                 <div className="flex items-center gap-1">
                   <Heart size={16} fill='#f87171' stroke='#f87171' />
                   <p>{like}</p>
