@@ -16,8 +16,8 @@ const BottomCommentSheet = ({ isOpen, onClose, children }: BottomSheetProps) => 
           } transition-transform duration-300`}
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxHeight: '35%',
-          minHeight: '35%',
+          maxHeight: '40%',
+          minHeight: '40%',
           overflowY: 'auto'
         }}
       >

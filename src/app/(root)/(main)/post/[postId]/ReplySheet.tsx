@@ -57,7 +57,7 @@ const ReplySheet = ({ isOpen, setIsOpen, id, addNewReply, replyData }: Props) =>
 
   return (
     <BottomCommentSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
-      <div className='flex flex-col px-4 py-2'>
+      <div className='flex flex-col px-4 pt-2'>
         <div className='rounded-lg'>
           <div className='flex gap-2 items-center'>
             <div className="flex w-8 h-8 min-w-8 min-h-8 rounded-full overflow-hidden">
@@ -89,7 +89,7 @@ const ReplySheet = ({ isOpen, setIsOpen, id, addNewReply, replyData }: Props) =>
             />
           </div>
 
-          <div className='flex items-center justify-between mt-3'>
+          <div className='sticky bottom-0 flex items-center justify-between mt-3 bg-white py-1'>
             <div className='flex gap-5'>
               <div className='cursor-pointer text-gray-400'>
                 <Sticker />
