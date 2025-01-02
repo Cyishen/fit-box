@@ -28,7 +28,8 @@ const CardDetailTop = ({ post }: CardDetailProps) => {
 
       <div className='mt-3 flex gap-2 items-center no-select'>
         <div className="flex w-8 h-8 min-w-8 min-h-8 ring-offset-1 ring-[0.5px] ring-gray-500 rounded-full overflow-hidden">
-          <div className="flex items-center justify-center min-w-8 min-h-8 bg-gray-100">
+          <div className={`flex items-center justify-center min-w-8 min-h-8 bg-gray-100
+            ${gender === 'male' ? 'bg-blue-100' : 'bg-pink-100'}`}>
             <img
               src={gender === 'male'
                 ? '/posts/boy.svg'

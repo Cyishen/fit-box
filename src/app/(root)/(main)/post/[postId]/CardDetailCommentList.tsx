@@ -42,7 +42,7 @@ const CardDetailCommentList = ({ post }: CardDetailProps) => {
               className='flex justify-start text-gray-400 text-sm w-full'
               onClick={() => setIsOpen(true)}
             >
-              留言...
+              我要說 ...
             </button>
           </div>
         </div>
