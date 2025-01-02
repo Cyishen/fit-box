@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { getDateRange } from "@/lib/TimeFn/Timer";
 
+
 // import { Prisma } from "@prisma/client";
 
 //TODO? menu邏輯
@@ -292,7 +293,7 @@ export const upsertExercise = async (exercises: TemplateExerciseType[], template
           template: { connect: { id: templateId } },
           templateSets: {
             create: templateSets.map(set => ({
-              where: { id: set.id || ''},
+              where: { id: set.id || '' },
               movementId: exercise.movementId,
               leftWeight: set.leftWeight,
               rightWeight: set.rightWeight,
@@ -800,7 +801,7 @@ export const getWeekSessionByUserId = async (id: string) => {
 
   const now = new Date();
   const oneWeekAgo = new Date(now);
-  oneWeekAgo.setDate(now.getDate() - 7); 
+  oneWeekAgo.setDate(now.getDate() - 7);
 
   const startOfLocalWeek = new Date(oneWeekAgo.setHours(0, 0, 0, 0));
   const endOfLocalDay = new Date(now.setHours(23, 59, 59, 999));
@@ -809,7 +810,7 @@ export const getWeekSessionByUserId = async (id: string) => {
     where: {
       userId: id,
       createdAt: {
-        gte: startOfLocalWeek, 
+        gte: startOfLocalWeek,
         lte: endOfLocalDay
       }
     },
@@ -1024,7 +1025,7 @@ export const upsertWorkoutSummary = async (id: string) => {
   };
 };
 
-export const getCategorySummaryByUserIdForLineChart = async (id: string, range: 'week' | 'month' | 'year') => {
+export const getCategorySummaryByUserIdForLineChart = async (id: string, range: 'week' | 'month' | 'year' | 'all') => {
   const session = await auth();
   const userId = session?.user?.id;
 
@@ -1034,7 +1035,6 @@ export const getCategorySummaryByUserIdForLineChart = async (id: string, range: 
 
   const startDate = new Date();
   const endDate = new Date();
-
 
   switch (range) {
     case 'week':
@@ -1050,6 +1050,17 @@ export const getCategorySummaryByUserIdForLineChart = async (id: string, range: 
     case 'year':
       startDate.setMonth(0, 1); // 當年的開始（1月1日）
       endDate.setMonth(11, 31); // 當年的結束（12月31日）
+      break;
+    case 'all':
+      try {
+        const firstDay = await getFirstWorkoutSessionDay();
+        if (firstDay?.createdAt) {
+          startDate.setTime(new Date(firstDay.createdAt).getTime());
+        }
+      } catch (error) {
+        console.error('Error fetching first workout session day:', error);
+        return [];
+      }
       break;
   }
 

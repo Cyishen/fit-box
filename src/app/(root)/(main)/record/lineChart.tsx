@@ -147,7 +147,7 @@ const LineChart = ({ userYearSummary }: Props) => {
       },
     },
     grid: {
-      left: '0%',
+      left: '4%',
       right: '4%',
       bottom: '16%',
       containLabel: true

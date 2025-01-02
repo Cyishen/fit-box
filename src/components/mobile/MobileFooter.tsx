@@ -12,12 +12,12 @@ const MobileFooter = () => {
             iconHoverSrc="/icons/barIcon-fit-on.svg"
             title="訓練"
           />
-          <MobileItem
+          {/* <MobileItem
             href="/action"
             iconSrc="/icons/barIcon-action.svg"
             iconHoverSrc="/icons/barIcon-action-on.svg"
             title="動作"
-          />
+          /> */}
           <MobileItem
             href="/post"
             iconSrc="/icons/barIcon-action.svg"

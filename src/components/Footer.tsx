@@ -7,7 +7,6 @@ export const footerLinks = [
   "使用條款",
   "銷售及退款",
   "法律聲明",
-  "網站地圖",
 ];
 
 const Footer = () => {
@@ -17,13 +16,13 @@ const Footer = () => {
       <Wrapper>
         <div className="flex flex-col md:flex-row justify-between gap-14">
           <div className="w-full md:w-1/3">
-            <p className="font-mono font-extrabold">Logo here</p>
+            <p className="font-mono font-extrabold">FitBox</p>
 
             <br />
 
-            <p className="font-mono">write something here.</p>
+            {/* <p className="font-mono">write something here.</p> */}
 
-            <div className="bg-gray-300 h-[1px] my-8" />
+            <div className="bg-gray-300 h-[1px] my-4 sm:my-8" />
 
             <p className="font-mono">Get The Latest News</p>
 
@@ -68,7 +67,7 @@ const Footer = () => {
               <p className="font-mono font-bold">
                 Product
               </p>
-              <ul className="flex flex-col gap-2 mt-5 font-mono">
+              <ul className="flex flex-col gap-2 mt-3 font-mono text-sm">
                 <p>Pricing</p>
                 <p>Features</p>
                 <p>How It Works</p>
@@ -79,7 +78,7 @@ const Footer = () => {
               <p className="font-mono font-bold">
                 About Us
               </p>
-              <ul className="flex flex-col gap-2 mt-5 font-mono">
+              <ul className="flex flex-col gap-2 mt-3 font-mono text-sm">
                 <p>About</p>
                 <p>Blog</p>
                 <p>Our Team</p>
@@ -92,7 +91,7 @@ const Footer = () => {
                 <p className="font-mono font-bold">
                   Support
                 </p>
-                <ul className="flex flex-col gap-2 mt-5 font-mono">
+                <ul className="flex flex-col gap-2 mt-3 font-mono text-sm">
                   <p>Your Account</p>
                   <p>Support Center</p>
                   <p>Community</p>
@@ -104,7 +103,7 @@ const Footer = () => {
                 <p className="font-mono font-bold">
                   Contact Us
                 </p>
-                <ul className="flex flex-col gap-2 mt-5 font-mono">
+                <ul className="flex flex-col gap-2 mt-3 font-mono text-sm">
                   <div className="flex items-center gap-2">
                     <span>+886 123-456</span>
                   </div>

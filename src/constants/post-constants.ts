@@ -140,7 +140,7 @@ export const generateFakeCardData = (): DCardProps[] => {
     {
       id: 'post3',
       userId: 'a1',
-      userName: '吃貨小仙女',
+      userName: '健身小仙女',
       isAnonymous: false,
       gender: 'female',
       userImage: '/icons/',

@@ -13,7 +13,7 @@ const RecordPage = async () => {
   const session = await auth();
   const userId = session?.user?.id
 
-  const userYearSummaryData = getCategorySummaryByUserIdForLineChart(userId as string, 'year');
+  const userYearSummaryData = getCategorySummaryByUserIdForLineChart(userId as string, 'all');
 
   const userThisWeekSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '週', false);
   const userLastWeekSummaryData = getCategorySummaryByUserIdForBarChart(userId as string, '週', true);
